@@ -1,0 +1,409 @@
+def shared var xcom as integer format "ZZ".
+def shared var xdiv as integer format "ZZ".
+def var fprop as dec format "ZZZZZZZZZZ"
+    label "Enter proposal number you wish to move to Company 7.".
+def var fprop7 as dec format "ZZZZZZZZZZ".
+def var fcom as integer format "ZZ".
+def var fprop18 as dec format "ZZZZZZZZZZ".
+def var xactive like propsl.active.
+def var xaddr1 like propsl.addr1.
+def var xaddr2 like propsl.addr2.
+def var xaddr3 like propsl.addr3.
+def var xaddr4 like propsl.addr4.
+def var xaddr5 like propsl.addr5.
+def var xc-name like propsl.c-name.
+def var xcomp# like propsl.comp#.
+def var xcust# like propsl.cust#.
+def var xcust-trf like propsl.cust-trf.
+def var xdate-p like propsl.date-p.
+def var xdiv# like propsl.div#.
+def var xemail like propsl.email.
+def var xfax-tele like propsl.fax-tele.
+def var xjanitor like propsl.janitor.
+def var xl-comments like propsl.l-comments.
+def var xl-name like propsl.l-name.
+def var xl-state like propsl.l-state.
+def var xl-tele like propsl.l-tele.
+def var xl-tele2 like propsl.l-tele2.
+def var xladdr01 like propsl.laddr01.
+def var xladdr02 like propsl.laddr02.
+def var xladdr03 like propsl.laddr03.
+def var xmlabel like propsl.mlabel.
+def var xpropsl# like propsl.propsl#.
+def var xroute# like propsl.route#.
+def var xstate like propsl.state.
+def var xsub# like propsl.sub#.
+def var xtele like propsl.tele.
+def var xtot-amt like propsl.tot-amt.
+def var xzip like propsl.zip.
+def var za2-desp like pro-desp.a2-desp.
+def var zac# like pro-desp.ac#.
+def var zamt like pro-desp.amt.
+def var zamt2 like pro-desp.amt2.
+def var zamt2-mul like pro-desp.amt2-mul.
+def var zcl-date like pro-desp.cl-date.
+def var zcommis like pro-desp.commis.
+def var zcomp# like pro-desp.comp#.
+def var zcust# like pro-desp.cust#.
+def var zdesc01 like pro-desp.desc01.
+def var zdesc02 like pro-desp.desc02.
+def var zdesc03 like pro-desp.desc03.
+def var zdesc04 like pro-desp.desc04.
+def var zdesc05 like pro-desp.desc05.
+def var zdesc06 like pro-desp.desc06.
+def var zdesc07 like pro-desp.desc07.
+def var zdesc08 like pro-desp.desc08.
+def var zdesc09 like pro-desp.desc09.
+def var zdesc10 like pro-desp.desc10.
+def var zdiv# like pro-desp.div#.
+def var zdl like pro-desp.dl.
+def var zfreq like pro-desp.freq.
+def var zitem# like pro-desp.item#.
+def var zmth like pro-desp.mth.
+def var zpo# like pro-desp.po#.
+def var zpropsl# like pro-desp.propsl#.
+def var zroute# like pro-desp.route#.
+def var zspc-intr like pro-desp.spc-intr.
+def var zstart-dt like pro-desp.start-dt.
+def var zsub# like pro-desp.sub#.
+def var zsub-con like pro-desp.sub-con.
+def var zwhch-amt like pro-desp.whch-amt.
+def var zwk like pro-desp.wks.
+def var zwkday like pro-desp.wkday.
+
+display space(19) "Transfer proposal and description screen" space(5)
+    today format 99/99/9999 skip(1) xcom label "Company Number" space(18)
+    xdiv label "Division Number" with frame a side-labels no-box.
+repeat:
+    update fcom = 9.
+    if lastkey = keycode("F4") or lastkey = keycode("ESC") then leave.
+    update skip(5) fprop
+        with frame a color display normal prompt w/ma side-labels.
+    update fprop7 = fprop - 200000.
+    find first propsl where propsl.comp# = fcom and
+                            propsl.div# = xdiv and
+                            propsl.propsl# = fprop no-error.
+    if not available propsl then do:
+        message "Source proposal not available. Try another".
+        next.
+    end.
+    find first propsl where propsl.comp# = 7 and
+                            propsl.div# = xdiv and
+                            propsl.propsl# = fprop7 no-error.
+    if available propsl then do:
+        message "Proposal exists in Company 7. Can not be added.".
+        next.
+    end.
+    find first pro-desp where pro-desp.comp# = 7 and
+                              pro-desp.div# = xdiv and
+                              pro-desp.propsl# = fprop7 no-error.
+    if available pro-desp then do:
+        message "Proposal description(s) exists Can not be added.".
+        next.
+    end.
+    find first propsl where propsl.comp# = fcom and
+                            propsl.div# = xdiv and
+                            propsl.propsl# = fprop no-error.
+    if not available propsl then do:
+        message "Source proposal not available. Try another".
+        next.
+    end.
+update xactive = propsl.active.
+update xaddr1 = propsl.addr1.
+update xaddr2 = propsl.addr2.
+update xaddr3 = propsl.addr3.
+update xaddr4 = propsl.addr4.
+update xaddr5 = propsl.addr5.
+update xc-name = propsl.c-name.
+update xcomp# = 7.
+update xcust# = propsl.cust#.
+update xcust-trf = propsl.cust-trf.
+update xdate-p = propsl.date-p.
+update xdiv# = propsl.div#.
+update xemail = propsl.email.
+update xfax-tele = propsl.fax-tele.
+update xjanitor = propsl.janitor.
+update xl-comments = propsl.l-comments.
+update xl-name = propsl.l-name.
+update xl-state = propsl.l-state.
+update xl-tele = propsl.l-tele.
+update xl-tele2 = propsl.l-tele2.
+update xladdr01 = propsl.laddr01.
+update xladdr02 = propsl.laddr02.
+update xladdr03 = propsl.laddr03.
+update xmlabel = propsl.mlabel.
+update xpropsl# = fprop7.
+update xroute# = propsl.route#.
+update xstate = propsl.state.
+update xsub# = propsl.sub#.
+update xtele = propsl.tele.
+update xtot-amt = propsl.tot-amt.
+update xzip = propsl.zip.
+create propsl.
+update propsl.active = xactive.
+update propsl.addr1 = xaddr1.
+update propsl.addr2 = xaddr2.
+update propsl.addr3 = xaddr3.
+update propsl.addr4 = xaddr4.
+update propsl.addr5 = xaddr5.
+update propsl.c-name = xc-name.
+update propsl.comp# = xcomp#.
+update propsl.cust# = xcust#.
+update propsl.cust-trf = xcust-trf.
+update propsl.date-p = xdate-p.
+update propsl.div# = xdiv#.
+update propsl.email = xemail.
+update propsl.fax-tele = xfax-tele.
+update propsl.janitor = xjanitor.
+update propsl.l-comments = xl-comments.
+update propsl.l-name = xl-name.
+update propsl.l-state = xl-state.
+update propsl.l-tele = xl-tele.
+update propsl.l-tele2 = xl-tele2.
+update propsl.laddr01 = xladdr01.
+update propsl.laddr02 = xladdr02.
+update propsl.laddr03 = xladdr03.
+update propsl.mlabel = xmlabel.
+update propsl.propsl# = xpropsl#.
+update propsl.route# = xroute#.
+update propsl.state = xstate.
+update propsl.sub# = xsub#.
+update propsl.tele = xtele.
+update propsl.tot-amt = xtot-amt.
+update propsl.zip = xzip.
+release propsl.
+
+/***************************************************/
+find first pro-desp where pro-desp.comp# = fcom and
+                          pro-desp.div# = xdiv and
+                          pro-desp.propsl# = fprop no-error.
+if not available pro-desp then do:
+    message "The sky is falling. The sky is falling".
+end.
+update za2-desp = pro-desp.a2-desp.
+update zac# = pro-desp.ac#.
+update zamt = pro-desp.amt.
+update zamt2 = pro-desp.amt2.
+update zamt2-mul = pro-desp.amt2-mul.
+update zcl-date = pro-desp.cl-date.
+update zcommis = pro-desp.commis.
+update zcomp# = 7.
+update zcust# = pro-desp.cust#.
+update zdesc01 = pro-desp.desc01.
+update zdesc02 = pro-desp.desc02.
+update zdesc03 = pro-desp.desc03.
+update zdesc04 = pro-desp.desc04.
+update zdesc05 = pro-desp.desc05.
+update zdesc06 = pro-desp.desc06.
+update zdesc07 = pro-desp.desc07.
+update zdesc08 = pro-desp.desc08.
+update zdesc09 = pro-desp.desc09.
+update zdesc10 = pro-desp.desc10.
+update zdiv# = pro-desp.div#.
+update zdl = pro-desp.dl.
+update zfreq = pro-desp.freq.
+update zitem# = pro-desp.item#.
+update zmth[1] = pro-desp.mth[1].
+update zmth[2] = pro-desp.mth[2].
+update zmth[3] = pro-desp.mth[3].
+update zmth[4] = pro-desp.mth[4].
+update zmth[5] = pro-desp.mth[5].
+update zmth[6] = pro-desp.mth[6].
+update zmth[7] = pro-desp.mth[7].
+update zmth[8] = pro-desp.mth[8].
+update zmth[9] = pro-desp.mth[9].
+update zmth[10] = pro-desp.mth[10].
+update zmth[11] = pro-desp.mth[11].
+update zmth[12] = pro-desp.mth[12].
+update zpo# = pro-desp.po#.
+update zpropsl# = fprop7.
+update zroute# = pro-desp.route#.
+update zspc-intr = pro-desp.spc-intr.
+update zstart-dt = pro-desp.start-dt.
+update zsub# = pro-desp.sub#.
+update zsub-con = pro-desp.sub-con.
+update zwhch-amt = pro-desp.whch-amt.
+update zwk[1] = pro-desp.wks[1].
+update zwk[2] = pro-desp.wks[2].
+update zwk[3] = pro-desp.wks[3].
+update zwk[4] = pro-desp.wks[4].
+update zwkday[1] = pro-desp.wkday[1].
+update zwkday[2] = pro-desp.wkday[2].
+update zwkday[3] = pro-desp.wkday[3].
+update zwkday[4] = pro-desp.wkday[4].
+update zwkday[5] = pro-desp.wkday[5].
+update zwkday[6] = pro-desp.wkday[6].
+update zwkday[7] = pro-desp.wkday[7].
+create pro-desp.
+update pro-desp.a2-desp = za2-desp.
+update pro-desp.ac# = zac#.
+update pro-desp.amt = zamt.
+update pro-desp.amt2 = zamt2.
+update pro-desp.amt2-mul = zamt2-mul.
+update pro-desp.cl-date = zcl-date.
+update pro-desp.commis = zcommis.
+update pro-desp.comp# = zcomp#.
+update pro-desp.cust# = zcust#.
+update pro-desp.desc01 = zdesc01.
+update pro-desp.desc02 = zdesc02.
+update pro-desp.desc03 = zdesc03.
+update pro-desp.desc04 = zdesc04.
+update pro-desp.desc05 = zdesc05.
+update pro-desp.desc06 = zdesc06.
+update pro-desp.desc07 = zdesc07.
+update pro-desp.desc08 = zdesc08.
+update pro-desp.desc09 = zdesc09.
+update pro-desp.desc10 = zdesc10.
+update pro-desp.div# = zdiv#.
+update pro-desp.dl = zdl.
+update pro-desp.freq = zfreq.
+update pro-desp.item# = zitem#.
+update pro-desp.mth[1] = zmth[1].
+update pro-desp.mth[2] = zmth[2].
+update pro-desp.mth[3] = zmth[3].
+update pro-desp.mth[4] = zmth[4].
+update pro-desp.mth[5] = zmth[5].
+update pro-desp.mth[6] = zmth[6].
+update pro-desp.mth[7] = zmth[7].
+update pro-desp.mth[8] = zmth[8].
+update pro-desp.mth[9] = zmth[9].
+update pro-desp.mth[10] = zmth[10].
+update pro-desp.mth[11] = zmth[11].
+update pro-desp.mth[12] = zmth[12].
+update pro-desp.po# = zpo#.
+update pro-desp.propsl# = zpropsl#.
+update pro-desp.route# = zroute#.
+update pro-desp.spc-intr = zspc-intr.
+update pro-desp.start-dt = zstart-dt.
+update pro-desp.sub# = zsub#.
+update pro-desp.sub-con = zsub-con.
+update pro-desp.whch-amt = zwhch-amt.
+update pro-desp.wks[1] = zwk[1].
+update pro-desp.wks[1] = zwk[1].
+update pro-desp.wks[1] = zwk[1].
+update pro-desp.wks[1] = zwk[1].
+update pro-desp.wkday[1] = zwkday[1].
+update pro-desp.wkday[2] = zwkday[2].
+update pro-desp.wkday[3] = zwkday[3].
+update pro-desp.wkday[4] = zwkday[4].
+update pro-desp.wkday[5] = zwkday[5].
+update pro-desp.wkday[6] = zwkday[6].
+update pro-desp.wkday[7] = zwkday[7].
+release pro-desp.
+repeat:
+find next pro-desp where pro-desp.comp# = fcom and
+                          pro-desp.div# = xdiv and
+                          pro-desp.propsl# = fprop no-error.
+if not available pro-desp then leave.
+update za2-desp = pro-desp.a2-desp.
+update zac# = pro-desp.ac#.
+update zamt = pro-desp.amt.
+update zamt2 = pro-desp.amt2.
+update zamt2-mul = pro-desp.amt2-mul.
+update zcl-date = pro-desp.cl-date.
+update zcommis = pro-desp.commis.
+update zcomp# = 7.
+update zcust# = pro-desp.cust#.
+update zdesc01 = pro-desp.desc01.
+update zdesc02 = pro-desp.desc02.
+update zdesc03 = pro-desp.desc03.
+update zdesc04 = pro-desp.desc04.
+update zdesc05 = pro-desp.desc05.
+update zdesc06 = pro-desp.desc06.
+update zdesc07 = pro-desp.desc07.
+update zdesc08 = pro-desp.desc08.
+update zdesc09 = pro-desp.desc09.
+update zdesc10 = pro-desp.desc10.
+update zdiv# = pro-desp.div#.
+update zdl = pro-desp.dl.
+update zfreq = pro-desp.freq.
+update zitem# = pro-desp.item#.
+update zmth[1] = pro-desp.mth[1].
+update zmth[2] = pro-desp.mth[2].
+update zmth[3] = pro-desp.mth[3].
+update zmth[4] = pro-desp.mth[4].
+update zmth[5] = pro-desp.mth[5].
+update zmth[6] = pro-desp.mth[6].
+update zmth[7] = pro-desp.mth[7].
+update zmth[8] = pro-desp.mth[8].
+update zmth[9] = pro-desp.mth[9].
+update zmth[10] = pro-desp.mth[10].
+update zmth[11] = pro-desp.mth[11].
+update zmth[12] = pro-desp.mth[12].
+update zpo# = pro-desp.po#.
+update zpropsl# = fprop7.
+update zroute# = pro-desp.route#.
+update zspc-intr = pro-desp.spc-intr.
+update zstart-dt = pro-desp.start-dt.
+update zsub# = pro-desp.sub#.
+update zsub-con = pro-desp.sub-con.
+update zwhch-amt = pro-desp.whch-amt.
+update zwk[1] = pro-desp.wks[1].
+update zwk[2] = pro-desp.wks[2].
+update zwk[3] = pro-desp.wks[3].
+update zwk[4] = pro-desp.wks[4].
+update zwkday[1] = pro-desp.wkday[1].
+update zwkday[2] = pro-desp.wkday[2].
+update zwkday[3] = pro-desp.wkday[3].
+update zwkday[4] = pro-desp.wkday[4].
+update zwkday[5] = pro-desp.wkday[5].
+update zwkday[6] = pro-desp.wkday[6].
+update zwkday[7] = pro-desp.wkday[7].
+create pro-desp.
+update pro-desp.a2-desp = za2-desp.
+update pro-desp.ac# = zac#.
+update pro-desp.amt = zamt.
+update pro-desp.amt2 = zamt2.
+update pro-desp.amt2-mul = zamt2-mul.
+update pro-desp.cl-date = zcl-date.
+update pro-desp.commis = zcommis.
+update pro-desp.comp# = zcomp#.
+update pro-desp.cust# = zcust#.
+update pro-desp.desc01 = zdesc01.
+update pro-desp.desc02 = zdesc02.
+update pro-desp.desc03 = zdesc03.
+update pro-desp.desc04 = zdesc04.
+update pro-desp.desc05 = zdesc05.
+update pro-desp.desc06 = zdesc06.
+update pro-desp.desc07 = zdesc07.
+update pro-desp.desc08 = zdesc08.
+update pro-desp.desc09 = zdesc09.
+update pro-desp.desc10 = zdesc10.
+update pro-desp.div# = zdiv#.
+update pro-desp.dl = zdl.
+update pro-desp.freq = zfreq.
+update pro-desp.item# = zitem#.
+update pro-desp.mth[1] = zmth[1].
+update pro-desp.mth[2] = zmth[2].
+update pro-desp.mth[3] = zmth[3].
+update pro-desp.mth[4] = zmth[4].
+update pro-desp.mth[5] = zmth[5].
+update pro-desp.mth[6] = zmth[6].
+update pro-desp.mth[7] = zmth[7].
+update pro-desp.mth[8] = zmth[8].
+update pro-desp.mth[9] = zmth[9].
+update pro-desp.mth[10] = zmth[10].
+update pro-desp.mth[11] = zmth[11].
+update pro-desp.mth[12] = zmth[12].
+update pro-desp.po# = zpo#.
+update pro-desp.propsl# = zpropsl#.
+update pro-desp.route# = zroute#.
+update pro-desp.spc-intr = zspc-intr.
+update pro-desp.start-dt = zstart-dt.
+update pro-desp.sub# = zsub#.
+update pro-desp.sub-con = zsub-con.
+update pro-desp.whch-amt = zwhch-amt.
+update pro-desp.wks[1] = zwk[1].
+update pro-desp.wks[2] = zwk[2].
+update pro-desp.wks[3] = zwk[3].
+update pro-desp.wks[4] = zwk[4].
+update pro-desp.wkday[1] = zwkday[1].
+update pro-desp.wkday[2] = zwkday[2].
+update pro-desp.wkday[3] = zwkday[3].
+update pro-desp.wkday[4] = zwkday[4].
+update pro-desp.wkday[5] = zwkday[5].
+update pro-desp.wkday[6] = zwkday[6].
+update pro-desp.wkday[7] = zwkday[7].
+release pro-desp.
+end.
+end.

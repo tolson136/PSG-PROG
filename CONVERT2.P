@@ -1,0 +1,6 @@
+for each ticket where ticket.comp# = 9 and date-prt > 12/31/2002.
+find first propsl where propsl.comp# =   ticket.comp# and
+			propsl.div# =    ticket.div# and
+			propsl.cust# =   ticket.cust# and
+			propsl.propsl# = ticket.propsl# no-error.
+if not available propsl then display ticket.

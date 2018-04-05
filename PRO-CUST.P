@@ -1,0 +1,119 @@
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+DEFINE VARIABLE XCUST AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE VARIABLE XPROP AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+DEF VAR ANS AS CHAR FORMAT "X"
+    LABEL "<A>ssociate with old customer or <C>reate new customer ?  A/C".
+DEF VAR XXCUST AS DECIMAL FORMAT "ZZZZZZZZZZ"
+    LABEL "Associate with which customer # ?".
+IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
+THEN DO:
+    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
+    RETURN.
+END.
+REPEAT:
+DISPLAY SPACE(5)
+"C R E A T E   C U S T O M E R   F R O M   P R O P O S A L   S C R E E N"
+SKIP(1) XCOM-N LABEL "CMP" SPACE(1)
+        XDIV-N LABEL "DIV" SPACE(1)
+        XOPR LABEL "OPR" SKIP(1).
+    PROMPT-FOR PROPSL.PROPSL#.
+    XPROP = INPUT PROPSL.PROPSL#.
+    FIND FIRST PROPSL WHERE PROPSL.PROPSL# = XPROP AND PROPSL.COMP# = XCOM AND
+         PROPSL.DIV# = XDIV.
+    IF LASTKEY = KEYCODE("F4") THEN LEAVE.
+    DISPLAY
+            PROPSL# LABEL "PROPOSAL NUMBER"
+            COMP# LABEL "COMPANY NUMBER"
+            DIV# LABEL "DIVISION NUMBER" SKIP(1)
+            CUST# LABEL "CUSTOMER NUMBER "SKIP(1)
+            C-NAME LABEL "CUSTOMER " SPACE(5)
+            L-NAME LABEL "L-NAME " SKIP(0)
+            ADDR1 LABEL "ADDRESS 1" SPACE(5)
+            LADDR01 LABEL "L-ADDR1" SKIP(0)
+            ADDR2 LABEL "ADDRESS 2" SPACE(5)
+            LADDR02 LABEL "L-ADDR2" SKIP(0)
+            ADDR3 LABEL "ADDRESS 3" SPACE(5)
+            LADDR03 LABEL "L-ADDR3" SKIP(0)
+            ADDR4 LABEL "ADDRESS 4" SPACE(5)
+            L-STATE
+            L-TELE SKIP(0)
+            ADDR5 LABEL "ADDRESS 5" SPACE(5)
+            L-TELE2 LABEL "2ND PHONE OR EXT#" SKIP(0)
+            STATE LABEL "STATE    " SPACE(5)
+            ZIP SPACE(8)
+            L-COMMENTS LABEL "COMMENT" SKIP(0)
+            TELE LABEL "TELEPHONE" SPACE(16)
+            TOT-AMT SKIP(0)
+            FAX-TELE LABEL "FAX PHONE" SPACE(16)
+            DATE-P LABEL "PROPOSAL DATE" SKIP(0)
+            CUST-TRF LABEL "CUSTOMER TRANSFERED" SKIP(0)
+            ACTIVE LABEL "CUSTOMER STATUS" SKIP(0)
+               WITH SIDE-LABELS NO-BOX.
+            UPDATE ANS WITH ROW FRAME-ROW + 16 + FRAME-LINE + 2 COLUMN 10
+            WITH SIDE-LABELS OVERLAY FRAME XTRANS NO-BOX
+            COLOR DISPLAY W/MA PROMPT MA/W.
+        IF ANS = "C" THEN DO:
+            IF PROPSL.CUST-TRF
+            THEN DO:
+                MESSAGE "THIS CUSTOMER HAS ALREADY BEEN TRANSFERRED".
+                NEXT.
+            END.
+            ELSE DO:
+                    FIND FIRST SYSCONTROL EXCLUSIVE-LOCK.
+                    XCUST = SYSCONTROL.NEXT-CST + 1.
+                    SYSCONTROL.NEXT-CST = XCUST.
+                    RELEASE SYSCONTROL.
+                CREATE ACCT-RCV.
+                ACCT-RCV.ADDR-1 = PROPSL.ADDR1.
+                ACCT-RCV.ADDR-2 = PROPSL.ADDR2.
+                ACCT-RCV.ADDR-3 = PROPSL.ADDR3.
+                ACCT-RCV.ADDR-4 = PROPSL.ADDR4.
+                ACCT-RCV.ADDR-5 = PROPSL.ADDR5.
+                ACCT-RCV.C-NAME = PROPSL.C-NAME.
+                ACCT-RCV.COMP# = PROPSL.COMP#.
+                ACCT-RCV.CUST# = XCUST.
+                ACCT-RCV.EXP-DATE = PROPSL.DATE-P.
+                ACCT-RCV.DIV# = PROPSL.DIV#.
+                ACCT-RCV.STATE = PROPSL.STATE.
+                ACCT-RCV.TELE = PROPSL.TELE.
+                ACCT-RCV.ZIP = PROPSL.ZIP.
+                RELEASE ACCT-RCV.
+                PROPSL.CUST# = XCUST.
+                PROPSL.CUST-TRF = yes.
+                FOR EACH PRO-DESP /* USE-INDEX INDX1 */
+                          WHERE
+                          PRO-DESP.PROPSL# = PROPSL.PROPSL# AND
+                          PRO-DESP.COMP# = PROPSL.COMP# AND
+                          PRO-DESP.DIV# = PROPSL.DIV#:
+                    PRO-DESP.CUST# = XCUST.
+                END.
+            END.
+        END.
+        ELSE IF ANS = "A" THEN DO:
+            UPDATE XXCUST WITH ROW FRAME-ROW + 17 + FRAME-LINE + 2 COLUMN 10
+            WITH SIDE-LABELS OVERLAY FRAME TRANS1 NO-BOX
+            COLOR DISPLAY W/MA PROMPT MA/W.
+            FIND ACCT-RCV WHERE ACCT-RCV.CUST# = XXCUST AND
+                                ACCT-RCV.COMP# = XCOM AND
+                                ACCT-RCV.DIV# = XDIV AND
+                                ACCT-RCV.C-STATUS <> "I" NO-ERROR.
+            IF NOT AVAILABLE ACCT-RCV THEN DO:
+                MESSAGE "THIS CUSTOMER DOES NOT EXIST OR IS INACTIVE".
+                UNDO, RETRY.
+            END.
+                PROPSL.CUST# = XXCUST.
+                PROPSL.CUST-TRF = yes.
+                FOR EACH PRO-DESP /* USE-INDEX INDX1 */
+                         WHERE
+                         PRO-DESP.PROPSL# = PROPSL.PROPSL# AND
+                         PRO-DESP.COMP# = PROPSL.COMP# AND
+                         PRO-DESP.DIV# = PROPSL.DIV#:
+                  PRO-DESP.CUST# = XXCUST.
+                END.
+        END.
+END.
+HIDE ALL.

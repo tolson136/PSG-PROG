@@ -1,0 +1,2 @@
+for each invoice where comp# = 7 break by ord-no by item#.
+display c-date i-date cust# ord-no item# inv-no i-type.

@@ -1,0 +1,46 @@
+for each acct-rcv where acct-rcv.comp# = 9 and acct-rcv.div# = 1.
+find first propsl where propsl.comp# = 9 and propsl.div# = 1 and
+			propsl.cust# = acct-rcv.cust no-error.
+if not available propsl then do:
+    find first pro-desp where pro-desp.comp# = 9 and
+			      pro-desp.div# = 1 and
+			      pro-desp.cust# = acct-rcv.cust# no-error.
+    if not available pro-desp then do:
+	for each invoice where invoice.comp# = 9 and
+			       invoice.div# = 1 and
+			       invoice.cust# = acct-rcv.cust#.
+	    delete invoice.
+	end.
+	for each ar-desp where ar-desp.comp# = 9 and
+			       ar-desp.div# = 1 and
+			       ar-desp.cust# = acct-rcv.cust#.
+	    delete ar-desp.
+	end.
+	for each cl-date where cl-date.comp# = 9 and
+			       cl-date.div# = 1 and
+			       cl-date.cust# = acct-rcv.cust#.
+	    delete cl-date.
+	end.
+	for each employee where employee.comp# = 9 and
+				employee.div# = 1 and
+				employee.cust# = acct-rcv.cust#.
+	    delete employee.
+	end.
+	for each notes where notes.comp# = 9 and
+			     notes.div# = 1 and
+			     notes.cust# = acct-rcv.cust#.
+	    delete notes.
+	end.
+	for each ticket where ticket.comp# = 9 and
+			      ticket.div# = 1 and
+			      ticket.cust# = acct-rcv.cust#.
+	    delete ticket.
+	end.
+	for each tranfile where tranfile.comp# = 9 and
+				tranfile.div# = 1 and
+				tranfile.cust# = acct-rcv.cust#.
+	    delete tranfile.
+	end.
+    end.
+end.
+end.

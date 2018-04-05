@@ -1,0 +1,6 @@
+for each ticket where ticket.comp# = 9 and ticket.div# = 1 and
+		    (ticket.t-stat = "I" or ticket.t-stat = "Z" or
+		     ticket.t-stat = "P" or ticket.t-stat = "Y") and
+		     date-prt >= 01/01/2007 and date-prt <= 03/31/2007.
+display ticket.
+find first propsl where

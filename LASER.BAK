@@ -1,0 +1,2 @@
+pro psg -ovl 100kb -e 100kb -o "LPT1" -L 750
+

@@ -1,0 +1,4 @@
+for each tranfile where comp# = 3 and div# = 1 and inv-no = 9755 and
+tr-stat = "A" and t-type = "h":
+display tranfile.
+end.

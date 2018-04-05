@@ -1,0 +1,48 @@
+03/17/2002 18:18:       PROGRESS Data Dictionary Report                 Page   1
+Database: c:\psg\psg                                                  (PROGRESS)
+Filename: CL-DATE
+          History of cleaning dates for each returned ticket.
+
+Order Field-Name                       dType Ext Flgs Format          Initial
+----- -------------------------------- --------- ---- --------------- ----------
+  710 CL-DATE                          date      i    99/99/9999      ?
+   10 COMP#                            inte      im   ZZ              0
+  580 CUST#                            deci0     i    ZZZZZZZZZZ      0
+  620 DATE-RET                         date           99/99/9999      ?
+   20 DIV#                             inte      im   ZZ              0
+  630 FREQ                             char           X(25)
+   40 ITEM#                            inte      i    ZZZZ            0
+  750 M-NUM                            inte      m    ZZZ             0
+  650 MONTH#                           inte      im   ZZ              0
+  400 PROPSL#                          deci0     im   ZZZZZZZZZZ      0
+  840 ROUTE#                           inte           ZZ              0
+  850 SUB#                             inte           ZZ              0
+  760 T-INDX                           inte      im   ZZ              0
+
+                       + Data Dictionary Report Legend +
+      c - field is case-sensitive        : m - field is mandatory
+      i - field participates in an index : v - field is a view component
+
+
+Index Name (* indicates primary)  Unique Field Name                 Seq Asc Abbr
+--------------------------------- ------ -------------------------- --- --- ----
+INDX01*                           no     COMP#                        1 yes no
+                                         DIV#                         2 yes no
+                                         CUST#                        3 yes no
+                                         PROPSL#                      4 yes no
+                                         ITEM#                        5 yes no
+                                         MONTH#                       6 yes no
+                                         T-INDX                       7 yes no
+INDX02                            no     COMP#                        1 yes no
+                                         DIV#                         2 yes no
+                                         CUST#                        3 yes no
+INDX03                            no     CL-DATE                      1 yes no
+                                         COMP#                        2 yes no
+                                         DIV#                         3 yes no
+                                         CUST#                        4 yes no
+INDX04                            no     CL-DATE                      1 yes no
+
+Field Validation Criteria, Validation Messages
+----------------------------------------------
+
+

@@ -1,0 +1,55 @@
+DEFINE NEW SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+DEFINE SHARED VARIABLE CHOICE AS CHAR FORMAT "X".
+DEFINE NEW SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE NEW SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+DEFINE NEW SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
+DEFINE NEW SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
+DEFINE NEW SHARED VARIABLE XPROG AS LOGICAL.
+def var ans as logical label "Are you sure you want to access this company ?".
+DISPLAY
+"C O M P A N Y   &   D I V I S I O N   S E L E C T I O N   S C R E E N"
+SKIP(3)
+WITH CENTERED.
+    ans = no.
+    PROMPT-FOR CMP-FILE.COMP# SKIP(1) WITH CENTERED SIDE-LABELS.
+    FIND CMP-FILE USING CMP-FILE.COMP#.
+    XCOM = INPUT CMP-FILE.COMP#.
+    DISPLAY CMP-FILE.CO-NAME SKIP(2).
+    if xcom = 7 or xcom = 9 then do:
+        update ans with row frame-row + 15 + frame-line + 5 column 20
+            with side-labels overlay frame del-frame no-box
+            color display white/red prompt red/white.
+        if not ans then leave.
+    hide.
+    end.
+    XCOM-N = INPUT CO-NAME.
+    IF AVAILABLE CMP-FILE THEN
+       DO:
+         PROMPT-FOR DIV-FILE.DIV# SKIP(1).
+         XDIV = INPUT DIV-FILE.DIV#.
+         FIND DIV-FILE WHERE DIV-FILE.COMP# = XCOM AND DIV-FILE.DIV# = XDIV.
+         XDIV = INPUT DIV-FILE.DIV#.
+         DISPLAY DV-NAME PROG SKIP(3).
+         XDIV-N = INPUT DV-NAME.
+         XPROG = INPUT PROG.
+       END.
+     UPDATE XOPR LABEL "ENTER OPERATOR" WITH CENTERED SIDE-LABELS.
+     HIDE.
+     IF
+        (USERID = "jim" AND XCOM = 9)
+     THEN DO:
+         MESSAGE "YOU ARE NOT AUTHORIZED TO ACCESS THIS COMPANY".
+         RETURN.
+     END.
+       IF CHOICE = "A" THEN
+          RUN ARMAIN.P.
+       IF CHOICE = "B" THEN
+          RUN INMAIN.P.
+       if choice = "C" then
+          run inwain.p.
+       IF CHOICE = "D" THEN
+          RUN TKMAIN.P.
+       if choice = "E" then
+          run tkwain.p.
+       IF CHOICE = "F" THEN
+          RUN PLMAIN.P.

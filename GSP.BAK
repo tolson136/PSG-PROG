@@ -1,0 +1,2 @@
+mpro psg -p mainmenu.p -ovl 120kb -e 100kb -o "LPT1" -L 750
+

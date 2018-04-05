@@ -1,0 +1,480 @@
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+DEFINE SHARED VARIABLE BEG# AS INTEGER FORMAT "ZZ"
+  LABEL "ENTER MONTH & YEAR FOR WHICH YOU WANT TO RUN TICKETS".
+DEFINE VARIABLE H-FREQ AS CHAR FORMAT "X(5)".
+DEFINE SHARED VARIABLE D2 AS DECIMAL FORMAT "9999.99".
+DEFINE SHARED VARIABLE D3 AS DECIMAL FORMAT "9999".
+DEFINE SHARED VARIABLE D4 AS DECIMAL FORMAT "9999.99".
+DEFINE SHARED VARIABLE D5 AS INTEGER FORMAT "9999" LABEL "YEAR (4 DIGITS)".
+DEFINE SHARED VARIABLE L-YEAR AS LOGICAL.
+DEFINE VARIABLE TICKS AS INTEGER FORMAT "9999".
+DEFINE VARIABLE F-TICK AS LOGICAL.
+DEFINE VARIABLE H-WEEK AS INTEGER FORMAT "9".
+DEFINE SHARED VARIABLE DY AS INTEGER FORMAT "99".
+DEFINE SHARED VARIABLE UP-LIM AS INTEGER FORMAT "99".
+DEFINE VARIABLE C-DATE AS DATE FORMAT "99/99/9999".
+DEFINE SHARED VARIABLE F-CUST AS DECIMAL FORMAT "ZZZZZZZZZZ"
+    LABEL "CUSTOMER NUMBER".
+DEFINE SHARED VARIABLE F-PROP AS DECIMAL FORMAT "ZZZZZZZZZZ"
+    LABEL "PROPOSAL NUMBER".
+DEFINE SHARED VARIABLE F-ITEM AS INTEGER FORMAT "ZZZZ"
+    LABEL "ITEM NUMBER".
+DEFINE SHARED VARIABLE F-INDEX AS INTEGER FORMAT "ZZ"
+    LABEL "TICK INDEX".
+def var ctr as integer.
+def var wtick as char format "x(13)".    
+IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
+THEN DO:
+    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
+    RETURN.
+END.
+OUTPUT TO TERMINAL.
+  FIND FIRST ACCT-RCV WHERE ACCT-RCV.COMP# = XCOM AND
+                            ACCT-RCV.DIV# = XDIV  AND
+                            ACCT-RCV.CUST# = F-CUST AND
+                            ACCT-RCV.C-STATUS <> "I" NO-ERROR.
+  IF NOT AVAILABLE ACCT-RCV THEN DO:
+      MESSAGE "CUSTOMER DOES NOT EXIST OR IS INACTIVE".
+      NEXT.
+  END.
+  IF ACCT-RCV.C-STATUS = "I" THEN NEXT.
+  FIND FIRST PROPSL WHERE PROPSL.COMP# = XCOM AND
+                          PROPSL.DIV# = XDIV AND
+                          PROPSL.CUST# = F-CUST AND
+                          PROPSL.PROPSL# = F-PROP NO-ERROR.
+  IF NOT AVAILABLE PROPSL THEN DO:
+      MESSAGE "THAT PROPOSAL DOES NOT EXIST FOR THIS CUSTOMER".
+      NEXT.
+  END.
+    IF PROPSL.JANITOR = yes THEN DO:
+           MESSAGE "THIS IS A JANITORIAL TICKET".
+           NEXT.
+    END.
+  FIND FIRST PRO-DESP WHERE PRO-DESP.COMP# = XCOM AND
+                            PRO-DESP.DIV# = XDIV AND
+                            PRO-DESP.CUST# = F-CUST AND
+                            PRO-DESP.PROPSL# = F-PROP AND
+                            PRO-DESP.ITEM# = F-ITEM NO-ERROR.
+  IF NOT AVAILABLE PRO-DESP THEN DO:
+      MESSAGE "THAT ITEM DOES NOT EXIST FOR THIS CUSTOMER AND PROPOSAL".
+      NEXT.
+  END.
+IF LASTKEY = KEYCODE("F4") THEN LEAVE.
+IF LASTKEY = KEYCODE("ESC") THEN LEAVE.
+      F-TICK = no.
+      H-FREQ = "".
+      IF PRO-DESP.FREQ = "DAILY" THEN DO:
+               H-FREQ = "D".
+               TICKS = UP-LIM.
+               F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "TWO_TIMES_PER_WEEK" THEN DO:
+          H-FREQ = "2XW".
+          TICKS = 0.
+          F-TICK = yes.
+          REPEAT DY = 1 TO UP-LIM:
+              C-DATE = DATE(BEG#,DY,D5).
+              H-WEEK = WEEKDAY(C-DATE).
+              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
+          END.
+      END.
+      IF PRO-DESP.FREQ = "THREE_TIMES_PER_WEEK" THEN DO:
+          H-FREQ = "3XW".
+          TICKS = 0.
+          F-TICK = yes.
+          REPEAT DY = 1 TO UP-LIM:
+              C-DATE = DATE(BEG#,DY,D5).
+              H-WEEK = WEEKDAY(C-DATE).
+              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
+          END.
+      END.
+      IF PRO-DESP.FREQ = "FOUR_TIMES_PER_WEEK" THEN DO:
+          H-FREQ = "4XW".
+          TICKS = 0.
+          F-TICK = yes.
+          REPEAT DY = 1 TO UP-LIM:
+              C-DATE = DATE(BEG#,DY,D5).
+              H-WEEK = WEEKDAY(C-DATE).
+              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
+          END.
+      END.
+      IF PRO-DESP.FREQ = "FIVE_TIMES_PER_WEEK" THEN DO:
+          H-FREQ = "5XW".
+          TICKS = 0.
+          F-TICK = yes.
+          REPEAT DY = 1 TO UP-LIM:
+              C-DATE = DATE(BEG#,DY,D5).
+              H-WEEK = WEEKDAY(C-DATE).
+              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
+          END.
+      END.
+      IF PRO-DESP.FREQ = "SIX_TIMES_PER_WEEK" THEN DO:
+          H-FREQ = "6XW".
+          TICKS = 0.
+          F-TICK = yes.
+          REPEAT DY = 1 TO UP-LIM:
+              C-DATE = DATE(BEG#,DY,D5).
+              H-WEEK = WEEKDAY(C-DATE).
+              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
+          END.
+      END.
+      IF PRO-DESP.FREQ = "WEEKLY" THEN DO:
+          H-FREQ = "W".
+          TICKS = 0.
+          F-TICK = yes.
+          REPEAT DY = 1 TO UP-LIM:
+              C-DATE = DATE(BEG#,DY,D5).
+              H-WEEK = WEEKDAY(C-DATE).
+              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
+              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
+          END.
+      END.
+      IF PRO-DESP.FREQ = "EVERY_TWO_WEEKS" THEN DO:
+          H-FREQ = "2W".
+          TICKS = 0.
+          F-TICK = yes.
+          IF PRO-DESP.CL-DATE + 14 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 14 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 28 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 28 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 42 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 42 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 56 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 56 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 70 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 70 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE = 01/01/1901 THEN TICKS = 2.
+      END.
+      IF PRO-DESP.FREQ = "EVERY_THREE_WEEKS" THEN DO:
+          H-FREQ = "3W".
+          TICKS = 0.
+          F-TICK = yes.
+          IF PRO-DESP.CL-DATE + 21 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 21 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 42 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 42 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 63 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 63 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE = 01/01/1901 THEN TICKS = 1.
+      END.
+      IF PRO-DESP.FREQ = "EVERY_FOUR_WEEKS" THEN DO:
+          H-FREQ = "4W".
+          TICKS = 0.
+          F-TICK = yes.
+          IF PRO-DESP.CL-DATE + 28 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 28 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 56 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 56 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 84 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 84 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE = 01/01/1901 THEN TICKS = 1.
+      END.
+
+      IF PRO-DESP.FREQ = "EVERY_FIVE_WEEKS" THEN DO:
+          H-FREQ = "5W".
+          TICKS = 0.
+          F-TICK = yes.
+          IF PRO-DESP.CL-DATE + 35 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 35 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 70 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 70 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE = 01/01/1901 THEN TICKS = 1.
+      END.
+      IF PRO-DESP.FREQ = "EVERY_SIX_WEEKS" THEN DO:
+          H-FREQ = "6W".
+          TICKS = 0.
+          F-TICK = yes.
+          IF PRO-DESP.CL-DATE + 42 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 42 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 84 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 84 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE = 01/01/1901 THEN TICKS = 1.
+      END.
+      IF PRO-DESP.FREQ = "EVERY_EIGHT_WEEKS" THEN DO:
+          H-FREQ = "8W".
+          TICKS = 0.
+          F-TICK = yes.
+          IF PRO-DESP.CL-DATE + 56 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 56 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE + 112 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 112 <= DATE(BEG#,UP-LIM,D5)
+             THEN TICKS = TICKS + 1.
+          IF PRO-DESP.CL-DATE = 01/01/1901 THEN TICKS = 1.
+      END.
+      IF PRO-DESP.FREQ = "MONTHLY" THEN DO:
+          H-FREQ = "M".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "QUARTERLY" AND PRO-DESP.MTH[BEG#] THEN DO:
+          H-FREQ = "Q".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "TWO_TIMES_PER_MONTH" THEN DO:
+          H-FREQ = "2XM".
+          TICKS = 2.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "ANNUAL" AND PRO-DESP.MTH[BEG#] THEN DO:
+          H-FREQ = "A".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "TWO_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#] THEN DO:
+          H-FREQ = "2XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "THREE_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "3XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "FOUR_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "4XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "FIVE_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "5XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "SIX_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "6XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "SEVEN_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "7XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "EIGHT_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "8XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "NINE_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "9XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "TEN_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "10XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "ELEVEN_TIMES_PER_YEAR" AND PRO-DESP.MTH[BEG#]
+        THEN DO:
+          H-FREQ = "11XYR".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "EVERY_TWO_YEARS" THEN
+          IF (D5 - YEAR(PRO-DESP.CL-DATE) = 2) AND PRO-DESP.MTH[BEG#] THEN DO:
+              H-FREQ = "1X2YR".
+              TICKS = 1.
+              F-TICK = yes.
+          END.
+      IF PRO-DESP.FREQ = "EVERY_THREE_YEARS" THEN
+          IF (D5 - YEAR(PRO-DESP.CL-DATE) = 3) AND PRO-DESP.MTH[BEG#] THEN DO:
+              H-FREQ = "1X3YR".
+              TICKS = 1.
+              F-TICK = yes.
+          END.
+      IF PRO-DESP.FREQ = "EVERY_FOUR_YEARS" THEN
+          IF (D5 - YEAR(PRO-DESP.CL-DATE) = 4) AND PRO-DESP.MTH[BEG#] THEN DO:
+              H-FREQ = "1X4YR".
+              TICKS = 1.
+              F-TICK = yes.
+          END.
+      IF PRO-DESP.FREQ = "EVERY_FIVE_YEARS" THEN
+          IF (D5 - YEAR(PRO-DESP.CL-DATE) = 5) AND PRO-DESP.MTH[BEG#] THEN DO:
+              H-FREQ = "1X5YR".
+              TICKS = 1.
+              F-TICK = yes.
+          END.
+      IF PRO-DESP.FREQ = "EVERY_EIGHTEEN_MONTHS" THEN
+          IF PRO-DESP.CL-DATE + 549 >= DATE(BEG#,1,D5) AND
+             PRO-DESP.CL-DATE + 549 <= DATE(BEG#,UP-LIM,D5)
+             THEN DO:
+               TICKS = 1.
+               H-FREQ = "1X18M".
+               F-TICK = yes.
+          END.
+      IF PRO-DESP.FREQ = "SPECIAL_CLEANING" AND PRO-DESP.MTH[BEG#] THEN DO:
+          H-FREQ = "SPCL".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "ON_CALL" AND PRO-DESP.MTH[BEG#] THEN DO:
+          H-FREQ = "OC".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "INITIAL_CLEANING" AND PRO-DESP.MTH[BEG#] THEN DO:
+          H-FREQ = "IC".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      IF PRO-DESP.FREQ = "ONE_TIME_CLEANING" AND PRO-DESP.MTH[BEG#] THEN DO:
+          H-FREQ = "1X".
+          TICKS = 1.
+          F-TICK = yes.
+      END.
+      OUTPUT TO PRINTER PAGE-SIZE 0.
+    IF F-TICK THEN DO:
+      REPEAT DY = 1 TO TICKS:
+      FIND FIRST TICKET WHERE TICKET.COMP# = ACCT-RCV.COMP# AND
+                              TICKET.DIV# = ACCT-RCV.DIV# AND
+                              TICKET.CUST# = ACCT-RCV.CUST# AND
+                              TICKET.PROPSL# = PRO-DESP.PROPSL# AND
+                              TICKET.ITEM# = PRO-DESP.ITEM# AND
+                              TICKET.MONTH# = BEG# AND
+                              TICKET.T-INDX = DY NO-ERROR.
+      IF AVAILABLE TICKET THEN DO:
+          NEXT.
+      END.
+      IF DY = F-INDEX THEN DO:
+      ctr = 1.
+      repeat:
+        if ctr > 3 then leave.
+        if ctr = 1 then wtick = "             ".
+        if ctr = 2 then wtick = "CUSTOMER COPY".
+        if ctr = 3 then wtick = "OFFICE COPY  ".
+      DISPLAY SPACE(29) 
+              STRING(PRO-DESP.COMP#, ">>") + "-" +
+              TRIM(STRING(PRO-DESP.DIV#, ">>")) + "-" +
+              TRIM(STRING(PRO-DESP.CUST#, ">>>>>>>>>>")) + "-" +
+              TRIM(STRING(PRO-DESP.PROPSL#, ">>>>>>>>>>")) + "-" +
+              TRIM(STRING(PRO-DESP.ITEM#, ">>>>")) + "-" +
+              TRIM(STRING(BEG#, ">>")) + "-" +
+              TRIM(STRING(DY, ">>")) FORMAT "X(35)" SPACE(11)
+              H-FREQ
+              SKIP(1) WTICK SPACE(7)
+              PROPSL.L-NAME SPACE(1)
+              PROPSL.LADDR01 SKIP(0) SPACE(20)
+              PROPSL.LADDR02 SPACE(1)
+              PROPSL.LADDR03 SKIP(0)
+              PRO-DESP.DESC01 SKIP(0)
+              PRO-DESP.DESC02 SKIP(0)
+              PRO-DESP.DESC03 SKIP(0)
+              PRO-DESP.DESC04 SKIP(0)
+              PRO-DESP.DESC05 SKIP(0)
+              PRO-DESP.DESC06 SKIP(0)
+              PRO-DESP.DESC07 SKIP(0)
+              PRO-DESP.DESC08 SKIP(0)
+              PRO-DESP.DESC09 SKIP(0)
+              PRO-DESP.DESC10 SKIP(0) ">>>>>" SPACE(2)
+              PRO-DESP.SPC-INTR SKIP(7) WITH FRAME P NO-BOX NO-LABELS.
+      CTR = CTR + 1.
+      END.        
+              CREATE TICKET.
+              TICKET.COMP# = ACCT-RCV.COMP#.
+              TICKET.DIV# = ACCT-RCV.DIV#.
+              TICKET.CUST# = ACCT-RCV.CUST#.
+              TICKET.PROPSL# = PRO-DESP.PROPSL#.
+              TICKET.ITEM# = PRO-DESP.ITEM#.
+              TICKET.MONTH# = BEG#.
+              TICKET.T-INDX = DY.
+              TICKET.DATE-PRT = TODAY.
+              TICKET.DL-BUD = PRO-DESP.DL.
+              TICKET.DL-BAL = PRO-DESP.DL.
+              TICKET.WK-DL-BAL = PRO-DESP.DL.
+              TICKET.WK-DL-BUD = PRO-DESP.DL.
+              TICKET.PRT = "Y".
+              TICKET.FREQ = PRO-DESP.FREQ.
+              TICKET.T-STAT = "P".
+              IF PRO-DESP.WHCH-AMT = 1 THEN DO:
+                  TICKET.TOT-AMT = PRO-DESP.AMT.
+                  TICKET.WK-START = PRO-DESP.AMT.
+                  TICKET.TOT-AMT-REM = PRO-DESP.AMT.
+              END.
+              IF PRO-DESP.WHCH-AMT = 2 THEN DO:
+                  TICKET.TOT-AMT = AMT2 * AMT2-MUL.
+                  TICKET.WK-START = AMT2 * AMT2-MUL.
+                  TICKET.TOT-AMT-REM = AMT2 * AMT2-MUL.
+              END.
+              RELEASE TICKET.
+              create cl-date.
+                cl-date.cl-date = 01/01/9999.
+                cl-date.comp# = acct-rcv.comp#.
+                cl-date.cust# = acct-rcv.cust#.
+                cl-date.date-ret = 01/01/9999.
+                cl-date.div# = acct-rcv.div#.
+                cl-date.freq = pro-desp.freq.
+                cl-date.item# = pro-desp.item#.
+                cl-date.month# = beg#.
+                cl-date.propsl# = pro-desp.propsl#.
+                cl-date.route# = pro-desp.route#.
+                cl-date.sub# = pro-desp.sub#.
+                cl-date.t-indx = dy.
+              release cl-date.
+            END.
+          END.
+      END.

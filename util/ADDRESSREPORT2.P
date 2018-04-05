@@ -1,0 +1,160 @@
+DEF VAR Cnt as INT.
+
+display "Processing........" SKIP(2).
+
+/****************/
+/*  Sub 0 Route */
+/****************/
+
+   output to c:\reports\sub0route.csv.
+
+  PUT UNFORMATTED
+   "Propsl#"           ","
+   "Item#"             ","
+   "Freq"              ","
+   "C-NAME"            ","
+   "ADDR"              "," 
+   "Suite#"            ","
+   "City"              ","
+   "STATE"             ","
+   "Zip"               ","
+   "Contact1"          ","
+   "Contact2"          ","
+   "Tel"               ","
+   "Email1"            ","
+   "Email2"            ","  
+   "L-NAME"            ","
+   "LADDR01"           ","
+   "LADDR02"           ","
+   "LADDR03"           ","
+   SKIP.
+
+
+
+   for each pro-desp WHERE
+      pro-desp.sub# = 0 AND pro-desp.route# NE 0 
+      NO-LOCK:
+
+    
+     IF pro-desp.freq EQ "ONE_TIME_CLEANING" THEN NEXT.
+     IF pro-desp.freq EQ "INITIAL_CLEANING"  THEN NEXT.
+     IF pro-desp.freq EQ "ON_CALL" THEN NEXT.
+     IF pro-desp.freq EQ "SPECIAL_CLEANING" THEN NEXT.
+   
+     find propsl of pro-desp no-lock no-error.
+     if not available(propsl) THEN NEXT.
+     cnt = cnt + 1.
+     /*if cnt GT 20 then leave.*/
+     put unformatted 
+      pro-desp.propsl#  ","
+      pro-desp.item#    ","
+      pro-desp.freq     ","
+      '"' C-NAME '"'           ","
+      '"' ADDR1 '"'             "," 
+      '"' ADDR2 '"'            ","
+      '"' ADDR3 '"'            ","
+      '"' STATE  '"'           ","
+      '"' ZIP '"'              ","
+      '"' ADDR4 '"'            ","
+      '"' ADDR5 '"'            ","
+      '"' TELE  '"'            ","
+      '"' email1 '"'           ","
+      '"' email2 '"'           ","
+      '"' L-NAME  '"'          ","
+      '"' LADDR01 '"'          ","
+      '"' LADDR02 '"'          ","
+      '"' LADDR03 '"'          ","
+      
+      SKIP
+      .
+  
+   END.
+   output close.  
+/****************/
+/* Sub 0 Route  */
+/****************/
+
+
+/**************************/
+/* Sub 0.3.1.2.4  Route 0 */
+/**************************/
+
+   output to c:\reports\subxroute0.csv.
+   cnt = 0.
+  PUT UNFORMATTED
+   "Propsl#"           ","
+   "Item#"             ","
+   "Freq"              ","
+   "C-NAME"            ","
+   "ADDR"              "," 
+   "Suite#"            ","
+   "City"              ","
+   "STATE"             ","
+   "Zip"               ","
+   "Contact1"          ","
+   "Contact2"          ","
+   "Tel"               ","
+   "Email1"            ","
+   "Email2"            ","  
+   "L-NAME"            ","
+   "LADDR01"           ","
+   "LADDR02"           ","
+   "LADDR03"           ","
+   "SUB"               ","
+   SKIP.
+
+
+
+   for each pro-desp WHERE
+      ( pro-desp.sub# = 0 OR
+        pro-desp.sub# = 3 OR
+        pro-desp.sub# = 1 OR
+        pro-desp.sub# = 2 OR 
+        pro-desp.sub# = 4
+      )
+      AND pro-desp.route# EQ 0 
+      NO-LOCK:
+
+   
+     IF pro-desp.freq EQ "ONE_TIME_CLEANING" THEN NEXT.
+     IF pro-desp.freq EQ "INITIAL_CLEANING"  THEN NEXT.
+     IF pro-desp.freq EQ "ON_CALL" THEN NEXT.
+     IF pro-desp.freq EQ "SPECIAL_CLEANING" THEN NEXT.
+   
+     find propsl of pro-desp no-lock no-error.
+     if not available(propsl) THEN NEXT.
+     cnt = cnt + 1.
+     /*if cnt GT 20 then leave.*/
+     put unformatted 
+      pro-desp.propsl#  ","
+      pro-desp.item#    ","
+      pro-desp.freq     ","
+      '"' C-NAME '"'           ","
+      '"' ADDR1 '"'             "," 
+      '"' ADDR2 '"'            ","
+      '"' ADDR3 '"'            ","
+      '"' STATE  '"'           ","
+      '"' ZIP '"'              ","
+      '"' ADDR4 '"'            ","
+      '"' ADDR5 '"'            ","
+      '"' TELE  '"'            ","
+      '"' email1 '"'           ","
+      '"' email2 '"'           ","
+      '"' L-NAME  '"'          ","
+      '"' LADDR01 '"'          ","
+      '"' LADDR02 '"'          ","
+      '"' LADDR03 '"'          ","
+      '"' Sub# '"'             ","
+      
+      SKIP
+      .
+  
+   END.
+   output close.  
+/**************************/
+/* Sub 0.3.1.2.4  Route 0 */
+/**************************/
+
+
+display "Complete........Reports are in c:\reports".
+pause.

@@ -1,0 +1,71 @@
+/***********************************************/
+/*  Proposal Master Maintenance */
+/* 4/10/2017   TO  Added StartDate and EndDate */
+/* 2/05/2018   TO  CHanged Address labels      */
+/***********************************************/
+
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+DEFINE VARIABLE XCUST AS INTEGER FORMAT "ZZZZZZZZZZ".
+DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+REPEAT:
+DISPLAY SPACE(7)
+"P R O P O S A L   M A S T E R   M A I N T E N A N C E   S C R E E N"
+SKIP(1) XCOM-N LABEL "CMP" SPACE(1)
+        XDIV-N LABEL "DIV" SPACE(1)
+        XOPR LABEL "OPR" SKIP(1).
+    PROMPT-FOR PROPSL.PROPSL#.
+    XCUST = INPUT PROPSL.PROPSL#.
+    FIND FIRST PROPSL WHERE PROPSL.PROPSL# = XCUST AND PROPSL.COMP# = XCOM AND
+         PROPSL.DIV# = XDIV.
+    IF LASTKEY = KEYCODE("F4") THEN LEAVE.
+    DISPLAY
+            PROPSL# LABEL "PROPOSAL NUMBER"
+            COMP# LABEL "COMPANY NUMBER"
+            DIV# LABEL "DIVISION NUMBER" SKIP(1)
+            CUST# LABEL "CUSTOMER NUMBER "
+            SUB# ROUTE# SKIP(1)
+            C-NAME LABEL "Customer " SPACE(5)
+            L-NAME LABEL "L-Name " SKIP(0)
+            ADDR1 LABEL "   Street" SPACE(5)
+            LADDR01 LABEL "L-Addr1" SKIP(0)
+            ADDR2 LABEL "Address 2" SPACE(5)
+            LADDR02 LABEL " L-City" SKIP(0)
+            ADDR3 LABEL "     City" SPACE(5)
+            LADDR03 LABEL "  L-Zip" SKIP(0)
+            ADDR4 LABEL "Contact 1" SPACE(5)
+            L-STATE
+            L-TELE SKIP(0)
+            ADDR5 LABEL "Contact 2" SPACE(5)
+            L-TELE2 LABEL "2ND PHONE OR EXT#" SKIP(0)
+            STATE LABEL "STATE    " SPACE(5)
+            ZIP SPACE(8)
+            L-COMMENTS LABEL "COMMENT" SKIP(0)
+            TELE LABEL "TELEPHONE" SPACE(16)
+            TOT-AMT SKIP(0)
+            FAX-TELE LABEL "FAX PHONE" SPACE(16)
+            DATE-P LABEL "PROPOSAL DATE" SKIP(0)
+            EMAIL LABEL "Extension" SPACE(5)
+            CUST-TRF LABEL "CUSTOMER TRANSFERED" SKIP(0)
+            JANITOR LABEL "JANITORIAL ?" SPACE(24)
+            ACTIVE LABEL "CUSTOMER STATUS" SKIP(0)
+            MLABEL LABEL "MAILING LIST ?" skip(0)
+            email1 label "1st email" skip(0)
+            email2 label "2nd email"
+            StartDate
+            EndDate
+               WITH SIDE-LABELS NO-BOX.
+IF (USERID <> "OPERATIONS") AND (USERID <> "LANDMARK") AND (USERID <> "GARCIA")
+THEN DO:
+    PROMPT-FOR C-NAME ADDR1 ADDR2 ADDR3 ADDR4 ADDR5 STATE ZIP TELE
+               FAX-TELE EMAIL JANITOR MLABEL email1 email2
+               L-NAME LADDR01 LADDR02 LADDR03 L-STATE L-TELE
+               L-TELE2 L-COMMENTS TOT-AMT DATE-P
+               StartDate EndDate
+               WITH COLOR DISPLAY NORMAL PROMPT W/MA.
+    
+    ASSIGN PROPSL.
+END.
+END.

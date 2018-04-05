@@ -1,0 +1,359 @@
+ FOR EACH PRO-DESP EXCLUSIVE-LOCK:
+      IF PRO-DESP.FREQ = "D" THEN
+	      PRO-DESP.FREQ = "DAILY".
+      
+      IF PRO-DESP.FREQ = "2XW" THEN
+	  PRO-DESP.FREQ = "TWO_TIMES_PER_WEEK".
+      
+      IF PRO-DESP.FREQ = "3XW" THEN
+	  PRO-DESP.FREQ = "THREE_TIMES_PER_WEEK".
+      
+      IF PRO-DESP.FREQ = "4XW" THEN
+	  PRO-DESP.FREQ = "FOUR_TIMES_PER_WEEK".
+      
+      IF PRO-DESP.FREQ = "5XW" THEN
+	  PRO-DESP.FREQ = "FIVE_TIMES_PER_WEEK".
+      
+      IF PRO-DESP.FREQ = "6XW" THEN
+	  PRO-DESP.FREQ = "SIX_TIMES_PER_WEEK".
+      
+      IF PRO-DESP.FREQ = "W" THEN
+	  PRO-DESP.FREQ = "WEEKLY".
+      
+      IF PRO-DESP.FREQ = "2W" THEN
+	  PRO-DESP.FREQ = "EVERY_TWO_WEEKS".
+      
+      IF PRO-DESP.FREQ = "3W" THEN
+	  PRO-DESP.FREQ = "EVERY_THREE_WEEKS".
+      
+      IF PRO-DESP.FREQ = "4W" THEN
+	  PRO-DESP.FREQ = "EVERY_FOUR_WEEKS".
+      
+
+      IF PRO-DESP.FREQ = "5W" THEN
+	  PRO-DESP.FREQ = "EVERY_FIVE_WEEKS".
+      
+      IF PRO-DESP.FREQ = "6W" THEN
+	  PRO-DESP.FREQ = "EVERY_SIX_WEEKS".
+      
+      IF PRO-DESP.FREQ = "8W" THEN
+	  PRO-DESP.FREQ = "EVERY_EIGHT_WEEKS".
+      
+      IF PRO-DESP.FREQ = "M" THEN
+	  PRO-DESP.FREQ = "MONTHLY".
+      
+      IF PRO-DESP.FREQ = "Q"  THEN
+	  PRO-DESP.FREQ = "QUARTERLY".
+      
+      IF PRO-DESP.FREQ = "2XM" THEN
+	  PRO-DESP.FREQ = "TWO_TIMES_PER_MONTH".
+      
+      IF PRO-DESP.FREQ = "A"  THEN
+	  PRO-DESP.FREQ = "ANNUAL".
+      
+      IF PRO-DESP.FREQ = "2XYR"  THEN
+	  PRO-DESP.FREQ = "TWO_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "3XYR" THEN
+	 PRO-DESP.FREQ = "THREE_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "4XYR" 
+	THEN
+	  PRO-DESP.FREQ = "FOUR_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "5XYR" 
+	THEN
+	  PRO-DESP.FREQ = "FIVE_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "6XYR" 
+	THEN
+	  PRO-DESP.FREQ = "SIX_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "7XYR" 
+	THEN
+	  PRO-DESP.FREQ = "SEVEN_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "8XYR" 
+	THEN
+	  PRO-DESP.FREQ = "EIGHT_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "9XYR" 
+	THEN
+	  PRO-DESP.FREQ = "NINE_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "10XYR" 
+	THEN
+	  PRO-DESP.FREQ = "TEN_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "11XYR" 
+	THEN
+	  PRO-DESP.FREQ = "ELEVEN_TIMES_PER_YEAR".
+      
+      IF PRO-DESP.FREQ = "1X2YR" THEN
+	      PRO-DESP.FREQ = "EVERY_TWO_YEARS".
+
+      IF PRO-DESP.FREQ = "1X3YR" THEN
+	  	      PRO-DESP.FREQ = "EVERY_THREE_YEARS".
+
+      IF PRO-DESP.FREQ = "1X4YR" THEN
+	      PRO-DESP.FREQ = "EVERY_FOUR_YEARS".
+
+      IF PRO-DESP.FREQ = "1X5YR" THEN
+	 	      PRO-DESP.FREQ = "EVERY_FIVE_YEARS".
+
+      IF PRO-DESP.FREQ = "1X18M" THEN
+	      PRO-DESP.FREQ = "EVERY_EIGHTEEN_MONTHS".
+	.
+      IF PRO-DESP.FREQ = "SPCL"  THEN
+	  PRO-DESP.FREQ = "SPECIAL_CLEANING".
+      
+      IF PRO-DESP.FREQ = "OC"  THEN
+	  PRO-DESP.FREQ = "ON_CALL".
+      
+      IF PRO-DESP.FREQ = "IC"  THEN
+	  PRO-DESP.FREQ = "INITIAL_CLEANING".
+      
+      IF PRO-DESP.FREQ = "1X"  THEN
+	  PRO-DESP.FREQ = "ONE_TIME_CLEANING".
+      
+END.
+
+FOR EACH schedule EXCLUSIVE-LOCK:
+      IF schedule.freq = "D" THEN
+	      schedule.freq = "DAILY".
+      
+      IF schedule.freq = "2XW" THEN
+	  schedule.freq = "TWO_TIMES_PER_WEEK".
+      
+      IF schedule.freq = "3XW" THEN
+	  schedule.freq = "THREE_TIMES_PER_WEEK".
+      
+      IF schedule.freq = "4XW" THEN
+	  schedule.freq = "FOUR_TIMES_PER_WEEK".
+      
+      IF schedule.freq = "5XW" THEN
+	  schedule.freq = "FIVE_TIMES_PER_WEEK".
+      
+      IF schedule.freq = "6XW" THEN
+	  schedule.freq = "SIX_TIMES_PER_WEEK".
+      
+      IF schedule.freq = "W" THEN
+	  schedule.freq = "WEEKLY".
+      
+      IF schedule.freq = "2W" THEN
+	  schedule.freq = "EVERY_TWO_WEEKS".
+      
+      IF schedule.freq = "3W" THEN
+	  schedule.freq = "EVERY_THREE_WEEKS".
+      
+      IF schedule.freq = "4W" THEN
+	  schedule.freq = "EVERY_FOUR_WEEKS".
+      
+
+      IF schedule.freq = "5W" THEN
+	  schedule.freq = "EVERY_FIVE_WEEKS".
+      
+      IF schedule.freq = "6W" THEN
+	  schedule.freq = "EVERY_SIX_WEEKS".
+      
+      IF schedule.freq = "8W" THEN
+	  schedule.freq = "EVERY_EIGHT_WEEKS".
+      
+      IF schedule.freq = "M" THEN
+	  schedule.freq = "MONTHLY".
+      
+      IF schedule.freq = "Q"  THEN
+	  schedule.freq = "QUARTERLY".
+      
+      IF schedule.freq = "2XM" THEN
+	  schedule.freq = "TWO_TIMES_PER_MONTH".
+      
+      IF schedule.freq = "A"  THEN
+	  schedule.freq = "ANNUAL".
+      
+      IF schedule.freq = "2XYR"  THEN
+	  schedule.freq = "TWO_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "3XYR" THEN
+	 schedule.freq = "THREE_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "4XYR" 
+	THEN
+	  schedule.freq = "FOUR_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "5XYR" 
+	THEN
+	  schedule.freq = "FIVE_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "6XYR" 
+	THEN
+	  schedule.freq = "SIX_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "7XYR" 
+	THEN
+	  schedule.freq = "SEVEN_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "8XYR" 
+	THEN
+	  schedule.freq = "EIGHT_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "9XYR" 
+	THEN
+	  schedule.freq = "NINE_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "10XYR" 
+	THEN
+	  schedule.freq = "TEN_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "11XYR" 
+	THEN
+	  schedule.freq = "ELEVEN_TIMES_PER_YEAR".
+      
+      IF schedule.freq = "1X2YR" THEN
+	      schedule.freq = "EVERY_TWO_YEARS".
+
+      IF schedule.freq = "1X3YR" THEN
+	  	      schedule.freq = "EVERY_THREE_YEARS".
+
+      IF schedule.freq = "1X4YR" THEN
+	      schedule.freq = "EVERY_FOUR_YEARS".
+
+      IF schedule.freq = "1X5YR" THEN
+	 	      schedule.freq = "EVERY_FIVE_YEARS".
+
+      IF schedule.freq = "1X18M" THEN
+	      schedule.freq = "EVERY_EIGHTEEN_MONTHS".
+	.
+      IF schedule.freq = "SPCL"  THEN
+	  schedule.freq = "SPECIAL_CLEANING".
+      
+      IF schedule.freq = "OC"  THEN
+	  schedule.freq = "ON_CALL".
+      
+      IF schedule.freq = "IC"  THEN
+	  schedule.freq = "INITIAL_CLEANING".
+      
+      IF schedule.freq = "1X"  THEN
+	  schedule.freq = "ONE_TIME_CLEANING".
+      
+END.
+
+FOR EACH ticket EXCLUSIVE-LOCK:
+      IF ticket.freq = "D" THEN
+	      ticket.freq = "DAILY".
+      
+      IF ticket.freq = "2XW" THEN
+	  ticket.freq = "TWO_TIMES_PER_WEEK".
+      
+      IF ticket.freq = "3XW" THEN
+	  ticket.freq = "THREE_TIMES_PER_WEEK".
+      
+      IF ticket.freq = "4XW" THEN
+	  ticket.freq = "FOUR_TIMES_PER_WEEK".
+      
+      IF ticket.freq = "5XW" THEN
+	  ticket.freq = "FIVE_TIMES_PER_WEEK".
+      
+      IF ticket.freq = "6XW" THEN
+	  ticket.freq = "SIX_TIMES_PER_WEEK".
+      
+      IF ticket.freq = "W" THEN
+	  ticket.freq = "WEEKLY".
+      
+      IF ticket.freq = "2W" THEN
+	  ticket.freq = "EVERY_TWO_WEEKS".
+      
+      IF ticket.freq = "3W" THEN
+	  ticket.freq = "EVERY_THREE_WEEKS".
+      
+      IF ticket.freq = "4W" THEN
+	  ticket.freq = "EVERY_FOUR_WEEKS".
+      
+
+      IF ticket.freq = "5W" THEN
+	  ticket.freq = "EVERY_FIVE_WEEKS".
+      
+      IF ticket.freq = "6W" THEN
+	  ticket.freq = "EVERY_SIX_WEEKS".
+      
+      IF ticket.freq = "8W" THEN
+	  ticket.freq = "EVERY_EIGHT_WEEKS".
+      
+      IF ticket.freq = "M" THEN
+	  ticket.freq = "MONTHLY".
+      
+      IF ticket.freq = "Q"  THEN
+	  ticket.freq = "QUARTERLY".
+      
+      IF ticket.freq = "2XM" THEN
+	  ticket.freq = "TWO_TIMES_PER_MONTH".
+      
+      IF ticket.freq = "A"  THEN
+	  ticket.freq = "ANNUAL".
+      
+      IF ticket.freq = "2XYR"  THEN
+	  ticket.freq = "TWO_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "3XYR" THEN
+	 ticket.freq = "THREE_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "4XYR" 
+	THEN
+	  ticket.freq = "FOUR_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "5XYR" 
+	THEN
+	  ticket.freq = "FIVE_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "6XYR" 
+	THEN
+	  ticket.freq = "SIX_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "7XYR" 
+	THEN
+	  ticket.freq = "SEVEN_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "8XYR" 
+	THEN
+	  ticket.freq = "EIGHT_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "9XYR" 
+	THEN
+	  ticket.freq = "NINE_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "10XYR" 
+	THEN
+	  ticket.freq = "TEN_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "11XYR" 
+	THEN
+	  ticket.freq = "ELEVEN_TIMES_PER_YEAR".
+      
+      IF ticket.freq = "1X2YR" THEN
+	      ticket.freq = "EVERY_TWO_YEARS".
+
+      IF ticket.freq = "1X3YR" THEN
+	  	      ticket.freq = "EVERY_THREE_YEARS".
+
+      IF ticket.freq = "1X4YR" THEN
+	      ticket.freq = "EVERY_FOUR_YEARS".
+
+      IF ticket.freq = "1X5YR" THEN
+	 	      ticket.freq = "EVERY_FIVE_YEARS".
+
+      IF ticket.freq = "1X18M" THEN
+	      ticket.freq = "EVERY_EIGHTEEN_MONTHS".
+	.
+      IF ticket.freq = "SPCL"  THEN
+	  ticket.freq = "SPECIAL_CLEANING".
+      
+      IF ticket.freq = "OC"  THEN
+	  ticket.freq = "ON_CALL".
+      
+      IF ticket.freq = "IC"  THEN
+	  ticket.freq = "INITIAL_CLEANING".
+      
+      IF ticket.freq = "1X"  THEN
+	  ticket.freq = "ONE_TIME_CLEANING".
+      
+END.

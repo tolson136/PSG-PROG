@@ -1,0 +1,86 @@
+/***********************************************/
+/*  Proposal Creation Maintenance              */
+/***********************************************/
+/* 4/10/2017   TO  Added StartDate and EndDate */
+/* 2/05/2018   TO  Changed labels              */
+/***********************************************/
+
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+DEFINE VARIABLE XCUST AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE VARIABLE PRO# AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE NEW SHARED VARIABLE PPRO# AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
+THEN DO:
+    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
+    RETURN.
+END.
+REPEAT:
+  IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN UNDO, LEAVE.
+  DO TRANSACTION:
+    FIND FIRST SYSCONTROL EXCLUSIVE-LOCK.
+    PRO# = SYSCONTROL.NEXT-PRO + 1.
+    SYSCONTROL.NEXT-PRO = PRO#.
+    RELEASE SYSCONTROL.
+    if xcom = 2 then pro# = pro# + 200000.
+    if xcom = 7 then pro# = pro# + 700000.
+    if xcom = 8 then pro# = pro# + 800000.
+    if xcom = 9 then pro# = pro# + 900000.
+  END.
+DO TRANSACTION:
+DISPLAY SPACE(7)
+"   P R O P O S A L   M A S T E R   C R E A T I O N   S C R E E N   "
+SKIP(1) XCOM-N LABEL "CMP" SPACE(1)
+        XDIV-N LABEL "DIV" SPACE(1)
+        XOPR LABEL "OPR" SKIP(1).
+        CREATE PROPSL.
+        PROPSL# = PRO#.
+        COMP# = XCOM.
+        DIV# = XDIV.
+    DISPLAY
+            PROPSL# LABEL "PROPOSAL NUMBER"
+            COMP# LABEL "COMPANY NUMBER"
+            DIV# LABEL "DIVISION NUMBER" SKIP(1)
+            CUST# LABEL "CUSTOMER NUMBER "SKIP(1)
+            C-NAME LABEL "Customer " SPACE(5)
+            L-NAME LABEL "L-Name " SKIP(0)
+            ADDR1 LABEL "   Street" SPACE(5)
+            LADDR01 LABEL "L-Addr1" SKIP(0)
+            ADDR2 LABEL "Address 2" SPACE(5)
+            LADDR02 LABEL " L-City" SKIP(0)
+            ADDR3 LABEL "     City" SPACE(5)
+            LADDR03 LABEL "  L-Zip" SKIP(0)
+            ADDR4 LABEL "Contact 1" SPACE(5)
+            L-STATE LABEL "State"
+            L-TELE  LABEL "L-Tele" SKIP(0)
+            ADDR5 LABEL "Contact 2" SPACE(5)
+            L-TELE2 LABEL "2nd Phone OR Ext#" SKIP(0)
+            STATE LABEL "State    " SPACE(5)
+            ZIP  LABEL "Zip" SPACE(8)
+            L-COMMENTS LABEL "Comment" SKIP(0)
+            TELE LABEL "Telephone" SPACE(16)
+            TOT-AMT LABEL "Tot-Amt" SKIP(0)
+            FAX-TELE LABEL "Fax Phone" SPACE(16)
+            DATE-P LABEL "Proposal Date" SKIP(0)
+            EMAIL LABEL "Extension" SKIP(0)
+            CUST-TRF LABEL "Customer Transferred" SPACE(17)
+            JANITOR LABEL "Janitorial ?" SKIP(0)
+            ACTIVE LABEL "Customer Status" SPACE(23)
+            MLABEL LABEL "Mailing List ?" skip(0)
+            email1 label "1st email" skip(0)
+            email2 label "2nd email"
+            StartDate 
+            EndDate
+               WITH SIDE-LABELS NO-BOX.
+    UPDATE C-NAME ADDR1 ADDR2 ADDR3 ADDR4 ADDR5 STATE ZIP TELE FAX-TELE
+           L-NAME LADDR01 LADDR02 LADDR03 L-STATE L-TELE L-TELE2 L-COMMENTS
+           TOT-AMT DATE-P JANITOR MLABEL email1 email2
+           STartDate EndDate
+               WITH COLOR DISPLAY NORMAL PROMPT W/MA.
+    RELEASE PROPSL.
+    IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN UNDO, LEAVE.
+ END.
+END.

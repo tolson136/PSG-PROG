@@ -1,0 +1,66 @@
+def var counter as int.
+def var oldchoice as char.
+def var xnull as character initial "".
+def var cust-in as char format 'x(25)'
+    label "Enter the first few letters of the Customer name".
+def var ctr as int.
+ctr = 0.
+form propsl.propsl# propsl.l-name propsl.laddr01 skip propsl.c-name
+    with frame cust-frame scroll 1 10 down no-labels.
+update cust-in with side-labels.
+find first propsl use-index indx2 where propsl.c-name begins cust-in no-error.
+if not available propsl then leave.
+ctr = ctr + 1.
+repeat counter = 1 to 10:
+    pause 0.
+    display propsl.propsl# propsl.c-name propsl.l-name propsl.laddr01
+	with frame cust-frame.
+    down with frame cust-frame.
+    find next propsl use-index indx2
+	where propsl.c-name begins cust-in no-error.
+    if not available propsl then leave.
+    ctr = ctr + 1.
+end.
+pause 0.
+if ctr > 9
+    then up 10 with frame cust-frame.
+    else up ctr + 1 with frame cust-frame.
+oldchoice = "".
+repeat:
+status default "use up and down arrows".
+choose row propsl.propsl# no-error go-on(cursor-right) with frame cust-frame.
+color display normal propsl.propsl# with frame cust-frame.
+if frame-value = "" then next.
+if frame-value <> oldchoice then do:
+    oldchoice = frame-value.
+    find propsl use-index indx2 where propsl.propsl# = integer(frame-value).
+end.
+if lastkey = keycode("cursor-down")
+then do:
+    find next propsl use-index indx2
+	where propsl.c-name begins cust-in no-error.
+    if not available propsl then
+    find first propsl use-index indx2 where propsl.c-name begins cust-in.
+    down with frame cust-frame.
+    pause 0.
+    display propsl.propsl# propsl.c-name propsl.l-name propsl.laddr01
+	with frame cust-frame.
+    next.
+end.
+if lastkey = keycode("cursor-up")
+then do:
+    find prev propsl use-index indx2
+	where propsl.c-name begins cust-in no-error.
+    if not available propsl then
+    find last propsl use-index indx2 where propsl.c-name begins cust-in.
+    up with frame cust-frame.
+    pause 0.
+    display propsl.propsl# propsl.c-name propsl.l-name propsl.laddr01
+	with frame cust-frame.
+    next.
+end.
+if lastkey = keycode("enter") then leave.
+end.
+    find propsl use-index indx2 where propsl.propsl# = integer(oldchoice).
+    pause 0.
+    display propsl with frame cust-disp.

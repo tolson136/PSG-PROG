@@ -1,0 +1,62 @@
+DEF VAR Cnt as INT.
+
+output to c:\psg\addresstest.csv.
+PUT UNFORMATTED
+   "Propsl#"           ","
+   "Item#"             ","
+   "Freq"              ","
+   "C-NAME"            ","
+   "ADDR1"             "," 
+   "ADDR2"             ","
+   "ADDR3"             ","
+   "ADDR4"             ","
+   "ADDR5"             ","
+   "STATE"             ","
+   "L-NAME"            ","
+   "L-STATE"           ","
+   "L-TELE"            ","
+   "LADDR01"           ","
+   "LADDR02"           ","
+   "LADDR03"           ","
+   "email1"            ","
+   "EMAIL"             
+   SKIP.
+
+
+
+for each pro-desp NO-LOCK: 
+  IF pro-desp.freq EQ "ONE_TIME_CLEANING" THEN NEXT.
+  IF pro-desp.freq EQ "INITIAL_CLEANING"  THEN NEXT.
+  IF pro-desp.freq EQ "ON_CALL" THEN NEXT.
+  IF pro-desp.freq EQ "SPECIAL_CLEANING" THEN NEXT.
+  
+  find propsl of pro-desp no-lock no-error.
+  if not available(propsl) THEN NEXT.
+  cnt = cnt + 1.
+  /*if cnt GT 20 then leave.*/
+  put unformatted 
+   pro-desp.propsl#  ","
+   pro-desp.item#    ","
+   pro-desp.freq     ","
+   '"' C-NAME '"'           ","
+   '"' ADDR1 '"'             "," 
+   '"' ADDR2 '"'            ","
+   '"' ADDR3 '"'            ","
+   '"' ADDR4 '"'            ","
+   '"' ADDR5 '"'            ","
+   '"' STATE  '"'           ","
+   '"' L-NAME  '"'          ","
+   '"' L-STATE '"'          ","
+   '"' L-TELE  '"'          ","
+   '"' LADDR01 '"'          ","
+   '"' LADDR02 '"'          ","
+   '"' LADDR03 '"'          ","
+   '"' email1 '"'           ","
+   '"' EMAIL '"'            
+      
+   SKIP
+   .
+  
+END.
+
+output close.  

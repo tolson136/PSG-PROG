@@ -1,0 +1,1 @@
+C:\Progress\OpenEdge\bin\_progres.exe psg -S 23456 -H p-one-server -N tcp -baseADE p: -T c:\psg-work -p mainmenu.p -o \\vickie\lq-2090

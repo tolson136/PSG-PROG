@@ -1,0 +1,342 @@
+10:24:37 Looking for *.p in C:\Psg-Prog
+Compiling A-LIST.P
+Compiling A.P
+Compiling AR-ACTIV.P
+Compiling AR-ADD.P
+Compiling AR-ADDP.P
+Compiling AR-AGE.P
+Compiling AR-CHG.P
+Compiling AR-CHGP.P
+Compiling AR-COM.P
+Compiling AR-DEL.P
+Compiling AR-DELHS.P
+Compiling AR-DELP.P
+Compiling AR-DESP.P
+Compiling AR-INQ.P
+Compiling AR-POST.P
+Compiling AR-RDEX.P
+Compiling AR-RDEXP.P
+Compiling AR-ROLL.P
+Compiling AR-RPT.P
+Compiling AR-STATE.P
+Compiling AR-SUB.P
+Compiling AR-TRF.P
+Compiling AR-TRIAL.P
+Compiling AR-WINQ.P
+Compiling AR-YEND.P
+Compiling ARMAIN.P
+Compiling B.P
+Compiling C-LIST.P
+Compiling C.P
+Compiling CASH-RCT.P
+Compiling CHG-SYSC.P
+Compiling CNT-ADD.P
+Compiling CNT-CHG.P
+Compiling CNTR-ADD.P
+Compiling CNTR-CHG.P
+Compiling CNVRT01.P
+Compiling CO-MENU.P
+Compiling CON-CUST.P
+Compiling CON-DEL.P
+Compiling CON-MAIL.P
+Compiling CON-RPT.P
+Compiling CONVERT1.P
+Compiling CONVERT2.P
+Compiling CONVERT3.P
+Compiling CRE-SYSC.P
+Compiling DayOfWeek.p
+Compiling del-pro.P
+Compiling DELETE.P
+Compiling DELETE9.P
+Compiling DELTALL.P
+Compiling DIS-SYSC.P
+Compiling DLOUT-69.P
+Compiling DV-MENU.P
+Compiling EMP-UPD.P
+Compiling FMXDATE.P
+Compiling FMXDEL.P
+Compiling gary1.p
+Compiling gary2.p
+Compiling GARY69.P
+Compiling GARZON.P
+Compiling GET-CO.P
+Compiling IN-ADD.P
+Compiling IN-ADDP.P
+Compiling IN-CHG.P
+Compiling IN-CHGP.P
+Compiling IN-CRE.P
+Compiling IN-CREP.P
+Compiling IN-DEL.P
+Compiling IN-DELP.P
+Compiling IN-PRO.P
+Compiling IN-PROP.P
+Compiling IN-REPRO.P
+Compiling IN-REPRP.P
+Compiling IN-RPT.P
+Compiling IN-RPTP.P
+Compiling IN-TRF.P
+Compiling IN-TRFP.P
+Compiling IN1PROPL.P
+Compiling IN2PROPL.P
+Compiling IND-ADD.P
+Compiling IND-ADDP.P
+Compiling IND-CHG.P
+Compiling IND-CHGP.P
+Compiling IND-DEL.P
+Compiling IND-DELP.P
+Compiling INMAIN.P
+Compiling INVOICE1.P
+Compiling INVOICE7.P
+Compiling inwain.p
+Compiling JAXX1.P
+Compiling JEFF.P
+Compiling LOGIN.P
+Compiling MAINMENU.P
+Compiling maria-rpt.p
+Compiling maria01.p
+Compiling missingweeks.p
+Compiling MONA.P
+Compiling NTYPE.P
+Compiling P07-04.P
+Compiling PAY-CALC.P
+Compiling PEACH.P
+Compiling PERMIS.P
+Compiling PL-MAIL.P
+Compiling PL-RPT.P
+Compiling PLD-ADD.P
+Compiling Pld-chg.p
+Compiling PLMAIN.P
+Compiling PLP-ADD.P
+Compiling PLP-CHG.P
+Compiling POSTING.P
+Compiling PR-WEEK.P
+Compiling PRINT.P
+Compiling PRO-CUST.P
+Compiling PRO-DEL.P
+Compiling PRO189.P
+Compiling PROCLINT.P
+Compiling PROP-SRC.P
+Compiling PROPSL7.P
+Compiling REMV1.P
+Compiling REMV2.P
+Compiling REMV3.P
+Compiling REX.P
+Compiling REX1.P
+Compiling SALE-ADD.P
+Compiling SALE-MNT.P
+Compiling SECADM.P
+Compiling SETUPMEN.P
+Compiling SMTP_Code_Example.p
+Compiling SPC-ADD.P
+Compiling TEST-DAT.P
+Compiling TEST.P
+Compiling TESTDATE.P
+Compiling TESTEE.P
+Compiling TICKET1.P
+Compiling TICKET2.P
+Compiling TIMER.P
+Compiling tk-5thwk.p
+Compiling TK-ADD.P
+Compiling TK-ADDJ.P
+Compiling TK-ADDPR.P
+Compiling TK-ADDR-NEW.P
+Compiling TK-ADDR.P
+Compiling TK-ADDRP.P
+Compiling TK-CHG.P
+Compiling TK-CLEN.P
+Compiling TK-COMP.P
+Compiling TK-CRE-laser old.P
+Compiling TK-CRE.P
+Compiling TK-CREJ.P
+Compiling TK-CREPR.P
+Compiling TK-CRER-laser old.P
+Compiling TK-CRER-NEW.P
+Compiling TK-CRER-old.P
+Compiling TK-CRER.P
+Compiling TK-CREW.P
+Compiling TK-DEL.P
+Compiling TK-DELTK.P
+Compiling TK-DLLOC.P
+Compiling TK-DLOUT.P
+Compiling TK-DLSUB.P
+Compiling TK-INC.P
+Compiling TK-LAST.P
+Compiling TK-LASTP.P
+Compiling TK-METAR.P
+Compiling TK-METRP.P
+Compiling TK-PR1.P
+Compiling TK-PR1P.P
+Compiling TK-PR2.P
+Compiling TK-PR2P.P
+Compiling TK-PRO.P
+Compiling TK-REP.P
+Compiling TK-REPJ.P
+Compiling TK-REPR-NEW.P
+Compiling TK-REPR.P
+Compiling TK-REPRP.P
+Compiling TK-RET.p
+Compiling TK-RETC.P
+Compiling TK-RNG.P
+Compiling TK-RVSR.P
+Compiling TK-SPEC.P
+Compiling TK-SPECP.P
+Compiling TK-WOMP.P
+Compiling TKC-CRER.P
+Compiling TKMAIN.P
+Compiling tkwain.p
+Compiling TRANPROP.P
+Compiling TRANPRP7.P
+Compiling TRANPRP9.P
+Compiling wadd.p
+Compiling waddr.p
+Compiling wchg.p
+Compiling wcomp.p
+Compiling wcre.p
+Compiling wcrer.p
+Compiling wdel.p
+Compiling wdlout.p
+Compiling wdlsub.p
+Compiling wdlwsub.p
+Compiling wgary.p
+Compiling win-cre.p
+Compiling win-pro.p
+Compiling win-repro.p
+Compiling win-rpt.p
+Compiling win-trf.p
+Compiling wind-add.p
+Compiling wind-chg.p
+Compiling wpro.p
+Compiling wrep.p
+Compiling wrepr.p
+Compiling wret.p
+Compiling wrvsr.p
+Compiling wwomp.p
+Compiling ZIRCON1.P
+Compiling ZIRCON2.P
+10:24:42 Looking for 104___07\*.p in C:\Psg-Prog
+10:24:43 Looking for download\*.p in C:\Psg-Prog
+10:24:43 Looking for excel\*.p in C:\Psg-Prog
+10:24:43 Looking for include\*.p in C:\Psg-Prog
+10:24:43 Looking for Old versions\*.p in C:\Psg-Prog
+Compiling Old versions\PLMAIN.P
+10:24:43 Looking for propsl\*.p in C:\Psg-Prog
+Compiling propsl\exportprices.p
+10:24:43 Looking for samples\*.p in C:\Psg-Prog
+10:24:43 Looking for samples\jpgs\*.p in C:\Psg-Prog
+10:24:43 Looking for samples\src\*.p in C:\Psg-Prog
+Compiling samples\src\convert_print.p
+Compiling samples\src\no_sliberr.p
+Compiling samples\src\slow_activex.p
+Unknown or ambiguous table Customer. (725)
+** C:\Psg-Prog\samples\src\slow_activex.p Could not understand line 72. (196)
+10:24:43 Looking for samples\src\excel\*.p in C:\Psg-Prog
+Compiling samples\src\excel\create_template.p
+Unknown or ambiguous table Item. (725)
+** C:\Psg-Prog\samples\src\excel\create_template.p Could not understand line 32. (196)
+Compiling samples\src\excel\create_template_dataset.p
+** C:\Psg-Prog\samples\src\excel\create_template_dataset.p Could not understand line 16. (196)
+Compiling samples\src\excel\create_template_multi_tt_v9.p
+Unknown or ambiguous table item. (725)
+** C:\Psg-Prog\samples\src\excel\create_template_multi_tt_v9.p Could not understand line 54. (196)
+Compiling samples\src\excel\create_template_ttmeta.p
+** C:\Psg-Prog\samples\src\excel\create_template_ttmeta.p Could not understand line 16. (196)
+Compiling samples\src\excel\cut_paste_basic.p
+Compiling samples\src\excel\cut_paste_pic.p
+Unknown or ambiguous table item. (725)
+** C:\Psg-Prog\samples\src\excel\cut_paste_pic.p Could not understand line 80. (196)
+Compiling samples\src\excel\header_lines.p
+Unknown or ambiguous table Item. (725)
+** C:\Psg-Prog\samples\src\excel\header_lines.p Could not understand line 30. (196)
+Compiling samples\src\excel\replace_basic.p
+Unknown or ambiguous table item. (725)
+Could not find buffer item in object reference. (7381)
+** C:\Psg-Prog\samples\src\excel\replace_basic.p Could not understand line 55. (196)
+Compiling samples\src\excel\replace_chart.p
+Unknown or ambiguous table SalesRep. (725)
+** C:\Psg-Prog\samples\src\excel\replace_chart.p Could not understand line 45. (196)
+Compiling samples\src\excel\replace_filter.p
+Unknown or ambiguous table Customer. (725)
+** C:\Psg-Prog\samples\src\excel\replace_filter.p Could not understand line 30. (196)
+Compiling samples\src\excel\replace_pivot.p
+Unknown or ambiguous table Customer. (725)
+** C:\Psg-Prog\samples\src\excel\replace_pivot.p Could not understand line 30. (196)
+10:24:43 Looking for samples\templates\*.p in C:\Psg-Prog
+10:24:43 Looking for slib\*.p in C:\Psg-Prog
+Compiling slib\getbarcode128b.p
+Compiling slib\slibbidi_ansi.p
+Compiling slib\slibbidi_win9x.p
+Compiling slib\slibdate.p
+Compiling slib\sliberr.p
+Compiling slib\slibimg.p
+Compiling slib\slibinfozip.p
+Compiling slib\slibmath.p
+Compiling slib\slibos.p
+Compiling slib\slibpro.p
+Compiling slib\slibstr.p
+Compiling slib\slibunix.p
+Compiling slib\slibwin.p
+Compiling slib\slibxml.p
+Compiling slib\start-slib.p
+10:24:44 Looking for slib\bin\*.p in C:\Psg-Prog
+10:24:44 Looking for slibooxml\*.p in C:\Psg-Prog
+Compiling slibooxml\slibdocx.p
+Compiling slibooxml\slibooxml.p
+Compiling slibooxml\slibooxmltxt.p
+Compiling slibooxml\slibxlsx.p
+Compiling slibooxml\slibxlsxext.p
+10:24:46 Looking for Template\*.p in C:\Psg-Prog
+10:24:46 Looking for Template\old\*.p in C:\Psg-Prog
+10:24:46 Looking for tim work\*.p in C:\Psg-Prog
+Compiling tim work\ADDRESS_REPORT.P
+Compiling tim work\ADDRESS_REPORT2.P
+Compiling tim work\routechg.p
+Compiling tim work\Texas Propsls additional.p
+Compiling tim work\TExas Propsls.p
+10:24:46 Looking for util\*.p in C:\Psg-Prog
+Compiling util\ADDRESSREPORT2.P
+Compiling util\BigSearchPopulate.p
+Unknown or ambiguous table BigSearch. (725)
+** C:\Psg-Prog\util\BigSearchPopulate.p Could not understand line 1. (196)
+Compiling util\FreqUpdate.P
+10:24:46 Looking for *.w in C:\Psg-Prog
+Compiling PropslExp.w
+10:24:47 Looking for 104___07\*.w in C:\Psg-Prog
+10:24:48 Looking for download\*.w in C:\Psg-Prog
+10:24:48 Looking for excel\*.w in C:\Psg-Prog
+10:24:48 Looking for include\*.w in C:\Psg-Prog
+10:24:48 Looking for Old versions\*.w in C:\Psg-Prog
+10:24:48 Looking for propsl\*.w in C:\Psg-Prog
+10:24:48 Looking for samples\*.w in C:\Psg-Prog
+10:24:48 Looking for samples\jpgs\*.w in C:\Psg-Prog
+10:24:48 Looking for samples\src\*.w in C:\Psg-Prog
+10:24:48 Looking for samples\src\excel\*.w in C:\Psg-Prog
+10:24:48 Looking for samples\templates\*.w in C:\Psg-Prog
+10:24:48 Looking for slib\*.w in C:\Psg-Prog
+10:24:49 Looking for slib\bin\*.w in C:\Psg-Prog
+10:24:49 Looking for slibooxml\*.w in C:\Psg-Prog
+10:24:49 Looking for Template\*.w in C:\Psg-Prog
+10:24:49 Looking for Template\old\*.w in C:\Psg-Prog
+10:24:49 Looking for tim work\*.w in C:\Psg-Prog
+10:24:49 Looking for util\*.w in C:\Psg-Prog
+Compiling util\CustSearch.w
+Unknown or ambiguous table BigSearch. (725)
+** C:\Psg-Prog\util\CustSearch.w Could not understand line 105. (196)
+10:24:49 Looking for *.cls in C:\Psg-Prog
+10:24:50 Looking for 104___07\*.cls in C:\Psg-Prog
+10:24:51 Looking for download\*.cls in C:\Psg-Prog
+10:24:51 Looking for excel\*.cls in C:\Psg-Prog
+10:24:51 Looking for include\*.cls in C:\Psg-Prog
+10:24:51 Looking for Old versions\*.cls in C:\Psg-Prog
+10:24:51 Looking for propsl\*.cls in C:\Psg-Prog
+10:24:51 Looking for samples\*.cls in C:\Psg-Prog
+10:24:51 Looking for samples\jpgs\*.cls in C:\Psg-Prog
+10:24:51 Looking for samples\src\*.cls in C:\Psg-Prog
+10:24:51 Looking for samples\src\excel\*.cls in C:\Psg-Prog
+10:24:51 Looking for samples\templates\*.cls in C:\Psg-Prog
+10:24:51 Looking for slib\*.cls in C:\Psg-Prog
+10:24:51 Looking for slib\bin\*.cls in C:\Psg-Prog
+10:24:51 Looking for slibooxml\*.cls in C:\Psg-Prog
+10:24:51 Looking for Template\*.cls in C:\Psg-Prog
+10:24:51 Looking for Template\old\*.cls in C:\Psg-Prog
+10:24:52 Looking for tim work\*.cls in C:\Psg-Prog
+10:24:52 Looking for util\*.cls in C:\Psg-Prog

@@ -1,0 +1,2 @@
+find ticket where recid(ticket) = 5484354.
+delete ticket.

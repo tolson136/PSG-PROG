@@ -1,0 +1,408 @@
+/*
+pld-add - Add Proposal Description
+
+11/18/2016   TO    Added price change logic
+
+    */
+
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+DEFINE VARIABLE XPROP AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE VARIABLE XITEM AS INTEGER FORMAT "ZZZZ".
+DEFINE VARIABLE XCUST AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+/*DEFINE VARIABLE NewAmt LIKE pro-desp.amt.*/
+
+
+IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
+THEN DO:
+    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
+    RETURN.
+END.
+XCUST = 0.
+REPEAT:
+DISPLAY SPACE(1)
+"   P R O P O S A L   D E S C R I P T I O N   C R E A T I O N   S C R E E N   "
+SKIP(0) XCOM-N LABEL "CMP" SPACE(1)
+        XDIV-N LABEL "DIV" SPACE(1)
+        XOPR LABEL "OPR" SKIP(0) WITH FRAME X.
+        CREATE PRO-DESP.
+    UPDATE PRO-DESP.PROPSL# WITH FRAME X.
+    XPROP = PRO-DESP.PROPSL#.
+    FIND FIRST PROPSL WHERE PROPSL.PROPSL# = XPROP AND PROPSL.COMP# = XCOM AND
+         PROPSL.DIV# = XDIV NO-ERROR.
+    IF NOT AVAILABLE PROPSL
+    THEN DO:
+        MESSAGE "PROPSL NUMBER " XPROP " HAS NOT YET BEEN CREATED".
+        UNDO, RETRY.
+    END.
+    PRO-DESP.COMP# = XCOM.
+    PRO-DESP.DIV# = XDIV.
+    IF LASTKEY = KEYCODE("F4") THEN LEAVE.
+    DISPLAY
+               PRO-DESP.PROPSL# LABEL "PROP #"
+               PRO-DESP.ITEM# LABEL "ITEM #"
+               PRO-DESP.COMP# LABEL "COMPANY"
+               PRO-DESP.DIV# LABEL "DIVISION"
+               START-DT SKIP(0)
+               PRO-DESP.CUST# LABEL "CUST #"
+               FREQ
+               /* NewAmt*/ AMT format "$>>,>>>.99" cod-amt FORMAT   "$>>>.99" LABEL "COD"
+               DESC01
+               DESC02
+               DESC03
+               DESC04
+               DESC05
+               DESC06
+               DESC07
+               DESC08
+               DESC09
+               DESC10
+               SPC-INTR SKIP(0)
+               /*DL LABEL "D/L" SPACE(5)*/
+               "Time-HH:MM AM" SPACE(13)
+               WKS[1] LABEL "FIRST WEEK "
+               WKDAY[1] LABEL "SAT"
+               MTH[1] LABEL "JANUARY "
+               MTH[7] LABEL "JULY     " SKIP(0)
+               /*WHCH-AMT LABEL "USE AMT 1/2?"*/
+               /*AC# LABEL "AC#" SPACE(2)*/
+               Pro-Desp.StartTime SPACE(6)
+               WKS[2] LABEL "SECOND WEEK"
+               WKDAY[2] LABEL "SUN"
+               MTH[2] LABEL "FEBRUARY"
+               MTH[8] LABEL "AUGUST   " SKIP(0)
+               /*A2-DESP LABEL "ALT DESP"*/
+               SPACE(2) Pro-Desp.EndTime SPACE(6)
+               WKS[3] LABEL "THIRD WEEK "
+               WKDAY[3] LABEL "MON"
+               MTH[3] LABEL "MARCH   "
+               MTH[9] LABEL "SEPTEMBER" SKIP(0)
+               /*AMT2-MUL LABEL "ALT AMT MULTIPLIER"*/
+               SPACE(26)
+               WKS[4] LABEL "FOURTH WEEK"
+               WKDAY[4] LABEL "TUE"
+               MTH[4] LABEL "APRIL   "
+               MTH[10] LABEL "OCTOBER  " SKIP(0)
+               /*AMT2 LABEL "ALT AMT"*/
+               SPACE(26)
+               wks[5] label "FIFTH WEEK "
+               WKDAY[5] LABEL "WED"
+               MTH[5] LABEL "MAY     "
+               MTH[11] LABEL "NOVEMBER " SKIP(0)
+               CL-DATE LABEL "LST CLEAN DTE"
+               pro-desp.sub# label "SUB#"
+               PRO-DESP.ROUTE# label "RT#"
+               WKDAY[6] LABEL "THU"
+               MTH[6] LABEL "JUNE    "
+               MTH[12] LABEL "DECEMBER " SKIP(0)
+               /*COMMIS LABEL "COMM$" SPACE(3)*/
+               SPACE(22)
+               SUB-CON LABEL "SUB$" SPACE(3)
+               WKDAY[7] LABEL "FRI"
+               PRO-DESP.PO# LABEL "P" SKIP
+               /*Pro-Desp.BudgetedHours FORMAT "9999.99" LABEL "Budget Hrs" SKIP*/
+               Pro-Desp.EquipmentRequired LABEL "Equip Req'd"
+               WITH FRAME X SIDE-LABELS NO-BOX width 84.
+       UPDATE PRO-DESP.ITEM# PRO-DESP.CUST# WITH FRAME X.
+  REPEAT:
+       UPDATE pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+       IF pro-desp.FREQ BEGINS "D" OR FREQ = "DAILY"
+       THEN DO:
+         pro-desp.FREQ = "DAILY".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "2XW" OR FREQ = "TWO_TIMES_PER_WEEK"
+       THEN DO:
+         pro-desp.FREQ = "TWO_TIMES_PER_WEEK".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "3XW" OR FREQ = "THREE_TIMES_PER_WEEK"
+       THEN DO:
+         pro-desp.FREQ = "THREE_TIMES_PER_WEEK".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "4XW" OR FREQ = "FOUR_TIMES_PER_WEEK"
+       THEN DO:
+         pro-desp.FREQ = "FOUR_TIMES_PER_WEEK".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "5XW" OR FREQ = "FIVE_TIMES_PER_WEEK"
+       THEN DO:
+         pro-desp.FREQ = "FIVE_TIMES_PER_WEEK".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "6XW" OR FREQ = "SIX_TIMES_PER_WEEK"
+       THEN DO:
+         pro-desp.FREQ = "SIX_TIMES_PER_WEEK".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "W" OR FREQ = "WEEKLY"
+       THEN DO:
+         pro-desp.FREQ = "WEEKLY".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "2W" OR FREQ = "EVERY_TWO_WEEKS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_TWO_WEEKS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "3W" OR pro-desp.FREQ = "EVERY_THREE_WEEKS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_THREE_WEEKS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "4W" OR pro-desp.FREQ = "EVERY_FOUR_WEEKS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_FOUR_WEEKS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "5W" OR pro-desp.FREQ = "EVERY_FIVE_WEEKS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_FIVE_WEEKS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "6W" OR pro-desp.FREQ = "EVERY_SIX_WEEKS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_SIX_WEEKS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "8W" OR pro-desp.FREQ = "EVERY_EIGHT_WEEKS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_EIGHT_WEEKS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "M" OR pro-desp.FREQ = "MONTHLY"
+       THEN DO:
+         pro-desp.FREQ = "MONTHLY".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "Q" OR pro-desp.FREQ = "QUARTERLY"
+       THEN DO:
+         pro-desp.FREQ = "QUARTERLY".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "2XM" OR pro-desp.FREQ = "TWO_TIMES_PER_MONTH"
+       THEN DO:
+         pro-desp.FREQ = "TWO_TIMES_PER_MONTH".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF pro-desp.FREQ BEGINS "A" OR pro-desp.FREQ = "ANNUAL"
+       THEN DO:
+         pro-desp.FREQ = "ANNUAL".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "2XYR" OR FREQ = "TWO_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "TWO_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "3XYR" OR FREQ = "THREE_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "THREE_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "4XYR" OR FREQ = "FOUR_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "FOUR_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "5XYR" OR FREQ = "FIVE_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "FIVE_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "6XYR" OR FREQ = "SIX_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "SIX_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "7XYR" OR FREQ = "SEVEN_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "SEVEN_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+
+       IF FREQ BEGINS "8XYR" OR FREQ = "EIGHT_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "EIGHT_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "9XYR" OR FREQ = "NINE_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "NINE_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "10XYR" OR FREQ = "TEN_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "TEN_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "11XYR" OR FREQ = "ELEVEN_TIMES_PER_YEAR"
+       THEN DO:
+         pro-desp.FREQ = "ELEVEN_TIMES_PER_YEAR".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "1X2YR" OR FREQ = "EVERY_TWO_YEARS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_TWO_YEARS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "1X3YR" OR FREQ = "EVERY_THREE_YEARS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_THREE_YEARS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "1X4YR" OR FREQ = "EVERY_FOUR_YEARS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_FOUR_YEARS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "1X5YR" OR FREQ = "EVERY_FIVE_YEARS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_FIVE_YEARS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "1X18M" OR FREQ = "EVERY_EIGHTEEN_MONTHS"
+       THEN DO:
+         pro-desp.FREQ = "EVERY_EIGHTEEN_MONTHS".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "SPCL" OR FREQ = "SPECIAL_CLEANING"
+       THEN DO:
+         pro-desp.FREQ = "SPECIAL_CLEANING".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "OC" OR FREQ = "ON_CALL"
+       THEN DO:
+         pro-desp.FREQ = "ON_CALL".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "IC" OR FREQ = "INITIAL_CLEANING"
+       THEN DO:
+         pro-desp.FREQ = "INITIAL_CLEANING".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE
+       IF FREQ BEGINS "1X" OR FREQ = "ONE_TIME_CLEANING"
+       THEN DO:
+         pro-desp.FREQ = "ONE_TIME_CLEANING".
+         DISPLAY pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+         LEAVE.
+       END.
+       ELSE MESSAGE "INCORRECT FREQUENCY".
+   END.
+       UPDATE START-DT AMT cod WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+       /*  REMOVED FOR NEW - NEW PRICING - WHEN RE-ENABLED DISABLE UPDATING Amt above
+       RUN propsl\fPropsPrice.p
+         ( INPUT pro-desp.comp#,
+           INPUT pro-desp.cust#,
+           INPUT pro-desp.div#,
+           INPUT pro-desp.propsl#,
+           INPUT pro-desp.item#
+          ).
+       RUN propsl\GetCurrentPropslPrice.p
+        ( INPUT pro-desp.comp#,
+          INPUT pro-desp.cust#,
+          INPUT pro-desp.div#,
+          INPUT pro-desp.propsl#,
+          INPUT pro-desp.item#,
+          INPUT TODAY,
+          OUTPUT NewAmt ).
+       DISPLAY NewAmt WITH FRAME X.
+       */    
+       UPDATE    DESC01 DESC02 DESC03 DESC04 DESC05 DESC06
+              DESC07 DESC08 DESC09 DESC10 SPC-INTR 
+              Pro-Desp.StartTime
+              Pro-Desp.EndTime
+              /*DL*/ 
+              /*WHCH-AMT*/
+              /*AC# */
+              /*A2-DESP*/
+              /*AMT2-MUL*/ 
+              /*AMT2*/ 
+              CL-DATE 
+              Pro-Desp.EquipmentRequired
+              /*COMMIS*/ 
+              SUB-CON WKS[1] WKS[2] WKS[3] WKS[4] WKS[5]
+              PRO-DESP.SUB# PRO-DESP.ROUTE#
+              WKDAY[1] WKDAY[2] WKDAY[3] WKDAY[4] WKDAY[5] WKDAY[6] WKDAY[7]
+              MTH[1] MTH[2] MTH[3] MTH[4] MTH[5] MTH[6] MTH[7] MTH[8] MTH[9]
+              MTH[10] MTH[11] MTH[12] PRO-DESP.PO# 
+              /*Pro-Desp.BudgetedHours*/
+              
+              WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA.
+       RELEASE PRO-DESP.
+END.
+HIDE ALL.

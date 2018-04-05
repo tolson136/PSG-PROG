@@ -1,0 +1,14 @@
+	      create cl-date.
+		cl-date.cl-date = 01/01/9999.
+		cl-date.comp# = acct-rcv.comp#.
+		cl-date.cust# = acct-rcv.cust#.
+		cl-date.date-ret = 01/01/9999.
+		cl-date.div# = acct-rcv.div#.
+		cl-date.freq = pro-desp.freq.
+		cl-date.item# = pro-desp.item#.
+		cl-date.month# = beg#.
+		cl-date.propsl# = pro-desp.propsl#.
+		cl-date.route# = pro-desp.route#.
+		cl-date.sub# = pro-desp.sub#.
+		cl-date.t-indx = dy.
+	      release cl-date.

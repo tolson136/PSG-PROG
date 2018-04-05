@@ -1,0 +1,1160 @@
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 1   
+
+{} Line Blk
+-- ---- ---
+      1     DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+      2     DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+      3     DEFINE VARIABLE XPROP AS DECIMAL FORMAT "ZZZZZZZZZZ".
+      4     DEFINE VARIABLE XITEM AS INTEGER FORMAT "ZZZZ".
+      5     DEFINE VARIABLE XCUST LIKE PRO-DESP.CUST#.
+      6     DEFINE VARIABLE POSER AS LOG.
+      7     DEFINE VARIABLE NOTER AS log.
+      8     DEFINE VARIABLE ADDNOTE AS LOG
+      9         LABEL "No Notes exist. Would you like to add them ?".
+     10     DEFINE VARIABLE SEARCHER AS LOG.
+     11     DEFINE VARIABLE SEARCHED AS CHAR FORMAT "X".
+     12     DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
+     13     DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
+     14     DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+     15   1 REPEAT:
+     16   1 DISPLAY SPACE(1)
+     17     "P R O P O S A L   D E S C R I P T I O N   M A I N T E N A N C E   
+     17   1 S C R E E N"
+     18   1 SKIP(0) XCOM-N LABEL "CMP" SPACE(1)
+     19   1         XDIV-N LABEL "DIV" SPACE(1)
+     20   1         XOPR LABEL "OPR" SKIP(0) WITH FRAME X NO-HIDE.
+     21   1 UPDATE SEARCHED AUTO-RETURN WITH FRAME X NO-HIDE NO-LABEL.
+     22   1 
+     23   2 IF SEARCHED <> "" THEN DO:
+     24   2 def var counter as int.
+     25   2 def var oddchoice as char.
+     26   2 def var oldchoice as char.
+     27   2 def var xnull as character initial "".
+     28   2 def var cust-in as char format 'x(25)'
+     29   2     label "Enter the first few letters of the Customer name".
+     30   2 def var cl-d as int.
+     31   2 def var cl-m as int.
+     32   2 def var cl-y as int format "9999".
+     33   2 def var ctr as int.
+     34   2 ctr = 0.
+     35   2 form propsl.propsl# propsl.l-name propsl.laddr01 skip propsl.c-name
+     36   2     with frame cust-frame scroll 1 10 down no-labels.
+     37   2 update cust-in with frame sc overlay side-labels.
+     38     find first propsl use-index indx2 where propsl.c-name begins cust-i
+     38   2 n and
+     39   2                                         propsl.comp# = xcom and
+     40   2                                         propsl.div# = xdiv
+     41   2                                         no-error.
+     42   2 if not available propsl then leave.
+     43   2 ctr = ctr + 1.
+     44   3 repeat counter = 1 to 10:
+     45   3     pause 0.
+     46         display propsl.propsl# propsl.c-name propsl.l-name propsl.laddr
+     46   3 01
+     47   3         with frame cust-frame with side-labels.
+     48   3     down with frame cust-frame.
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 2   
+
+{} Line Blk
+-- ---- ---
+     49   3     find next propsl use-index indx2
+     50   3         where propsl.c-name begins cust-in and
+     51   3               propsl.comp# = xcom and
+     52   3               propsl.div# = xdiv no-error.
+     53   3     if not available propsl then leave.
+     54   3     ctr = ctr + 1.
+     55   2 end.
+     56   2 pause 0.
+     57   2 up 10 with frame cust-frame.
+     58   2 oldchoice = "".
+     59   3 repeat:
+     60   3 status default "use up and down arrows".
+     61     choose row propsl.propsl# no-error go-on(cursor-right) with frame c
+     61   3 ust-frame.
+     62   3 color display normal propsl.propsl# with frame cust-frame.
+     63   3 if frame-value = "" then next.
+     64   4 if frame-value <> oldchoice then do:
+     65   4     oldchoice = frame-value.
+     66         find propsl use-index indx2 where propsl.propsl# = integer(fram
+     66   4 e-value).
+     67   3 end.
+     68   3 if lastkey = keycode("cursor-down")
+     69   4 then do:
+     70   4     find next propsl use-index indx2
+     71   4         where propsl.c-name begins cust-in and
+     72   4               propsl.comp# = xcom and
+     73   4               propsl.div# = xdiv no-error.
+     74   4     if not available propsl then
+     75         find first propsl use-index indx2 where propsl.c-name begins cu
+     75   4 st-in and
+     76   4                                             propsl.comp# = xcom and
+     77   4                                             propsl.div# = xdiv.
+     78   4     down with frame cust-frame.
+     79   4     pause 0.
+     80         display propsl.propsl# propsl.c-name propsl.l-name propsl.laddr
+     80   4 01
+     81   4         with frame cust-frame.
+     82   4     next.
+     83   3 end.
+     84   3 if lastkey = keycode("cursor-up")
+     85   4 then do:
+     86   4     find prev propsl use-index indx2
+     87   4         where propsl.c-name begins cust-in and
+     88   4               propsl.comp# = xcom and
+     89   4               propsl.div# = xdiv no-error.
+     90   4     if not available propsl then
+     91         find last propsl use-index indx2 where propsl.c-name begins cus
+     91   4 t-in and
+     92   4                                            propsl.comp# = xcom and
+     93   4                                            propsl.div# = xdiv.
+     94   4     up with frame cust-frame.
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 3   
+
+{} Line Blk
+-- ---- ---
+     95   4     pause 0.
+     96         display propsl.propsl# propsl.c-name propsl.l-name propsl.laddr
+     96   4 01
+     97   4         with frame cust-frame.
+     98   4     next.
+     99   3 end.
+    100   4 if lastkey = keycode("enter") then do:
+    101   4     poser = yes.
+    102   4     find first pro-desp where pro-desp.propsl# = propsl.propsl# and
+    103   4                               pro-desp.comp# = propsl.comp# and
+    104   4                               pro-desp.div# = propsl.div# and
+    105                                   pro-desp.cust# = propsl.cust# no-erro
+    105   4 r.
+    106   4     clear frame cust-frame all no-pause.
+    107   4     leave.
+    108   3 end.
+    109   2 end.
+    110   1 end.
+    111     /*************************END**************************************
+    111   1 *****/
+    112   1 
+    113   2 ELSE DO:
+    114   2 
+    115   2     PROMPT-FOR PRO-DESP.PROPSL# WITH FRAME X NO-HIDE.
+    116   2     XPROP = INPUT PRO-DESP.PROPSL#.
+    117   2     PROMPT-FOR PRO-DESP.ITEM# WITH FRAME X NO-HIDE.
+    118   2     XITEM = INPUT PRO-DESP.ITEM#.
+    119   2     FIND FIRST PRO-DESP WHERE PRO-DESP.PROPSL# = XPROP AND
+    120   2                               PRO-DESP.COMP# = XCOM AND
+    121   2                               PRO-DESP.DIV# = XDIV AND
+    122   2                               PRO-DESP.ITEM# = XITEM.
+    123   2     ASSIGN XCUST = PRO-DESP.CUST#.
+    124         find propsl where propsl.propsl# = xprop and propsl.comp# = xco
+    124   2 m and
+    125   2          propsl.div# = xdiv and propsl.cust# = xcust no-error.
+    126   3     IF AVAILABLE PROPSL THEN DO:
+    127   3         POSER = yes.
+    128   2     END.
+    129   3     ELSE DO:
+    130   3         POSER = no.
+    131   2     END.
+    132         IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN LEA
+    132   2 VE.
+    133   2 
+    134   1 END.
+    135   1 
+    136   1 
+    137   1     FIND NOTES WHERE NOTES.COMP# = XCOM AND
+    138   1                      NOTES.DIV# = XDIV AND
+    139   1                      NOTES.CUST# = XCUST AND
+    140   1                      NOTES.PROPSL# = XPROP AND
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 4   
+
+{} Line Blk
+-- ---- ---
+    141   1                      NOTES.ITEM# = XITEM NO-ERROR.
+    142   2     IF AVAILABLE NOTES THEN DO:
+    143   2         NOTER = yes.
+    144   1     END.
+    145   2     ELSE DO:
+    146   2         NOTER = no.
+    147   1     END.
+    148   2 if noter then do:
+    149   2    message "".
+    150   2    message color BLINK-Y
+    151     "                           ___N O T E S   E X I S T___            
+    151   2               ".
+    152   1 end.
+    153   1     FORM
+    154   1                PRO-DESP.PROPSL# LABEL "PROP #"
+    155   1                PRO-DESP.ITEM# LABEL "ITEM #"
+    156   1                PRO-DESP.COMP# LABEL "COMPANY"
+    157   1                PRO-DESP.DIV# LABEL "DIVISION"
+    158   1                START-DT SKIP(0) SPACE(2)
+    159   1                PRO-DESP.CUST# LABEL "CUST #"
+    160   1                FREQ
+    161   1                AMT SKIP(0)
+    162   1                DESC01
+    163   1                DESC02
+    164   1                DESC03
+    165   1                DESC04
+    166   1                DESC05
+    167   1                DESC06
+    168   1                DESC07
+    169   1                DESC08
+    170   1                DESC09
+    171   1                DESC10
+    172   1                SPC-INTR SKIP(0)
+    173   1                DL LABEL "D/L" SPACE(5)
+    174   1                WK[1] LABEL "FIRST WEEK "
+    175   1                WKDAY[1] LABEL "SAT"
+    176   1                MTH[1] LABEL "JANUARY "
+    177   1                MTH[7] LABEL "JULY     " SKIP(0)
+    178   1                WHCH-AMT LABEL "USE AMT 1/2?" SPACE(11)
+    179   1                WK[2] LABEL "SECOND WEEK"
+    180   1                WKDAY[2] LABEL "SUN"
+    181   1                MTH[2] LABEL "FEBRUARY"
+    182   1                MTH[8] LABEL "AUGUST   " SKIP(0)
+    183   1                A2-DESP LABEL "ALT DESP"
+    184   1                WK[3] LABEL "THIRD WEEK "
+    185   1                WKDAY[3] LABEL "MON"
+    186   1                MTH[3] LABEL "MARCH   "
+    187   1                MTH[9] LABEL "SEPTEMBER" SKIP(0)
+    188   1                AMT2-MUL LABEL "ALT AMT MULTIPLIER"
+    189   1                WK[4] LABEL "FOURTH WEEK"
+    190   1                WKDAY[4] LABEL "TUE"
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 5   
+
+{} Line Blk
+-- ---- ---
+    191   1                MTH[4] LABEL "APRIL   "
+    192   1                MTH[10] LABEL "OCTOBER  " SKIP(0)
+    193   1                AMT2 LABEL "ALT AMT"
+    194   1                PRO-DESP.SUB# LABEL "SUB#  " SPACE(7)
+    195   1                WKDAY[5] LABEL "WED"
+    196   1                MTH[5] LABEL "MAY     "
+    197   1                MTH[11] LABEL "NOVEMBER " SKIP(0)
+    198   1                CL-DATE LABEL "LST CLEAN DTE"
+    199   1                PRO-DESP.ROUTE# LABEL "ROUTE#" SPACE(7)
+    200   1                WKDAY[6] LABEL "THU"
+    201   1                MTH[6] LABEL "JUNE    "
+    202   1                MTH[12] LABEL "DECEMBER " SKIP(0)
+    203   1                COMMIS LABEL "COMM$" SPACE(3)
+    204   1                SUB-CON LABEL "SUB$" SPACE(3)
+    205   1                WKDAY[7] LABEL "FRI"
+    206   1                PRO-DESP.PO# LABEL "P"
+    207   1                WITH FRAME X SIDE-LABELS NO-BOX no-hide.
+    208   1 
+    209   1     DISPLAY
+    210                    PRO-DESP.PROPSL# PRO-DESP.ITEM# PRO-DESP.COMP# PRO-D
+    210   1 ESP.DIV#
+    211                    START-DT LABEL "START DT" PRO-DESP.CUST# FREQ LABEL 
+    211   1 "FREQ" AMT
+    212                    DESC01 DESC02 DESC03 DESC04 DESC05 DESC06 DESC07 DES
+    212   1 C08
+    213                    DESC09 DESC10 SPC-INTR DL WK[1] WKDAY[1] MTH[1] MTH[
+    213   1 7] WHCH-AMT
+    214                    WK[2] WKDAY[2] MTH[2] MTH[8] A2-DESP WK[3] WKDAY[3] 
+    214   1 MTH[3] MTH[9]
+    215                    AMT2-MUL WK[4] WKDAY[4] MTH[4] MTH[10] AMT2 PRO-DESP
+    215   1 .SUB#
+    216   1                WKDAY[5] MTH[5] MTH[11] CL-DATE PRO-DESP.ROUTE#
+    217                    WKDAY[6] MTH[6] MTH[12] COMMIS SUB-CON WKDAY[7] PRO-
+    217   1 DESP.PO#
+    218   1                WITH FRAME X SIDE-LABELS.
+    219   1 /*
+    220     UPDATE PRO-DESP.CUST# WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    220   1  no-hide.
+    221   1 */
+    222     IF (USERID <> "OPERATIONS") AND (USERID <> "LANDMARK") AND (USERID 
+    222   1 <> "GARCIA")
+    223   2 THEN DO:
+    224   3 if noter then do:
+    225   3    message "".
+    226   3    message color BLINK-Y
+    227     "                           ___N O T E S   E X I S T___            
+    227   3               ".
+    228   2 end.
+    229   3   REPEAT:
+    230            UPDATE FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA NO
+    230   3 -HIDE.
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 6   
+
+{} Line Blk
+-- ---- ---
+    231   3        IF FREQ BEGINS "D" OR FREQ = "DAILY"
+    232   4        THEN DO:
+    233   4          FREQ = "DAILY".
+    234              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    234   4 .
+    235   4          LEAVE.
+    236   3        END.
+    237   3        ELSE
+    238   3        IF FREQ BEGINS "2XW" OR FREQ = "TWO_TIMES_PER_WEEK"
+    239   4        THEN DO:
+    240   4          FREQ = "TWO_TIMES_PER_WEEK".
+    241              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    241   4  NO-HIDE.
+    242   4          LEAVE.
+    243   3        END.
+    244   3        ELSE
+    245   3        IF FREQ BEGINS "3XW" OR FREQ = "THREE_TIMES_PER_WEEK"
+    246   4        THEN DO:
+    247   4          FREQ = "THREE_TIMES_PER_WEEK".
+    248              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    248   4  NO-HIDE.
+    249   4          LEAVE.
+    250   3        END.
+    251   3        ELSE
+    252   3        IF FREQ BEGINS "4XW" OR FREQ = "FOUR_TIMES_PER_WEEK"
+    253   4        THEN DO:
+    254   4          FREQ = "FOUR_TIMES_PER_WEEK".
+    255              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    255   4  NO-HIDE.
+    256   4          LEAVE.
+    257   3        END.
+    258   3        ELSE
+    259   3        IF FREQ BEGINS "5XW" OR FREQ = "FIVE_TIMES_PER_WEEK"
+    260   4        THEN DO:
+    261   4          FREQ = "FIVE_TIMES_PER_WEEK".
+    262              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    262   4  NO-HIDE.
+    263   4          LEAVE.
+    264   3        END.
+    265   3        ELSE
+    266   3        IF FREQ BEGINS "6XW" OR FREQ = "SIX_TIMES_PER_WEEK"
+    267   4        THEN DO:
+    268   4          FREQ = "SIX_TIMES_PER_WEEK".
+    269              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    269   4  NO-HIDE.
+    270   4          LEAVE.
+    271   3        END.
+    272   3        ELSE
+    273   3        IF FREQ BEGINS "W" OR FREQ = "WEEKLY"
+    274   4        THEN DO:
+    275   4          FREQ = "WEEKLY".
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 7   
+
+{} Line Blk
+-- ---- ---
+    276              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    276   4  NO-HIDE.
+    277   4          LEAVE.
+    278   3        END.
+    279   3        ELSE
+    280   3        IF FREQ BEGINS "2W" OR FREQ = "EVERY_TWO_WEEKS"
+    281   4        THEN DO:
+    282   4          FREQ = "EVERY_TWO_WEEKS".
+    283              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    283   4  NO-HIDE.
+    284   4          LEAVE.
+    285   3        END.
+    286   3        ELSE
+    287   3        IF FREQ BEGINS "3W" OR FREQ = "EVERY_THREE_WEEKS"
+    288   4        THEN DO:
+    289   4          FREQ = "EVERY_THREE_WEEKS".
+    290              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    290   4  NO-HIDE.
+    291   4          LEAVE.
+    292   3        END.
+    293   3        ELSE
+    294   3        IF FREQ BEGINS "4W" OR FREQ = "EVERY_FOUR_WEEKS"
+    295   4        THEN DO:
+    296   4          FREQ = "EVERY_FOUR_WEEKS".
+    297              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    297   4  NO-HIDE.
+    298   4          LEAVE.
+    299   3        END.
+    300   3        ELSE
+    301   3        IF FREQ BEGINS "5W" OR FREQ = "EVERY_FIVE_WEEKS"
+    302   4        THEN DO:
+    303   4          FREQ = "EVERY_FIVE_WEEKS".
+    304              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    304   4  NO-HIDE.
+    305   4          LEAVE.
+    306   3        END.
+    307   3        ELSE
+    308   3        IF FREQ BEGINS "6W" OR FREQ = "EVERY_SIX_WEEKS"
+    309   4        THEN DO:
+    310   4          FREQ = "EVERY_SIX_WEEKS".
+    311              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    311   4  NO-HIDE.
+    312   4          LEAVE.
+    313   3        END.
+    314   3        ELSE
+    315   3        IF FREQ BEGINS "8W" OR FREQ = "EVERY_EIGHT_WEEKS"
+    316   4        THEN DO:
+    317   4          FREQ = "EVERY_EIGHT_WEEKS".
+    318              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    318   4  NO-HIDE.
+    319   4          LEAVE.
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 8   
+
+{} Line Blk
+-- ---- ---
+    320   3        END.
+    321   3        ELSE
+    322   3        IF FREQ BEGINS "M" OR FREQ = "MONTHLY"
+    323   4        THEN DO:
+    324   4          FREQ = "MONTHLY".
+    325              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    325   4  NO-HIDE.
+    326   4          LEAVE.
+    327   3        END.
+    328   3        ELSE
+    329   3        IF FREQ BEGINS "Q" OR FREQ = "QUARTERLY"
+    330   4        THEN DO:
+    331   4          FREQ = "QUARTERLY".
+    332              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    332   4  NO-HIDE.
+    333   4          LEAVE.
+    334   3        END.
+    335   3        ELSE
+    336   3        IF FREQ BEGINS "2XM" OR FREQ = "TWO_TIMES_PER_MONTH"
+    337   4        THEN DO:
+    338   4          FREQ = "TWO_TIMES_PER_MONTH".
+    339              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    339   4  NO-HIDE.
+    340   4          LEAVE.
+    341   3        END.
+    342   3        ELSE
+    343   3        IF FREQ BEGINS "A" OR FREQ = "ANNUAL"
+    344   4        THEN DO:
+    345   4          FREQ = "ANNUAL".
+    346              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    346   4  NO-HIDE.
+    347   4          LEAVE.
+    348   3        END.
+    349   3        ELSE
+    350   3        IF FREQ BEGINS "2XYR" OR FREQ = "TWO_TIMES_PER_YEAR"
+    351   4        THEN DO:
+    352   4          FREQ = "TWO_TIMES_PER_YEAR".
+    353              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    353   4  NO-HIDE.
+    354   4          LEAVE.
+    355   3        END.
+    356   3        ELSE
+    357   3        IF FREQ BEGINS "3XYR" OR FREQ = "THREE_TIMES_PER_YEAR"
+    358   4        THEN DO:
+    359   4          FREQ = "THREE_TIMES_PER_YEAR".
+    360              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    360   4  NO-HIDE.
+    361   4          LEAVE.
+    362   3        END.
+    363   3        ELSE
+    364   3        IF FREQ BEGINS "4XYR" OR FREQ = "FOUR_TIMES_PER_YEAR"
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 9   
+
+{} Line Blk
+-- ---- ---
+    365   4        THEN DO:
+    366   4          FREQ = "FOUR_TIMES_PER_YEAR".
+    367              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    367   4  NO-HIDE.
+    368   4          LEAVE.
+    369   3        END.
+    370   3        ELSE
+    371   3        IF FREQ BEGINS "5XYR" OR FREQ = "FIVE_TIMES_PER_YEAR"
+    372   4        THEN DO:
+    373   4          FREQ = "FIVE_TIMES_PER_YEAR".
+    374              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    374   4  NO-HIDE.
+    375   4          LEAVE.
+    376   3        END.
+    377   3        ELSE
+    378   3        IF FREQ BEGINS "6XYR" OR FREQ = "SIX_TIMES_PER_YEAR"
+    379   4        THEN DO:
+    380   4          FREQ = "SIX_TIMES_PER_YEAR".
+    381              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    381   4  NO-HIDE.
+    382   4          LEAVE.
+    383   3        END.
+    384   3        ELSE
+    385   3        IF FREQ BEGINS "7XYR" OR FREQ = "SEVEN_TIMES_PER_YEAR"
+    386   4        THEN DO:
+    387   4          FREQ = "SEVEN_TIMES_PER_YEAR".
+    388              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    388   4  NO-HIDE.
+    389   4          LEAVE.
+    390   3        END.
+    391   3        ELSE
+    392   3 
+    393   3        IF FREQ BEGINS "8XYR" OR FREQ = "EIGHT_TIMES_PER_YEAR"
+    394   4        THEN DO:
+    395   4          FREQ = "EIGHT_TIMES_PER_YEAR".
+    396              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    396   4  NO-HIDE.
+    397   4          LEAVE.
+    398   3        END.
+    399   3        ELSE
+    400   3        IF FREQ BEGINS "9XYR" OR FREQ = "NINE_TIMES_PER_YEAR"
+    401   4        THEN DO:
+    402   4          FREQ = "NINE_TIMES_PER_YEAR".
+    403              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    403   4  NO-HIDE.
+    404   4          LEAVE.
+    405   3        END.
+    406   3        ELSE
+    407   3        IF FREQ BEGINS "10XYR" OR FREQ = "TEN_TIMES_PER_YEAR"
+    408   4        THEN DO:
+    409   4          FREQ = "TEN_TIMES_PER_YEAR".
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 10  
+
+{} Line Blk
+-- ---- ---
+    410              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    410   4  NO-HIDE.
+    411   4          LEAVE.
+    412   3        END.
+    413   3        ELSE
+    414   3        IF FREQ BEGINS "11XYR" OR FREQ = "ELEVEN_TIMES_PER_YEAR"
+    415   4        THEN DO:
+    416   4          FREQ = "ELEVEN_TIMES_PER_YEAR".
+    417              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    417   4  NO-HIDE.
+    418   4          LEAVE.
+    419   3        END.
+    420   3        ELSE
+    421   3        IF FREQ BEGINS "1X2YR" OR FREQ = "EVERY_TWO_YEARS"
+    422   4        THEN DO:
+    423   4          FREQ = "EVERY_TWO_YEARS".
+    424              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    424   4  NO-HIDE.
+    425   4          LEAVE.
+    426   3        END.
+    427   3        ELSE
+    428   3        IF FREQ BEGINS "1X3YR" OR FREQ = "EVERY_THREE_YEARS"
+    429   4        THEN DO:
+    430   4          FREQ = "EVERY_THREE_YEARS".
+    431              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    431   4  NO-HIDE.
+    432   4          LEAVE.
+    433   3        END.
+    434   3        ELSE
+    435   3        IF FREQ BEGINS "1X4YR" OR FREQ = "EVERY_FOUR_YEARS"
+    436   4        THEN DO:
+    437   4          FREQ = "EVERY_FOUR_YEARS".
+    438              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    438   4  NO-HIDE.
+    439   4          LEAVE.
+    440   3        END.
+    441   3        ELSE
+    442   3        IF FREQ BEGINS "1X5YR" OR FREQ = "EVERY_FIVE_YEARS"
+    443   4        THEN DO:
+    444   4          FREQ = "EVERY_FIVE_YEARS".
+    445              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    445   4  NO-HIDE.
+    446   4          LEAVE.
+    447   3        END.
+    448   3        ELSE
+    449   3        IF FREQ BEGINS "1X18M" OR FREQ = "EVERY_EIGHTEEN_MONTHS"
+    450   4        THEN DO:
+    451   4          FREQ = "EVERY_EIGHTEEN_MONTHS".
+    452              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    452   4  NO-HIDE.
+    453   4          LEAVE.
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 11  
+
+{} Line Blk
+-- ---- ---
+    454   3        END.
+    455   3        ELSE
+    456   3        IF FREQ BEGINS "SPCL" OR FREQ = "SPECIAL_CLEANING"
+    457   4        THEN DO:
+    458   4          FREQ = "SPECIAL_CLEANING".
+    459              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    459   4  NO-HIDE.
+    460   4          LEAVE.
+    461   3        END.
+    462   3        ELSE
+    463   3        IF FREQ BEGINS "OC" OR FREQ = "ON_CALL"
+    464   4        THEN DO:
+    465   4          FREQ = "ON_CALL".
+    466              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    466   4  NO-HIDE.
+    467   4          LEAVE.
+    468   3        END.
+    469   3        ELSE
+    470   3        IF FREQ BEGINS "IC" OR FREQ = "INITIAL_CLEANING"
+    471   4        THEN DO:
+    472   4          FREQ = "INITIAL_CLEANING".
+    473              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    473   4  NO-HIDE.
+    474   4          LEAVE.
+    475   3        END.
+    476   3        ELSE
+    477   3        IF FREQ BEGINS "1X" OR FREQ = "ONE_TIME_CLEANING"
+    478   4        THEN DO:
+    479   4          FREQ = "ONE_TIME_CLEANING".
+    480              DISPLAY FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA
+    480   4  NO-HIDE.
+    481   4          LEAVE.
+    482   3        END.
+    483   3        ELSE MESSAGE color blink-y "INCORRECT FREQUENCY".
+    484   2    END.
+    485   3 if noter then do:
+    486   3    message "".
+    487   3    message color BLINK-Y
+    488     "                           ___N O T E S   E X I S T___            
+    488   3               ".
+    489   2 end.
+    490         IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN UND
+    490   2 O, RETRY.
+    491            UPDATE  START-DT AMT DESC01 DESC02 DESC03 DESC04 DESC05 DESC
+    491   2 06
+    492                    DESC07 DESC08 DESC09 DESC10 SPC-INT DL WHCH-AMT A2-D
+    492   2 ESP
+    493                    AMT2-MUL AMT2 CL-DATE COMMIS SUB-CON WK[1] WK[2] WK[
+    493   2 3] WK[4]
+    494   2                PRO-DESP.SUB# PRO-DESP.ROUTE#
+    495                    WKDAY[1] WKDAY[2] WKDAY[3] WKDAY[4] WKDAY[5] WKDAY[6
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 12  
+
+{} Line Blk
+-- ---- ---
+    495   2 ] WKDAY[7]
+    496                    MTH[1] MTH[2] MTH[3] MTH[4] MTH[5] MTH[6] MTH[7] MTH
+    496   2 [8] MTH[9]
+    497   2                MTH[10] MTH[11] MTH[12] PRO-DESP.PO#
+    498                    WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA NO-HID
+    498   2 E
+    499   3        editing:
+    500   3         readkey.
+    501             if lastkey <> keycode("CTRL-N") and lastkey <> keycode("CTR
+    501   3 L-P") and
+    502              lastkey <> keycode("PAGE-DOWN") and lastkey <> keycode("PA
+    502   3 GE-UP") and
+    503   3          lastkey <> keycode("ALT-C")
+    504   4           then do:
+    505   4             apply lastkey.
+    506   4             if go-pending
+    507   4             then leave.
+    508   4             else next.
+    509   3         end.
+    510   4         if lastkey = keycode("CTRL-N") and not noter then do:
+    511   4                 UPDATE ADDNOTE
+    512                         WITH FRAME A SIDE-LABELS OVERLAY ROW 10 COLUMN 
+    512   4 10.
+    513   5                     IF ADDNOTE THEN DO:
+    514   5                         CREATE NOTES.
+    515   5                      ASSIGN
+    516   5                      NOTES.COMP# = XCOM
+    517   5                      NOTES.DIV# = XDIV
+    518   5                      NOTES.CUST# = XCUST
+    519   5                      NOTES.PROPSL# = XPROP
+    520   5                      NOTES.ITEM# = XITEM.
+    521   5                      update note-line1 note-line2 note-line3
+    522   5                             note-line4 note-line5 note-line6
+    523                                 with frame b overlay side-labels column
+    523   5  20 row 15
+    524   5                             TITLE 'N  O  T  E  S'.
+    525   5                      RELEASE NOTES.
+    526   4                   END.
+    527   3             end.
+    528   4         if lastkey = keycode("CTRL-P") and poser then do:
+    529   4 
+    530   5         repeat:
+    531   5           display
+    532   5             PROPSL.PROPSL# LABEL "PROPOSAL NUMBER"
+    533   5             PROPSL.COMP# LABEL "COMPANY NUMBER"
+    534   5             PROPSL.DIV# LABEL "DIVISION NUMBER" SKIP(1)
+    535   5             PROPSL.CUST# LABEL "CUSTOMER NUMBER "
+    536   5             PROPSL.SUB# PROPSL.ROUTE# SKIP(1)
+    537   5             PROPSL.C-NAME LABEL "CUSTOMER " SPACE(5)
+    538   5             PROPSL.L-NAME LABEL "L-NAME " SKIP(0)
+    539   5             PROPSL.ADDR1 LABEL "ADDRESS 1" SPACE(5)
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 13  
+
+{} Line Blk
+-- ---- ---
+    540   5             PROPSL.LADDR01 LABEL "L-ADDR1" SKIP(0)
+    541   5             PROPSL.ADDR2 LABEL "ADDRESS 2" SPACE(5)
+    542   5             PROPSL.LADDR02 LABEL "L-ADDR2" SKIP(0)
+    543   5             PROPSL.ADDR3 LABEL "ADDRESS 3" SPACE(5)
+    544   5             PROPSL.LADDR03 LABEL "L-ADDR3" SKIP(0)
+    545   5             PROPSL.ADDR4 LABEL "ADDRESS 4" SPACE(5)
+    546   5             PROPSL.L-STATE
+    547   5             PROPSL.L-TELE SKIP(0)
+    548   5             PROPSL.ADDR5 LABEL "ADDRESS 5" SPACE(5)
+    549   5             PROPSL.L-TELE2 LABEL "2ND PHONE OR EXT#" SKIP(0)
+    550   5             PROPSL.STATE LABEL "STATE    " SPACE(5)
+    551   5             PROPSL.ZIP SPACE(8)
+    552   5             PROPSL.L-COMMENTS LABEL "COMMENT" SKIP(0)
+    553   5             PROPSL.TELE LABEL "TELEPHONE" SPACE(16)
+    554   5             PROPSL.TOT-AMT SKIP(0)
+    555   5             PROPSL.FAX-TELE LABEL "FAX PHONE" SPACE(16)
+    556   5             PROPSL.DATE-P LABEL "PROPOSAL DATE" SKIP(0)
+    557   5             PROPSL.EMAIL LABEL "eMAIL ADR" SPACE(5)
+    558   5             PROPSL.CUST-TRF LABEL "CUSTOMER TRANSFERED" SKIP(0)
+    559   5             PROPSL.JANITOR LABEL "JANITORIAL ?" SPACE(24)
+    560   5             PROPSL.ACTIVE LABEL "CUSTOMER STATUS" SKIP(0)
+    561   5             PROPSL.MLABEL LABEL "MAILING LIST ?"
+    562   5                 WITH SIDE-LABELS frame p overlay.
+    563   5             update PROPSL.C-NAME PROPSL.ADDR1 PROPSL.ADDR2
+    564                        PROPSL.ADDR3 PROPSL.ADDR4 PROPSL.ADDR5 PROPSL.ST
+    564   5 ATE
+    565                        PROPSL.ZIP PROPSL.TELE PROPSL.FAX-TELE PROPSL.EM
+    565   5 AIL
+    566   5                    PROPSL.JANITOR PROPSL.MLABEL PROPSL.L-NAME
+    567   5                    PROPSL.LADDR01 PROPSL.LADDR02 PROPSL.LADDR03
+    568   5                    PROPSL.L-STATE PROPSL.L-TELE PROPSL.L-TELE2
+    569   5                    PROPSL.L-COMMENTS PROPSL.TOT-AMT PROPSL.DATE-P
+    570   5                    WITH FRAME P COLOR DISPLAY NORMAL PROMPT W/MA.
+    571   5             assign propsl.
+    572   4             end.
+    573   3             end.
+    574     /******************************************************************
+    574   3 */
+    575   3 {pld-chg.i}
+ 1    1   4 if lastkey = keycode("ALT-C") and frame-field = "cl-date" then do:
+ 1    2   4 def var datechoice as date format "99/99/9999".
+ 1    3   4 clear frame cl-frame all no-pause.
+ 1    4   4 ctr = 0.
+ 1    5   4 form cl-date.notz cl-date.cl-date space(3) cl-date.month# space(3)
+ 1    6   4      cl-date.propsl# space(3) cl-date.item#
+ 1    7   4     with frame cl-frame scroll 1 15 down.
+ 1    8   4 find first cl-date use-index indx05 where
+ 1    9   4            cl-date.comp# = xcom and
+ 1   10   4            cl-date.div# = xdiv and
+ 1   11   4            cl-date.cust# = pro-desp.cust# and
+ 1   12   4            cl-date.propsl# = pro-desp.propsl# and
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 14  
+
+{} Line Blk
+-- ---- ---
+ 1   13   4            cl-date.item# = pro-desp.item# no-error.
+ 1   14   4 if not available cl-date then leave.
+ 1   15   4 ctr = ctr + 1.
+ 1   16   5 repeat counter = 1 to 15:
+ 1   17   5     pause 0.
+ 1   18   5     if cl-date.note-line1 > "" or
+ 1   19   5        cl-date.note-line2 > "" or
+ 1   20   5        cl-date.note-line3 > "" or
+ 1   21   5        cl-date.note-line4 > "" then
+ 1   22   6        do:
+ 1   23   6         update cl-date.notz = "*".
+ 1   24   5        end.
+ 1   25   6        else do:
+ 1   26   6         update cl-date.notz = " ".
+ 1   27   5        end.
+ 1   28   5     if cl-date.cl-date = 01/01/9999 then cl-date.notz = "?".
+ 1   29         display notz cl-date.cl-date cl-date.month# cl-date.propsl# cl-
+ 1   29   5 date.item#
+ 1   30   5         with frame cl-frame.
+ 1   31   5     down with frame cl-frame.
+ 1   32   5     find next cl-date use-index indx05 where
+ 1   33   5               cl-date.comp# = xcom and
+ 1   34   5               cl-date.div# = xdiv and
+ 1   35   5               cl-date.cust# = pro-desp.cust# and
+ 1   36   5               cl-date.propsl# = pro-desp.propsl# and
+ 1   37   5               cl-date.item# = pro-desp.item# no-error.
+ 1   38   5     if not available cl-date then leave.
+ 1   39   5     ctr = ctr + 1.
+ 1   40   4 end.
+ 1   41   4 pause 0.
+ 1   42   4 if ctr < 15
+ 1   43   5     then do:
+ 1   44   5         up ctr with frame cl-frame.
+ 1   45   4     end.
+ 1   46   5     else do:
+ 1   47   5         up ctr - 1 with frame cl-frame.
+ 1   48   4     end.
+ 1   49   4     oddchoice = frame-value.
+ 1   50   4     cl-d = integer(substring(oddchoice,4,2)).
+ 1   51   4     cl-m = integer(substring(oddchoice,1,2)).
+ 1   52   4     cl-y = integer(substring(oddchoice,7,4)).
+ 1   53   4 /*    if cl-y = 0000 then datechoice = today.
+ 1   54   4     if cl-y <> 0000 then datechoice = date(cl-m,cl-d,cl-y).    */
+ 1   55   4     find first cl-date use-index indx05 where
+ 1   56   4                cl-date.comp# = xcom and
+ 1   57   4                cl-date.div# = xdiv and
+ 1   58   4                cl-date.cust# = pro-desp.cust# and
+ 1   59   4                cl-date.propsl# = pro-desp.propsl# and
+ 1   60   4                cl-date.item# = pro-desp.item# no-error.
+ 1   61   4                cl-date.cl-date = datechoice no-error.
+ 1   62   5 repeat:
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 15  
+
+{} Line Blk
+-- ---- ---
+ 1   63   5 status default "use up and down arrows".
+ 1   64     choose row cl-date.cl-date no-error go-on(cursor-right) with frame 
+ 1   64   5 cl-frame.
+ 1   65   5 color display normal cl-date.cl-date with frame cl-frame.
+ 1   66   5 /*
+ 1   67   5 if frame-value = "" then leave.
+ 1   68   5 if frame-value <> oldchoice then do:
+ 1   69   5     oldchoice = frame-value.
+ 1   70   5     find cl-date where cl-date.propsl# = pro-desp.propsl# and
+ 1   71   5                        cl-date.comp# = xcom and
+ 1   72   5                        cl-date.div# = xdiv and
+ 1   73   5                        cl-date.cust# = pro-desp.cust# and
+ 1   74   5                        cl-date.item# = pro-desp.item# no-error.
+ 1   75   5     if not available cl-date then do:
+ 1   76   5         display "shit".
+ 1   77   5         leave.
+ 1   78   5     end.
+ 1   79   5 end.
+ 1   80   5 */
+ 1   81   5 if lastkey = keycode("cursor-down")
+ 1   82   6 then do:
+ 1   83   6     oddchoice = frame-value.
+ 1   84   6     cl-d = integer(substring(oddchoice,4,2)).
+ 1   85   6     cl-m = integer(substring(oddchoice,1,2)).
+ 1   86   6     cl-y = integer(substring(oddchoice,7,4)).
+ 1   87   6     datechoice = date(cl-m,cl-d,cl-y).
+ 1   88   6     find first cl-date use-index indx05 where
+ 1   89   6                cl-date.comp# = xcom and
+ 1   90   6                cl-date.div# = xdiv and
+ 1   91   6                cl-date.cust# = pro-desp.cust# and
+ 1   92   6                cl-date.propsl# = pro-desp.propsl# and
+ 1   93   6                cl-date.item# = pro-desp.item# and
+ 1   94   6                cl-date.cl-date = datechoice no-error.
+ 1   95   6     find next cl-date use-index indx05 where
+ 1   96   6               cl-date.comp# = xcom and
+ 1   97   6               cl-date.div# = xdiv and
+ 1   98   6               cl-date.cust# = pro-desp.cust# and
+ 1   99   6               cl-date.propsl# = pro-desp.propsl# and
+ 1  100   6               cl-date.item# = pro-desp.item# no-error.
+ 1  101   6     if not available cl-date then
+ 1  102   6     find first cl-date use-index indx05 where
+ 1  103   6                cl-date.comp# = xcom and
+ 1  104   6                cl-date.div# = xdiv and
+ 1  105   6                cl-date.cust# = pro-desp.cust# and
+ 1  106   6                cl-date.propsl# = pro-desp.propsl# and
+ 1  107   6                cl-date.item# = pro-desp.item# no-error.
+ 1  108   6     if not available cl-date then leave.
+ 1  109   6     down with frame cl-frame.
+ 1  110   6     pause 0.
+ 1  111   6     if cl-date.note-line1 > "" or
+ 1  112   6        cl-date.note-line2 > "" or
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 16  
+
+{} Line Blk
+-- ---- ---
+ 1  113   6        cl-date.note-line3 > "" or
+ 1  114   6        cl-date.note-line4 > "" then
+ 1  115   7        do:
+ 1  116   7         update cl-date.notz = "*".
+ 1  117   6        end.
+ 1  118   7        else do:
+ 1  119   7         update cl-date.notz = " ".
+ 1  120   6        end.
+ 1  121   6     if cl-date.cl-date = 01/01/9999 then cl-date.notz = "?".
+ 1  122   6     display cl-date.notz    column-label "Notes?"
+ 1  123   6             cl-date.cl-date column-label "Cleaning!Date    "
+ 1  124   6             cl-date.month#  column-label "Month of!Cleaning"
+ 1  125   6             cl-date.propsl# column-label "Proposal!Number  "
+ 1  126   6             cl-date.item#   column-label "Item   !Number "
+ 1  127   6             with frame cl-frame.
+ 1  128   6     next.
+ 1  129   5 end.
+ 1  130   5 if lastkey = keycode("cursor-up")
+ 1  131   6 then do:
+ 1  132   6     oddchoice = frame-value.
+ 1  133   6     cl-d = integer(substring(oddchoice,4,2)).
+ 1  134   6     cl-m = integer(substring(oddchoice,1,2)).
+ 1  135   6     cl-y = integer(substring(oddchoice,7,4)).
+ 1  136   6     datechoice = date(cl-m,cl-d,cl-y).
+ 1  137   6     find first cl-date use-index indx05 where
+ 1  138   6                cl-date.comp# = xcom and
+ 1  139   6                cl-date.div# = xdiv and
+ 1  140   6                cl-date.cust# = pro-desp.cust# and
+ 1  141   6                cl-date.propsl# = pro-desp.propsl# and
+ 1  142   6                cl-date.item# = pro-desp.item# and
+ 1  143   6                cl-date.cl-date = datechoice no-error.
+ 1  144   6     find prev cl-date use-index indx05 where
+ 1  145   6               cl-date.comp# = xcom and
+ 1  146   6               cl-date.div# = xdiv and
+ 1  147   6               cl-date.cust# = pro-desp.cust# and
+ 1  148   6               cl-date.propsl# = pro-desp.propsl# and
+ 1  149   6               cl-date.item# = pro-desp.item# no-error.
+ 1  150   6     if not available cl-date then
+ 1  151   6     find last cl-date use-index indx05 where
+ 1  152   6               cl-date.comp# = xcom and
+ 1  153   6               cl-date.div# = xdiv and
+ 1  154   6               cl-date.cust# = pro-desp.cust# and
+ 1  155   6               cl-date.propsl# = pro-desp.propsl# and
+ 1  156   6               cl-date.item# = pro-desp.item# no-error.
+ 1  157   6     if not available cl-date then leave.
+ 1  158   6     up with frame cl-frame.
+ 1  159   6     pause 0.
+ 1  160   6     if cl-date.note-line1 > "" or
+ 1  161   6        cl-date.note-line2 > "" or
+ 1  162   6        cl-date.note-line3 > "" or
+ 1  163   6        cl-date.note-line4 > "" then
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 17  
+
+{} Line Blk
+-- ---- ---
+ 1  164   7        do:
+ 1  165   7         update cl-date.notz = "*".
+ 1  166   6        end.
+ 1  167   7        else do:
+ 1  168   7         update cl-date.notz = " ".
+ 1  169   6        end.
+ 1  170   6     if cl-date.cl-date = 01/01/9999 then cl-date.notz = "?".
+ 1  171   6     display cl-date.notz cl-date.cl-date cl-date.month#
+ 1  172   6             cl-date.propsl# cl-date.item#
+ 1  173   6         with frame cl-frame.
+ 1  174   6     next.
+ 1  175   5 end.
+ 1  176   5 if lastkey = keycode("ESC") then leave.
+ 1  177   6 if lastkey = keycode("ENTER") then do:
+ 1  178   6     pause 0.
+ 1  179   6     oddchoice = frame-value.
+ 1  180   6     cl-d = integer(substring(oddchoice,4,2)).
+ 1  181   6     cl-m = integer(substring(oddchoice,1,2)).
+ 1  182   6     cl-y = integer(substring(oddchoice,7,4)).
+ 1  183   6     datechoice = date(cl-m,cl-d,cl-y).
+ 1  184   6     find first cl-date use-index indx05 where
+ 1  185   6                cl-date.comp# = xcom and
+ 1  186   6                cl-date.div# = xdiv and
+ 1  187   6                cl-date.cust# = pro-desp.cust# and
+ 1  188   6                cl-date.propsl# = pro-desp.propsl# and
+ 1  189   6                cl-date.item# = pro-desp.item# and
+ 1  190   6                cl-date.cl-date = datechoice no-error.
+ 1  191   6     display cl-date.comp# label "Company"
+ 1  192   6             cl-date.div# label "Division"
+ 1  193   6             cl-date.cust# label "Customer"
+ 1  194   6             cl-date.cl-date label "Clean Date"
+ 1  195   6             cl-date.date-ret label "Date Ret'd"
+ 1  196   6             cl-date.freq label "Frequency"
+ 1  197   6             cl-date.month# label "Month"
+ 1  198   6             cl-date.m-num label "Manager"
+ 1  199   6             cl-date.route# label "Route"
+ 1  200   6             cl-date.sub# label "Sub Route"
+ 1  201   6             cl-date.t-indx label "Ticket Index" skip(2)
+ 1  202   6             cl-date.note-line1 label "Cleaning   "
+ 1  203   6             cl-date.note-line2 label "  Date     "
+ 1  204   6             cl-date.note-line3 label "    Notes  "
+ 1  205   6             cl-date.note-line4 label "           "
+ 1  206   6                 with frame cl-b side-labels.
+ 1  207   6     update cl-date.note-line1
+ 1  208   6            cl-date.note-line2
+ 1  209   6            cl-date.note-line3
+ 1  210   6            cl-date.note-line4
+ 1  211   6            with frame cl-b side-labels
+ 1  212   7            editing:
+ 1  213   7             readkey.
+ 1  214   7             if lastkey = keycode("ESC") then leave.
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 18  
+
+{} Line Blk
+-- ---- ---
+ 1  215   8             if frame-field <> "m-num" then do:
+ 1  216   8                 apply lastkey.
+ 1  217   8                 if go-pending then leave.
+ 1  218   8                 else next.
+ 1  219   7             end.
+ 1  220   6            end.
+ 1  221   6     assign cl-date.
+ 1  222   6     leave.
+ 1  223   6     clear frame cl-frame all no-pause.
+ 1  224   5 end.
+ 1  225   4 end.
+ 1  226   3 end.
+    575   3  
+    576     /******************************************************************
+    576   3 */
+    577   3 
+    578   3 
+    579   4         if lastkey = keycode("CTRL-N") and noter then do:
+    580   4             FIND NOTES WHERE NOTES.COMP# = XCOM AND
+    581   4                              NOTES.DIV# = XDIV AND
+    582   4                              NOTES.CUST# = XCUST AND
+    583   4                              NOTES.PROPSL# = XPROP AND
+    584   4                              NOTES.ITEM# = XITEM NO-ERROR.
+    585                 update notes.note-line1 notes.note-line2 notes.note-lin
+    585   4 e3
+    586                        notes.note-line4 notes.note-line5 notes.note-lin
+    586   4 e6
+    587                        with frame b overlay side-labels column 20 row 1
+    587   4 5.
+    588   3         END.
+    589   4         if lastkey = keycode("PAGE-UP") then do:
+    590             find prev pro-desp where pro-desp.propsl# = propsl.propsl# 
+    590   4 and
+    591   4                                  pro-desp.comp# = propsl.comp# and
+    592   4                                  pro-desp.div# = propsl.div# and
+    593                                      pro-desp.cust# = propsl.cust# no-e
+    593   4 rror.
+    594   5         if not available pro-desp then do:
+    595             find last pro-desp where pro-desp.propsl# = propsl.propsl# 
+    595   5 and
+    596   5                                  pro-desp.comp# = propsl.comp# and
+    597   5                                  pro-desp.div# = propsl.div# and
+    598                                      pro-desp.cust# = propsl.cust# no-e
+    598   5 rror.
+    599   4         end.
+    600   4     DISPLAY
+    601                    PRO-DESP.PROPSL# PRO-DESP.ITEM# PRO-DESP.COMP# PRO-D
+    601   4 ESP.DIV#
+    602   4                START-DT PRO-DESP.CUST# PRO-DESP.FREQ AMT
+    603                    DESC01 DESC02 DESC03 DESC04 DESC05 DESC06 DESC07 DES
+    603   4 C08
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 19  
+
+{} Line Blk
+-- ---- ---
+    604                    DESC09 DESC10 SPC-INTR DL WK[1] WKDAY[1] MTH[1] MTH[
+    604   4 7] WHCH-AMT
+    605                    WK[2] WKDAY[2] MTH[2] MTH[8] A2-DESP WK[3] WKDAY[3] 
+    605   4 MTH[3] MTH[9]
+    606                    AMT2-MUL WK[4] WKDAY[4] MTH[4] MTH[10] AMT2 PRO-DESP
+    606   4 .SUB#
+    607                    WKDAY[5] MTH[5] MTH[11] PRO-DESP.CL-DATE PRO-DESP.RO
+    607   4 UTE#
+    608                    WKDAY[6] MTH[6] MTH[12] COMMIS SUB-CON WKDAY[7] PRO-
+    608   4 DESP.PO#
+    609   4                WITH FRAME X.
+    610   3         end.
+    611   4         if lastkey = keycode("PAGE-DOWN") then do:
+    612             find next pro-desp where pro-desp.propsl# = propsl.propsl# 
+    612   4 and
+    613   4                                  pro-desp.comp# = propsl.comp# and
+    614   4                                  pro-desp.div# = propsl.div# and
+    615                                      pro-desp.cust# = propsl.cust# no-e
+    615   4 rror.
+    616   5         if not available pro-desp then do:
+    617             find first pro-desp where pro-desp.propsl# = propsl.propsl#
+    617   5  and
+    618   5                                   pro-desp.comp# = propsl.comp# and
+    619   5                                   pro-desp.div# = propsl.div# and
+    620                                       pro-desp .cust# = propsl.cust# no
+    620   5 -error.
+    621   4         end.
+    622   4     DISPLAY
+    623                    PRO-DESP.PROPSL# PRO-DESP.ITEM# PRO-DESP.COMP# PRO-D
+    623   4 ESP.DIV#
+    624   4                START-DT PRO-DESP.CUST# PRO-DESP.FREQ AMT
+    625                    DESC01 DESC02 DESC03 DESC04 DESC05 DESC06 DESC07 DES
+    625   4 C08
+    626                    DESC09 DESC10 SPC-INTR DL WK[1] WKDAY[1] MTH[1] MTH[
+    626   4 7] WHCH-AMT
+    627                    WK[2] WKDAY[2] MTH[2] MTH[8] A2-DESP WK[3] WKDAY[3] 
+    627   4 MTH[3] MTH[9]
+    628                    AMT2-MUL WK[4] WKDAY[4] MTH[4] MTH[10] AMT2 PRO-DESP
+    628   4 .SUB#
+    629                    WKDAY[5] MTH[5] MTH[11] PRO-DESP.CL-DATE PRO-DESP.RO
+    629   4 UTE#
+    630                    WKDAY[6] MTH[6] MTH[12] COMMIS SUB-CON WKDAY[7] PRO-
+    630   4 DESP.PO#
+    631   4                WITH FRAME X.
+    632   3         end.
+    633   4 if noter then do:
+    634   4    message "".
+    635   4    message color BLINK-Y
+    636     "                           ___N O T E S   E X I S T___            
+    636   4               ".
+    637   3 end.
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 20  
+
+{} Line Blk
+-- ---- ---
+    638   2        END.
+    639   2        RELEASE PRO-DESP.
+    640   1    END.
+    641     END.
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 21  
+
+     File Name       Line Blk. Type Tran            Blk. Label            
+-------------------- ---- --------- ---- --------------------------------
+d:\psg\pld-chg.p        0 Procedure No                                    
+d:\psg\pld-chg.p       15 Repeat    Yes                                   
+    Buffers: psg.Cl-date
+             psg.NOTES
+             psg.PRO-DESP
+             psg.PROPSL
+    Frames:  cl-frame
+             b
+             A
+             sc
+             cust-frame
+             X
+
+d:\psg\pld-chg.p       23 Do        No                                    
+d:\psg\pld-chg.p       44 Repeat    No                                    
+d:\psg\pld-chg.p       59 Repeat    No                                    
+d:\psg\pld-chg.p       64 Do        No                                    
+d:\psg\pld-chg.p       68 Do        No                                    
+d:\psg\pld-chg.p       84 Do        No                                    
+d:\psg\pld-chg.p      100 Do        No                                    
+d:\psg\pld-chg.p      113 Do        No                                    
+d:\psg\pld-chg.p      126 Do        No                                    
+d:\psg\pld-chg.p      129 Do        No                                    
+d:\psg\pld-chg.p      142 Do        No                                    
+d:\psg\pld-chg.p      145 Do        No                                    
+d:\psg\pld-chg.p      148 Do        No                                    
+d:\psg\pld-chg.p      222 Do        No                                    
+d:\psg\pld-chg.p      224 Do        No                                    
+d:\psg\pld-chg.p      229 Repeat    Yes                                   
+d:\psg\pld-chg.p      231 Do        No                                    
+d:\psg\pld-chg.p      237 Do        No                                    
+d:\psg\pld-chg.p      244 Do        No                                    
+d:\psg\pld-chg.p      251 Do        No                                    
+d:\psg\pld-chg.p      258 Do        No                                    
+d:\psg\pld-chg.p      265 Do        No                                    
+d:\psg\pld-chg.p      272 Do        No                                    
+d:\psg\pld-chg.p      279 Do        No                                    
+d:\psg\pld-chg.p      286 Do        No                                    
+d:\psg\pld-chg.p      293 Do        No                                    
+d:\psg\pld-chg.p      300 Do        No                                    
+d:\psg\pld-chg.p      307 Do        No                                    
+d:\psg\pld-chg.p      314 Do        No                                    
+d:\psg\pld-chg.p      321 Do        No                                    
+d:\psg\pld-chg.p      328 Do        No                                    
+d:\psg\pld-chg.p      335 Do        No                                    
+d:\psg\pld-chg.p      342 Do        No                                    
+d:\psg\pld-chg.p      349 Do        No                                    
+d:\psg\pld-chg.p      356 Do        No                                    
+d:\psg\pld-chg.p      363 Do        No                                    
+d:\psg\pld-chg.p      370 Do        No                                    
+d:\psg\pld-chg.p      377 Do        No                                    
+d:\psg\pld-chg.p                        ???????? 12:09:09  PROGRESS(R) Page 22  
+
+     File Name       Line Blk. Type Tran            Blk. Label            
+-------------------- ---- --------- ---- --------------------------------
+d:\psg\pld-chg.p      384 Do        No                                    
+d:\psg\pld-chg.p      391 Do        No                                    
+d:\psg\pld-chg.p      399 Do        No                                    
+d:\psg\pld-chg.p      406 Do        No                                    
+d:\psg\pld-chg.p      413 Do        No                                    
+d:\psg\pld-chg.p      420 Do        No                                    
+d:\psg\pld-chg.p      427 Do        No                                    
+d:\psg\pld-chg.p      434 Do        No                                    
+d:\psg\pld-chg.p      441 Do        No                                    
+d:\psg\pld-chg.p      448 Do        No                                    
+d:\psg\pld-chg.p      455 Do        No                                    
+d:\psg\pld-chg.p      462 Do        No                                    
+d:\psg\pld-chg.p      469 Do        No                                    
+d:\psg\pld-chg.p      476 Do        No                                    
+d:\psg\pld-chg.p      485 Do        No                                    
+d:\psg\pld-chg.p      491 Editing   No                                    
+d:\psg\pld-chg.p      501 Do        No                                    
+d:\psg\pld-chg.p      510 Do        No                                    
+d:\psg\pld-chg.p      513 Do        No                                    
+d:\psg\pld-chg.p      528 Do        No                                    
+d:\psg\pld-chg.p      530 Repeat    Yes                                   
+    Frames:  p
+
+d:\psg\pld-chg.i        1 Do        No                                    
+d:\psg\pld-chg.i       16 Repeat    Yes                                   
+d:\psg\pld-chg.i       18 Do        No                                    
+d:\psg\pld-chg.i       25 Do        No                                    
+d:\psg\pld-chg.i       42 Do        No                                    
+d:\psg\pld-chg.i       46 Do        No                                    
+d:\psg\pld-chg.i       62 Repeat    Yes                                   
+    Frames:  cl-b
+
+d:\psg\pld-chg.i       81 Do        No                                    
+d:\psg\pld-chg.i      111 Do        No                                    
+d:\psg\pld-chg.i      118 Do        No                                    
+d:\psg\pld-chg.i      130 Do        No                                    
+d:\psg\pld-chg.i      160 Do        No                                    
+d:\psg\pld-chg.i      167 Do        No                                    
+d:\psg\pld-chg.i      177 Do        No                                    
+d:\psg\pld-chg.i      207 Editing   No                                    
+d:\psg\pld-chg.i      215 Do        No                                    
+d:\psg\pld-chg.p      579 Do        No                                    
+d:\psg\pld-chg.p      589 Do        No                                    
+d:\psg\pld-chg.p      594 Do        No                                    
+d:\psg\pld-chg.p      611 Do        No                                    
+d:\psg\pld-chg.p      616 Do        No                                    
+d:\psg\pld-chg.p      633 Do        No                                    
+

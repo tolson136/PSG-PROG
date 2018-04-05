@@ -1,0 +1,677 @@
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+DEFINE VARIABLE DATA AS CHARACTER FORMAT "X(80)".
+DEFINE SHARED VARIABLE PRO# AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE VARIABLE I1 AS INTEGER FORMAT "99".
+DEFINE VARIABLE I2 AS INTEGER FORMAT "99".
+DEFINE VARIABLE I3 AS INTEGER FORMAT "99".
+DEFINE VARIABLE L1 AS INTEGER FORMAT "99".
+DEFINE VARIABLE L2 AS CHAR FORMAT "X".
+DEFINE VARIABLE L3 AS CHAR FORMAT "X".
+DEFINE VARIABLE L4 AS INTEGER FORMAT "99".
+DEFINE VARIABLE H-FREQ AS CHAR FORMAT "X(25)".
+DEFINE VARIABLE H-ITEM AS INTEGER FORMAT "ZZZZ".
+DEFINE VARIABLE HOLD-AMT AS DECIMAL FORMAT "$->>>,>>>,>>>.99".
+DEFINE VARIABLE NOTHING AS CHAR FORMAT "X(70)".
+DEFINE VARIABLE XCTR AS INTEGER FORMAT "9999".
+DEFINE VARIABLE H-MTH LIKE PRO-DESP.MTH.
+DEFINE VARIABLE H-WK LIKE PRO-DESP.WKS.
+DEFINE VARIABLE H-WKDAY LIKE PRO-DESP.WKDAY.
+DEF VAR H-DESC01 AS CHAR FORMAT "X(70)".
+IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
+THEN DO:
+    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
+    RETURN.
+END.
+NOTHING =
+ "                                                                      ".
+INPUT FROM PROP.Q NO-ECHO.
+PAR1: REPEAT ON ERROR UNDO, LEAVE.
+        SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+            IF SUBSTR(DATA,2,1) = ")"
+            THEN DO:
+                H-ITEM = INTEGER(SUBSTR(DATA,1,1)).
+                H-DESC01 = SUBSTR(DATA,3,70).
+                CREATE PRO-DESP.
+                PRO-DESP.COMP# = XCOM.
+                PRO-DESP.DIV# = XDIV.
+                PRO-DESP.PROPSL# = PRO#.
+                PRO-DESP.ITEM# = H-ITEM.
+                PRO-DESP.DESC01 = H-DESC01.
+            END.
+            ELSE
+            IF SUBSTR(DATA,3,1) = ")"
+            THEN DO:
+                H-ITEM = INTEGER(SUBSTR(DATA,1,2)).
+                H-DESC01 = SUBSTR(DATA,4,70).
+                CREATE PRO-DESP.
+                PRO-DESP.COMP# = XCOM.
+                PRO-DESP.DIV# = XDIV.
+                PRO-DESP.PROPSL# = PRO#.
+                PRO-DESP.ITEM# = H-ITEM.
+                PRO-DESP.DESC01 = H-DESC01.
+            END.
+            ELSE NEXT.
+                REPEAT:
+                SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+                REPEAT I1 = 1 TO 70:
+                    IF SUBSTR(DATA,I1,19) = "PRICE PER CLEANING:"
+                    THEN DO:
+                    REPEAT I2 = I1 + 19 TO 80:
+                        IF SUBSTR(DATA,I2,1) = "$"
+                        THEN DO:
+                            REPEAT I3 = I2 + 1 TO 80:
+                                IF SUBSTR(DATA,I3,1) = "." THEN DO:
+                                PRO-DESP.AMT =
+                                DECIMAL(SUBSTR(DATA,I2 + 1,((I3 + 2) - (I2)))).
+                                UPDATE HOLD-AMT = HOLD-AMT + PRO-DESP.AMT.
+                                RELEASE PRO-DESP.
+                                NEXT PAR1.
+                                END.
+                            END.
+                        END.
+                    END.
+                    END.
+                END.
+              IF PRO-DESP.DESC02 = "                         "
+              THEN DO:
+                PRO-DESP.DESC02 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+              ELSE
+              IF PRO-DESP.DESC03 = "                         "
+              THEN DO:
+                PRO-DESP.DESC03 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+              ELSE
+              IF PRO-DESP.DESC04 = "                         "
+              THEN DO:
+                PRO-DESP.DESC04 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+              ELSE
+              IF PRO-DESP.DESC05 = "                         "
+              THEN DO:
+                PRO-DESP.DESC05 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+              ELSE
+              IF PRO-DESP.DESC06 = "                         "
+              THEN DO:
+                PRO-DESP.DESC06 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+              ELSE
+              IF PRO-DESP.DESC07 = "                         "
+              THEN DO:
+                PRO-DESP.DESC07 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+              ELSE
+              IF PRO-DESP.DESC08 = "                         "
+              THEN DO:
+                PRO-DESP.DESC08 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+              ELSE
+              IF PRO-DESP.DESC09 = "                         "
+              THEN DO:
+                PRO-DESP.DESC09 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+              ELSE
+              IF PRO-DESP.DESC10 = "                         "
+              THEN DO:
+                PRO-DESP.DESC10 = SUBSTR(DATA,1,70).
+                NEXT.
+              END.
+          END.
+       END.
+ INPUT CLOSE.
+INPUT FROM PROP.Q NO-ECHO.
+PAR2:   REPEAT ON ERROR UNDO, LEAVE:
+        SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+        IF SUBSTR(DATA,1,6) = "WEEKLY" OR
+           SUBSTR(DATA,1,18) = "TWO_TIMES_PER_WEEK" OR
+           SUBSTR(DATA,1,20) = "THREE_TIMES_PER_WEEK" OR
+           SUBSTR(DATA,1,19) = "FOUR_TIMES_PER_WEEK" OR
+           SUBSTR(DATA,1,19) = "FIVE_TIMES_PER_WEEK" OR
+           SUBSTR(DATA,1,18) = "SIX_TIMES_PER_WEEK" OR
+           SUBSTR(DATA,1,15) = "EVERY_TWO_WEEKS" OR
+           SUBSTR(DATA,1,17) = "EVERY_THREE_WEEKS" OR
+           SUBSTR(DATA,1,16) = "EVERY_FOUR_WEEKS" OR
+           SUBSTR(DATA,1,16) = "EVERY_FIVE_WEEKS" OR
+           SUBSTR(DATA,1,15) = "EVERY_SIX_WEEKS" OR
+           SUBSTR(DATA,1,17) = "EVERY_EIGHT_WEEKS"
+        THEN DO:
+        H-MTH[1] = no.
+        H-MTH[2] = no.
+        H-MTH[3] = no.
+        H-MTH[4] = no.
+        H-MTH[5] = no.
+        H-MTH[6] = no.
+        H-MTH[7] = no.
+        H-MTH[8] = no.
+        H-MTH[9] = no.
+        H-MTH[10] = no.
+        H-MTH[11] = no.
+        H-MTH[12] = no.
+        H-WK[1] = no.
+        H-WK[2] = no.
+        H-WK[3] = no.
+        H-WK[4] = no.
+        h-wk[5] = no.
+        H-WKDAY[1] = no.
+        H-WKDAY[2] = no.
+        H-WKDAY[3] = no.
+        H-WKDAY[4] = no.
+        H-WKDAY[5] = no.
+        H-WKDAY[6] = no.
+        H-WKDAY[7] = no.
+           REPEAT I1 = 7 TO 80:
+               IF SUBSTR(DATA,I1,3) = "MON" THEN H-WKDAY[3] = yes.
+               IF SUBSTR(DATA,I1,3) = "TUE" THEN H-WKDAY[4] = yes.
+               IF SUBSTR(DATA,I1,3) = "WED" THEN H-WKDAY[5] = yes.
+               IF SUBSTR(DATA,I1,3) = "THU" THEN H-WKDAY[6] = yes.
+               IF SUBSTR(DATA,I1,3) = "FRI" THEN H-WKDAY[7] = yes.
+               IF SUBSTR(DATA,I1,3) = "SAT" THEN H-WKDAY[1] = yes.
+               IF SUBSTR(DATA,I1,3) = "SUN" THEN H-WKDAY[2] = yes.
+           END.
+        END.
+        IF SUBSTR(DATA,1,5) = "DAILY"
+        THEN DO:
+           H-FREQ = "DAILY".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,6) = "WEEKLY"
+        THEN DO:
+           H-FREQ = "WEEKLY".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,18) = "TWO_TIMES_PER_WEEK"
+        THEN DO:
+           H-FREQ = "TWO_TIMES_PER_WEEK".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,20) = "THREE_TIMES_PER_WEEK"
+        THEN DO:
+           H-FREQ = "THREE_TIMES_PER_WEEK".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,19) = "FOUR_TIMES_PER_WEEK"
+        THEN DO:
+           H-FREQ = "FOUR_TIMES_PER_WEEK".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,19) = "FIVE_TIMES_PER_WEEK"
+        THEN DO:
+           H-FREQ = "FIVE_TIMES_PER_WEEK".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,18) = "SIX_TIMES_PER_WEEK"
+        THEN DO:
+           H-FREQ = "SIX_TIMES_PER_WEEK".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,15) = "EVERY_TWO_WEEKS"
+        THEN DO:
+           H-FREQ = "EVERY_TWO_WEEKS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,17) = "EVERY_THREE_WEEKS"
+        THEN DO:
+           H-FREQ = "EVERY_THREE_WEEKS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,16) = "EVERY_FOUR_WEEKS"
+        THEN DO:
+           H-FREQ = "EVERY_FOUR_WEEKS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,16) = "EVERY_FIVE_WEEKS"
+        THEN DO:
+           H-FREQ = "EVERY_FIVE_WEEKS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,15) = "EVERY_SIX_WEEKS"
+        THEN DO:
+           H-FREQ = "EVERY_SIX_WEEKS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,17) = "EVERY_EIGHT_WEEKS"
+        THEN DO:
+           H-FREQ = "EVERY_EIGHT_WEEKS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,7) = "MONTHLY"
+        THEN DO:
+        H-MTH[1] = no.
+        H-MTH[2] = no.
+        H-MTH[3] = no.
+        H-MTH[4] = no.
+        H-MTH[5] = no.
+        H-MTH[6] = no.
+        H-MTH[7] = no.
+        H-MTH[8] = no.
+        H-MTH[9] = no.
+        H-MTH[10] = no.
+        H-MTH[11] = no.
+        H-MTH[12] = no.
+        H-WK[1] = no.
+        H-WK[2] = no.
+        H-WK[3] = no.
+        H-WK[4] = no.
+        h-wk[5] = no.
+        H-WKDAY[1] = no.
+        H-WKDAY[2] = no.
+        H-WKDAY[3] = no.
+        H-WKDAY[4] = no.
+        H-WKDAY[5] = no.
+        H-WKDAY[6] = no.
+        H-WKDAY[7] = no.
+           REPEAT I1 = 8 TO 80:
+               IF SUBSTR(DATA,I1,3) = "MON" THEN H-WKDAY[3] = yes.
+               IF SUBSTR(DATA,I1,3) = "TUE" THEN H-WKDAY[4] = yes.
+               IF SUBSTR(DATA,I1,3) = "WED" THEN H-WKDAY[5] = yes.
+               IF SUBSTR(DATA,I1,3) = "THU" THEN H-WKDAY[6] = yes.
+               IF SUBSTR(DATA,I1,3) = "FRI" THEN H-WKDAY[7] = yes.
+               IF SUBSTR(DATA,I1,3) = "SAT" THEN H-WKDAY[1] = yes.
+               IF SUBSTR(DATA,I1,3) = "SUN" THEN H-WKDAY[2] = yes.
+               IF SUBSTR(DATA,I1,5) = "FIRST" THEN H-WK[1] = yes.
+               IF SUBSTR(DATA,I1,6) = "SECOND" THEN H-WK[2] = yes.
+               IF SUBSTR(DATA,I1,5) = "THIRD" THEN H-WK[3] = yes.
+               IF SUBSTR(DATA,I1,6) = "FOURTH" THEN H-WK[4] = yes.
+               if substr(data,I1,5) = "FIFTH" then h-wk[5] = yes.
+           END.
+        END.
+        IF SUBSTR(DATA,1,7) = "MONTHLY"
+        THEN DO:
+           H-FREQ = "MONTHLY".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,19) = "TWO_TIMES_PER_MONTH"
+        THEN DO:
+        H-MTH[1] = no.
+        H-MTH[2] = no.
+        H-MTH[3] = no.
+        H-MTH[4] = no.
+        H-MTH[5] = no.
+        H-MTH[6] = no.
+        H-MTH[7] = no.
+        H-MTH[8] = no.
+        H-MTH[9] = no.
+        H-MTH[10] = no.
+        H-MTH[11] = no.
+        H-MTH[12] = no.
+        H-WK[1] = no.
+        H-WK[2] = no.
+        H-WK[3] = no.
+        H-WK[4] = no.
+        h-wk[5] = no.
+        H-WKDAY[1] = no.
+        H-WKDAY[2] = no.
+        H-WKDAY[3] = no.
+        H-WKDAY[4] = no.
+        H-WKDAY[5] = no.
+        H-WKDAY[6] = no.
+        H-WKDAY[7] = no.
+           REPEAT I1 = 20 TO 80:
+               IF SUBSTR(DATA,I1,3) = "MON" THEN H-WKDAY[3] = yes.
+               IF SUBSTR(DATA,I1,3) = "TUE" THEN H-WKDAY[4] = yes.
+               IF SUBSTR(DATA,I1,3) = "WED" THEN H-WKDAY[5] = yes.
+               IF SUBSTR(DATA,I1,3) = "THU" THEN H-WKDAY[6] = yes.
+               IF SUBSTR(DATA,I1,3) = "FRI" THEN H-WKDAY[7] = yes.
+               IF SUBSTR(DATA,I1,3) = "SAT" THEN H-WKDAY[1] = yes.
+               IF SUBSTR(DATA,I1,3) = "SUN" THEN H-WKDAY[2] = yes.
+               IF SUBSTR(DATA,I1,5) = "FIRST" THEN H-WK[1] = yes.
+               IF SUBSTR(DATA,I1,6) = "SECOND" THEN H-WK[2] = yes.
+               IF SUBSTR(DATA,I1,5) = "THIRD" THEN H-WK[3] = yes.
+               IF SUBSTR(DATA,I1,6) = "FOURTH" THEN H-WK[4] = yes.
+               if substr(data,I1,5) = "FIFTH" then h-wk[5] = yes.
+           END.
+        END.
+        IF SUBSTR(DATA,1,19) = "TWO_TIMES_PER_MONTH"
+        THEN DO:
+           H-FREQ = "TWO_TIMES_PER_MONTH".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,9) = "QUARTERLY" OR
+           SUBSTR(DATA,1,6) = "ANNUAL" OR
+           SUBSTR(DATA,1,18) = "TWO_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,20) = "THREE_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,19) = "FOUR_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,19) = "FIVE_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,18) = "SIX_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,20) = "SEVEN_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,20) = "EIGHT_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,19) = "NINE_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,18) = "TEN_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,21) = "ELEVEN_TIMES_PER_YEAR" OR
+           SUBSTR(DATA,1,15) = "EVERY_TWO_YEARS" OR
+           SUBSTR(DATA,1,17) = "EVERY_THREE_YEARS" OR
+           SUBSTR(DATA,1,16) = "EVERY_FOUR_YEARS" OR
+           SUBSTR(DATA,1,16) = "EVERY_FIVE_YEARS" OR
+           SUBSTR(DATA,1,21) = "EVERY_EIGHTEEN_MONTHS"
+        THEN DO:
+        H-MTH[1] = no.
+        H-MTH[2] = no.
+        H-MTH[3] = no.
+        H-MTH[4] = no.
+        H-MTH[5] = no.
+        H-MTH[6] = no.
+        H-MTH[7] = no.
+        H-MTH[8] = no.
+        H-MTH[9] = no.
+        H-MTH[10] = no.
+        H-MTH[11] = no.
+        H-MTH[12] = no.
+        H-WK[1] = no.
+        H-WK[2] = no.
+        H-WK[3] = no.
+        H-WK[4] = no.
+        h-wk[5] = no.
+        H-WKDAY[1] = no.
+        H-WKDAY[2] = no.
+        H-WKDAY[3] = no.
+        H-WKDAY[4] = no.
+        H-WKDAY[5] = no.
+        H-WKDAY[6] = no.
+        H-WKDAY[7] = no.
+           REPEAT I1 = 7 TO 80:
+               IF SUBSTR(DATA,I1,3) = "JAN" THEN H-MTH[1] = yes.
+               IF SUBSTR(DATA,I1,3) = "FEB" THEN H-MTH[2] = yes.
+               IF SUBSTR(DATA,I1,3) = "MAR" THEN H-MTH[3] = yes.
+               IF SUBSTR(DATA,I1,3) = "APR" THEN H-MTH[4] = yes.
+               IF SUBSTR(DATA,I1,3) = "MAY" THEN H-MTH[5] = yes.
+               IF SUBSTR(DATA,I1,3) = "JUN" THEN H-MTH[6] = yes.
+               IF SUBSTR(DATA,I1,3) = "JUL" THEN H-MTH[7] = yes.
+               IF SUBSTR(DATA,I1,3) = "AUG" THEN H-MTH[8] = yes.
+               IF SUBSTR(DATA,I1,3) = "SEP" THEN H-MTH[9] = yes.
+               IF SUBSTR(DATA,I1,3) = "OCT" THEN H-MTH[10] = yes.
+               IF SUBSTR(DATA,I1,3) = "NOV" THEN H-MTH[11] = yes.
+               IF SUBSTR(DATA,I1,3) = "DEC" THEN H-MTH[12] = yes.
+           END.
+        END.
+        IF SUBSTR(DATA,1,9) = "QUARTERLY"
+        THEN DO:
+           H-FREQ = "QUARTERLY".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,6) = "ANNUAL"
+        THEN DO:
+           H-FREQ = "ANNUAL".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,18) = "TWO_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "TWO_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,20) = "THREE_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "THREE_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,19) = "FOUR_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "FOUR_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,19) = "FIVE_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "FIVE_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,18) = "SIX_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "SIX_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,20) = "SEVEN_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "SEVEN_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,20) = "EIGHT_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "EIGHT_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,19) = "NINE_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "NINE_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,18) = "TEN_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "TEN_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,21) = "ELEVEN_TIMES_PER_YEAR"
+        THEN DO:
+           H-FREQ = "ELEVEN_TIMES_PER_YEAR".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,15) = "EVERY_TWO_YEARS"
+        THEN DO:
+           H-FREQ = "EVERY_TWO_YEARS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,17) = "EVERY_THREE_YEARS"
+        THEN DO:
+           H-FREQ = "EVERY_THREE_YEARS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,16) = "EVERY_FOUR_YEARS"
+        THEN DO:
+           H-FREQ = "EVERY_FOUR_YEARS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,16) = "EVERY_FIVE_YEARS"
+        THEN DO:
+           H-FREQ = "EVERY_FIVE_YEARS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,21) = "EVERY_EIGHTEEN_MONTHS"
+        THEN DO:
+           H-FREQ = "EVERY_EIGHTEEN_MONTHS".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,16) = "SPECIAL_CLEANING"
+        THEN DO:
+        H-MTH[1] = no.
+        H-MTH[2] = no.
+        H-MTH[3] = no.
+        H-MTH[4] = no.
+        H-MTH[5] = no.
+        H-MTH[6] = no.
+        H-MTH[7] = no.
+        H-MTH[8] = no.
+        H-MTH[9] = no.
+        H-MTH[10] = no.
+        H-MTH[11] = no.
+        H-MTH[12] = no.
+        H-WK[1] = no.
+        H-WK[2] = no.
+        H-WK[3] = no.
+        H-WK[4] = no.
+        h-wk[5] = no.
+        H-WKDAY[1] = no.
+        H-WKDAY[2] = no.
+        H-WKDAY[3] = no.
+        H-WKDAY[4] = no.
+        H-WKDAY[5] = no.
+        H-WKDAY[6] = no.
+        H-WKDAY[7] = no.
+           H-FREQ = "SPECIAL_CLEANING".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,7) = "ON_CALL"
+        THEN DO:
+        H-MTH[1] = no.
+        H-MTH[2] = no.
+        H-MTH[3] = no.
+        H-MTH[4] = no.
+        H-MTH[5] = no.
+        H-MTH[6] = no.
+        H-MTH[7] = no.
+        H-MTH[8] = no.
+        H-MTH[9] = no.
+        H-MTH[10] = no.
+        H-MTH[11] = no.
+        H-MTH[12] = no.
+        H-WK[1] = no.
+        H-WK[2] = no.
+        H-WK[3] = no.
+        H-WK[4] = no.
+        h-wk[5] = no.
+        H-WKDAY[1] = no.
+        H-WKDAY[2] = no.
+        H-WKDAY[3] = no.
+        H-WKDAY[4] = no.
+        H-WKDAY[5] = no.
+        H-WKDAY[6] = no.
+        H-WKDAY[7] = no.
+           H-FREQ = "ON_CALL".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,16) = "INITIAL_CLEANING"
+        THEN DO:
+        H-MTH[1] = no.
+        H-MTH[2] = no.
+        H-MTH[3] = no.
+        H-MTH[4] = no.
+        H-MTH[5] = no.
+        H-MTH[6] = no.
+        H-MTH[7] = no.
+        H-MTH[8] = no.
+        H-MTH[9] = no.
+        H-MTH[10] = no.
+        H-MTH[11] = no.
+        H-MTH[12] = no.
+        H-WK[1] = no.
+        H-WK[2] = no.
+        H-WK[3] = no.
+        H-WK[4] = no.
+        h-wk[5] = no.
+        H-WKDAY[1] = no.
+        H-WKDAY[2] = no.
+        H-WKDAY[3] = no.
+        H-WKDAY[4] = no.
+        H-WKDAY[5] = no.
+        H-WKDAY[6] = no.
+        H-WKDAY[7] = no.
+           H-FREQ = "INITIAL_CLEANING".
+           NEXT PAR2.
+        END.
+        IF SUBSTR(DATA,1,17) = "ONE_TIME_CLEANING"
+        THEN DO:
+        H-MTH[1] = no.
+        H-MTH[2] = no.
+        H-MTH[3] = no.
+        H-MTH[4] = no.
+        H-MTH[5] = no.
+        H-MTH[6] = no.
+        H-MTH[7] = no.
+        H-MTH[8] = no.
+        H-MTH[9] = no.
+        H-MTH[10] = no.
+        H-MTH[11] = no.
+        H-MTH[12] = no.
+        H-WK[1] = no.
+        H-WK[2] = no.
+        H-WK[3] = no.
+        H-WK[4] = no.
+        h-wk[5] = no.
+        H-WKDAY[1] = no.
+        H-WKDAY[2] = no.
+        H-WKDAY[3] = no.
+        H-WKDAY[4] = no.
+        H-WKDAY[5] = no.
+        H-WKDAY[6] = no.
+        H-WKDAY[7] = no.
+           H-FREQ = "ONE_TIME_CLEANING".
+           NEXT PAR2.
+        END.
+            IF SUBSTR(DATA,2,1) = ")"
+            THEN DO:
+                H-ITEM = INTEGER(SUBSTR(DATA,1,1)).
+                FIND FIRST PRO-DESP WHERE PRO-DESP.COMP# = XCOM AND
+                                    PRO-DESP.DIV# = XDIV AND
+                                    PRO-DESP.PROPSL# = PRO# AND
+                                    PRO-DESP.ITEM# = H-ITEM NO-ERROR.
+                IF NOT AVAILABLE PRO-DESP THEN LEAVE.
+                PRO-DESP.MTH[1] = H-MTH[1].
+                PRO-DESP.MTH[2] = H-MTH[2].
+                PRO-DESP.MTH[3] = H-MTH[3].
+                PRO-DESP.MTH[4] = H-MTH[4].
+                PRO-DESP.MTH[5] = H-MTH[5].
+                PRO-DESP.MTH[6] = H-MTH[6].
+                PRO-DESP.MTH[7] = H-MTH[7].
+                PRO-DESP.MTH[8] = H-MTH[8].
+                PRO-DESP.MTH[9] = H-MTH[9].
+                PRO-DESP.MTH[10] = H-MTH[10].
+                PRO-DESP.MTH[11] = H-MTH[11].
+                PRO-DESP.MTH[12] = H-MTH[12].
+                PRO-DESP.WKS[1] = H-WK[1].
+                PRO-DESP.WKS[2] = H-WK[2].
+                PRO-DESP.WKS[3] = H-WK[3].
+                PRO-DESP.WKS[4] = H-WK[4].
+                pro-desp.wks[5] = h-wk[5].
+                PRO-DESP.WKDAY[1] = H-WKDAY[1].
+                PRO-DESP.WKDAY[2] = H-WKDAY[2].
+                PRO-DESP.WKDAY[3] = H-WKDAY[3].
+                PRO-DESP.WKDAY[4] = H-WKDAY[4].
+                PRO-DESP.WKDAY[5] = H-WKDAY[5].
+                PRO-DESP.WKDAY[6] = H-WKDAY[6].
+                PRO-DESP.WKDAY[7] = H-WKDAY[7].
+                PRO-DESP.FREQ = H-FREQ.
+                RELEASE PRO-DESP.
+                NEXT PAR2.
+            END.
+            IF SUBSTR(DATA,3,1) = ")"
+            THEN DO:
+                H-ITEM = INTEGER(SUBSTR(DATA,1,2)).
+                FIND FIRST PRO-DESP WHERE PRO-DESP.COMP# = XCOM AND
+                                    PRO-DESP.DIV# = XDIV AND
+                                    PRO-DESP.PROPSL# = PRO# AND
+                                    PRO-DESP.ITEM# = H-ITEM NO-ERROR.
+                IF NOT AVAILABLE PRO-DESP THEN LEAVE.
+                PRO-DESP.MTH[1] = H-MTH[1].
+                PRO-DESP.MTH[2] = H-MTH[2].
+                PRO-DESP.MTH[3] = H-MTH[3].
+                PRO-DESP.MTH[4] = H-MTH[4].
+                PRO-DESP.MTH[5] = H-MTH[5].
+                PRO-DESP.MTH[6] = H-MTH[6].
+                PRO-DESP.MTH[7] = H-MTH[7].
+                PRO-DESP.MTH[8] = H-MTH[8].
+                PRO-DESP.MTH[9] = H-MTH[9].
+                PRO-DESP.MTH[10] = H-MTH[10].
+                PRO-DESP.MTH[11] = H-MTH[11].
+                PRO-DESP.MTH[12] = H-MTH[12].
+                PRO-DESP.WKS[1] = H-WK[1].
+                PRO-DESP.WKS[2] = H-WK[2].
+                PRO-DESP.WKS[3] = H-WK[3].
+                PRO-DESP.WKS[4] = H-WK[4].
+                pro-desp.wks[5] = h-wk[5].
+                PRO-DESP.WKDAY[1] = H-WKDAY[1].
+                PRO-DESP.WKDAY[2] = H-WKDAY[2].
+                PRO-DESP.WKDAY[3] = H-WKDAY[3].
+                PRO-DESP.WKDAY[4] = H-WKDAY[4].
+                PRO-DESP.WKDAY[5] = H-WKDAY[5].
+                PRO-DESP.WKDAY[6] = H-WKDAY[6].
+                PRO-DESP.WKDAY[7] = H-WKDAY[7].
+                PRO-DESP.FREQ = H-FREQ.
+                RELEASE PRO-DESP.
+                NEXT PAR2.
+            END.
+END.
+INPUT CLOSE.
+FIND FIRST PROPSL WHERE PROPSL.PROPSL# = PRO# AND
+                  PROPSL.COMP# = XCOM AND
+                  PROPSL.DIV# = XDIV.
+UPDATE PROPSL.TOT-AMT = HOLD-AMT.
+UPDATE PROPSL.CUST-TRF = no.
+UPDATE PROPSL.ACTIVE = "A".
+RELEASE PROPSL.

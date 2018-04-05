@@ -1,0 +1,14 @@
+def var xprop as int format "ZZZZZZZZZZ".
+repeat:
+prompt-for propsl.propsl#.
+xprop = input propsl.propsl# + 900000.
+for each propsl where
+    propsl.comp# = 9 and propsl.div# = 1 and propsl.propsl# = xprop.
+delete propsl.
+end.
+for each pro-desp where pro-desp.comp# = 9 and
+			pro-desp.div# = 1 and
+			pro-desp.propsl# = xprop.
+delete pro-desp.
+end.
+end.

@@ -1,0 +1,8 @@
+DO FOR PERMISSIONS:
+    FIND PERMISSIONS "" NO-LOCK.
+    IF NOT CAN-DO(CAN-RUN)
+    THEN DO:
+	MESSAGE "You are not authorized to run this procedure.".
+	RETURN.
+    END.
+END.

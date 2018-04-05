@@ -1,0 +1,28 @@
+def var xbody as char.
+def var xsubj as char.
+def var xmail as char format "x(50)".
+DEFINE VARIABLE objOutlook AS COM-HANDLE NO-UNDO.
+DEFINE VARIABLE objOutlookMsg AS COM-HANDLE NO-UNDO.
+DEFINE VARIABLE objOutlookAttach AS COM-HANDLE NO-UNDO.
+DEFINE VARIABLE objOutlookRecip AS COM-HANDLE NO-UNDO.
+
+
+
+update xbody xsubj xmail.
+
+CREATE "Outlook.Application" objOutlook.
+
+objoutlookMsg = objOutlook:CreateItem(0).
+objOutlookRecip = objOutlookMsg:Recipients:Add(xmail).
+objOutlookRecip:Type = 1.
+objOutlookMsg:Subject = xsubj.
+objOutlookMsg:Body = xbody.
+
+objOutlookMsg:Attachments:Add("c:\recovery.txt").
+objOutlookRecip:Resolve.
+objOutlookMsg:Send.
+objoutlook:Quit().
+
+RELEASE OBJECT objOutlook.
+RELEASE OBJECT objOutlookMsg.
+RELEASE OBJECT objOutlookRecip.

@@ -1,0 +1,2 @@
+for each tranfile where comp# = 8.
+delete tranfile.

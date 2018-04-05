@@ -1,0 +1,9 @@
+def var ctr1 as int.
+def var ctr8 as int.
+def var ctr9 as int.
+for each ar-desp.
+if comp# = 1 then ctr1 = ctr1 + 1.
+if comp# = 8 then ctr8 = ctr8 + 1.
+if comp# = 9 then ctr9 = ctr9 + 1.
+end.
+display ctr1 ctr8 ctr9.

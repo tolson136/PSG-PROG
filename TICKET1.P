@@ -1,0 +1,3 @@
+for each ticket where comp# = 1 and div# = 1 and
+propsl# = 14565 and cust# = 3197.
+update ticket.

@@ -1,0 +1,10 @@
+def var keep as logical label "Delete invoice".
+
+for each invoice where comp# = 1 AND DIV# = 1 AND I-TYPE = "n" by cust#.
+keep = no.
+display invoice.
+update keep.
+if keep then do:
+    delete invoice.
+end.
+end.

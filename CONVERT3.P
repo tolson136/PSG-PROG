@@ -1,0 +1,12 @@
+def var ctr as integer.
+for each ticket where ticket.comp# = 1 and date-prt < 01/01/2003.
+find first propsl where propsl.comp# =   ticket.comp# and
+			propsl.div# =    ticket.div# and
+			propsl.cust# =   ticket.cust# and
+			propsl.propsl# = ticket.propsl# no-error.
+if not available propsl then do:
+/*    display ticket. */
+    ctr = ctr + 1.
+end.
+end.
+display ctr.

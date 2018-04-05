@@ -1,0 +1,11 @@
+for each pro-desp where pro-desp.route# = 0 and pro-desp.comp# = 1 and
+			pro-desp.div# = 1.
+find first acct-rcv where acct-rcv.comp# = pro-desp.comp# and
+			  acct-rcv.div# = pro-desp.div# and
+			  acct-rcv.cust# = pro-desp.cust#.
+acct-rcv.fuel_sur = yes.
+acct-rcv.fuel% = .03.
+pause 0.
+display acct-rcv.cust# acct-rcv.comp# acct-rcv.div# fuel_sur fuel%
+	pro-desp.route#.
+end.

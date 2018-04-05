@@ -1,0 +1,8 @@
+for each acct-rcv where acct-rcv.comp# = 9 by c-name.
+display acct-rcv.cust# acct-rcv.c-name c-status skip(1) with no-box no-label.
+for each propsl where propsl.comp# = acct-rcv.comp# and
+		      propsl.div# = acct-rcv.div# and
+		      propsl.cust# = acct-rcv.cust#.
+display space(20) propsl.propsl# with no-box no-label.
+end.
+end.

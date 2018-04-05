@@ -1,0 +1,8 @@
+for each propsl where propsl.comp# = 7.
+find first acct-rcv where acct-rcv.comp# = propsl.comp# and
+			  acct-rcv.div# = propsl.div# and
+			  acct-rcv.cust# = propsl.cust# no-error.
+if not available acct-rcv then do:
+display propsl.cust# propsl.propsl#.
+			  end.
+			  end.

@@ -1,0 +1,41 @@
+def var xcomp# like ar-desp.comp#.
+def var xcust# like ar-desp.cust#.
+def var xdesc01 like ar-desp.desc01.
+def var xdiv# like ar-desp.div#.
+def var xitem# like ar-desp.item#.
+def var xpropsl# like ar-desp.propsl#.
+def var xroute# like ar-desp.route#.
+def var xsub# like ar-desp.sub#.
+find first ar-desp.
+update xcomp# = 8.
+update xcust# = ar-desp.cust#.
+update xdesc01 = ar-desp.desc01.
+update xdiv# = ar-desp.div#.
+update xitem# = ar-desp.item#.
+update xpropsl# = ar-desp.propsl# + 800000.
+update xroute# = ar-desp.route#.
+update xsub# = ar-desp.sub#.
+create ar-desp.
+update ar-desp.comp# = xcomp#.
+update ar-desp.cust# = xcust#.
+update ar-desp.desc01 = xdesc01.
+update ar-desp.div# = xdiv#.
+update ar-desp.item# = xitem#.
+update ar-desp.propsl# = xpropsl#.
+update ar-desp.route# = xroute#.
+update ar-desp.sub# = xsub#.
+release ar-desp.
+repeat:
+find next ar-desp.
+if ar-desp.comp# = 8 then quit.
+create ar-desp.
+update ar-desp.comp# = xcomp#.
+update ar-desp.cust# = xcust#.
+update ar-desp.desc01 = xdesc01.
+update ar-desp.div# = xdiv#.
+update ar-desp.item# = xitem#.
+update ar-desp.propsl# = xpropsl#.
+update ar-desp.route# = xroute#.
+update ar-desp.sub# = xsub#.
+release ar-desp.
+end.

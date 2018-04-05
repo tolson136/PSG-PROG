@@ -1,0 +1,6 @@
+for each ticket where comp# = 1 and div# = 1 and
+cust# = 1033
+and propsl = 610
+and month# = 10.
+display ticket.
+update t-stat tot-amt-rem.

@@ -1,0 +1,13 @@
+def var ctr as integer.
+def var cnt as integer.
+define var ent-pro as decimal format "zzzzzzzzzz".
+update ent-pro.
+for each propsl where comp# = 2 and propsl# = ent-pro.
+ctr = ctr + 1.
+delete propsl.
+end.
+for each pro-desp where comp# = 2 and propsl# = ent-pro.
+cnt = cnt + 1.
+delete pro-desp.
+end.
+display ctr cnt.

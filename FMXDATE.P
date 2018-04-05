@@ -1,0 +1,16 @@
+def var dredid as decimal format '>>>>>>>>'.
+def var crecid as recid.
+dredid = 5484300.
+label1:
+repeat on error undo label1, next label1:
+dredid = dredid + 1.
+crecid = integer(dredid).
+find ticket where recid(ticket) = crecid no-error.
+pause 0.
+display dredid with frame x.
+if available ticket then do:
+    pause 0.
+    display ticket.
+    display crecid.
+end.
+end.

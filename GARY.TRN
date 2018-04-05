@@ -1,0 +1,44 @@
+05/27/93 13:05:40       PROGRESS Data Dictionary Report                 Page   0
+Database: psg                                                         (PROGRESS)
+Filename: TRANFILE
+          CONTAINS A/R TRANSACTIONS.
+
+Flags Index Name                       Seq Field Name
+----- -------------------------------- --- ----------------------------------
+      COMP#                              1 + COMP#
+      CUST#                              1 + CUST#
+      DIV#                               1 + DIV#
+p     INDX0                              1 + COMP#
+                                         2 + DIV#
+                                         3 + CUST#
+      INDX1                              1 + COMP#
+                                         2 + DIV#
+                                         3 + REC#
+      INDX2                              1 + COMP#
+                                         2 + DIV#
+                                         3 + CUST#
+                                         4 + TR-STAT
+      INDX3                              1 + COMP#
+                                         2 + DIV#
+                                         3 + CUST#
+                                         4 + REC#
+      INDX4                              1 + COMP#
+                                         2 + DIV#
+                                         3 + CUST#
+                                         4 + TR-STAT
+                                         5 + REC#
+      INDX5                              1 + COMP#
+                                         2 + DIV#
+                                         3 + CUST#
+                                         4 + T-DATE
+                                         5 + T-TYPE
+                                         6 + INV-NO
+                                         7 + SUB-CON
+      INV-NO                             1 + INV-NO
+      REC#                               1 + REC#
+      T-DATE                             1 + COMP#
+                                         2 + DIV#
+                                         3 + CUST#
+                                         4 + T-DATE
+          Flags: <p>rimary index, <u>nique, <a>bbreviated, <i>nactive
+                 + means ascending, - means descending

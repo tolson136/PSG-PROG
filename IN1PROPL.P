@@ -1,0 +1,523 @@
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+DEFINE VARIABLE DATA AS CHARACTER FORMAT "X(80)".
+DEFINE NEW SHARED VARIABLE PRO# AS DECIMAL FORMAT "ZZZZZZZZZZ".
+DEFINE VARIABLE I1 AS INTEGER FORMAT "99".
+DEFINE VARIABLE I2 AS INTEGER FORMAT "99".
+DEFINE VARIABLE I3 AS INTEGER FORMAT "99".
+DEFINE VARIABLE LOC AS CHAR FORMAT "X".
+DEFINE VARIABLE P-DAY AS INTEGER FORMAT "99".
+DEFINE VARIABLE P-MONTH AS INTEGER FORMAT "99".
+DEFINE VARIABLE P-YEAR AS INTEGER FORMAT "9999".
+DEFINE VARIABLE AORB AS CHARACTER LABEL "DRIVE A or B ? ".
+IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
+THEN DO:
+    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
+    RETURN.
+END.
+    UPDATE AORB WITH ROW FRAME-ROW + 5 + FRAME-LINE + 5 COLUMN 17
+       SIDE-LABELS OVERLAY FRAME X
+       COLOR DISPLAY WHITE/RED PROMPT RED/WHITE.
+IF AORB BEGINS "A" THEN DOS QUOTER A:PROP.ASC > PROP.Q.
+IF AORB BEGINS "B" THEN DOS QUOTER B:PROP.ASC > PROP.Q.
+FIND FIRST SYSCONTROL EXCLUSIVE-LOCK.
+PRO# = SYSCONTROL.NEXT-PRO + 1.
+SYSCONTROL.NEXT-PRO = PRO#.
+MESSAGE COLOR BLINK "CREATING PROPOSAL NUMBER " PRO#.
+MESSAGE COLOR BLINK "AFTER RECORDING THIS PROPOSAL NUMBER PRESS SPACE BAR".
+PAUSE.
+INPUT FROM PROP.Q NO-ECHO.
+REPEAT:
+LOC = "N".
+       REPEAT:
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  IF SUBSTR(DATA,1,25) <> "                   "
+	  THEN LEAVE.
+       END.
+	  CREATE PROPSL.
+	  PROPSL.PROPSL# = PRO#.
+	  PROPSL.COMP# = XCOM.
+	  PROPSL.DIV# = XDIV.
+	  PROPSL.C-NAME = SUBSTR(DATA,1,25).
+	  REPEAT I1 = 26 TO 80:
+	      IF SUBSTR(DATA,I1,7) = "JANUARY"
+	      THEN DO:
+		  P-MONTH = 1.
+		  IF SUBSTR(DATA,I1 + 10,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 8,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 12,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 9,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 8,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 11,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,8) = "FEBRUARY"
+	      THEN DO:
+		  P-MONTH = 2.
+		  IF SUBSTR(DATA,I1 + 11,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 9,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 13,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 10,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 9,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 12,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,5) = "MARCH"
+	      THEN DO:
+		  P-MONTH = 3.
+		  IF SUBSTR(DATA,I1 + 8,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 6,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 10,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 7,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 6,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 9,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,5) = "APRIL"
+	      THEN DO:
+		  P-MONTH = 4.
+		  IF SUBSTR(DATA,I1 + 8,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 6,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 10,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 7,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 6,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 9,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,3) = "MAY"
+	      THEN DO:
+		  P-MONTH = 5.
+		  IF SUBSTR(DATA,I1 + 6,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 4,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 8,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 5,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 4,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 7,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,4) = "JUNE"
+	      THEN DO:
+		  P-MONTH = 6.
+		  IF SUBSTR(DATA,I1 + 7,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 5,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 9,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 6,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 5,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 8,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,4) = "JULY"
+	      THEN DO:
+		  P-MONTH = 7.
+		  IF SUBSTR(DATA,I1 + 7,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 5,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 9,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 6,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 5,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 8,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,6) = "AUGUST"
+	      THEN DO:
+		  P-MONTH = 8.
+		  IF SUBSTR(DATA,I1 + 9,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 7,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 11,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 8,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 7,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 10,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,9) = "SEPTEMBER"
+	      THEN DO:
+		  P-MONTH = 9.
+		  IF SUBSTR(DATA,I1 + 12,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 10,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 14,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 11,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 10,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 13,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,7) = "OCTOBER"
+	      THEN DO:
+		  P-MONTH = 10.
+		  IF SUBSTR(DATA,I1 + 10,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 8,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 12,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 9,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 8,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 11,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,8) = "NOVEMBER"
+	      THEN DO:
+		  P-MONTH = 11.
+		  IF SUBSTR(DATA,I1 + 11,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 9,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 13,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 10,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 9,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 12,4)).
+		  END.
+		  LEAVE.
+	      END.
+	      IF SUBSTR(DATA,I1,8) = "DECEMBER"
+	      THEN DO:
+		  P-MONTH = 12.
+		  IF SUBSTR(DATA,I1 + 11,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 9,2)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 13,4)).
+		  END.
+		  IF SUBSTR(DATA,I1 + 10,1) = ","
+		  THEN DO:
+		      P-DAY = INTEGER(SUBSTR(DATA,I1 + 9,1)).
+		      P-YEAR = INTEGER(SUBSTR(DATA,I1 + 12,4)).
+		  END.
+		  LEAVE.
+	      END.
+	  END.
+	  DATE-P = DATE(P-MONTH,P-DAY,P-YEAR).
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  PROPSL.ADDR1 = SUBSTR(DATA,1,25).
+	  PROPSL.TELE = SUBSTR(DATA,I1,3) + SUBSTR(DATA,I1 + 4,3) +
+				SUBSTR(DATA,I1 + 8,4).
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  REPEAT I2 = 1 TO 30:
+	      IF SUBSTR(DATA,I2,4) = " IL " OR
+		 SUBSTR(DATA,I2,4) = " IN " OR
+		 SUBSTR(DATA,I2,4) = " WI "
+	      THEN DO:
+		 PROPSL.ADDR2 = SUBSTR(DATA,1,I2 - 1).
+		 PROPSL.STATE = SUBSTR(DATA,I2 + 1,2).
+		 REPEAT I3 = I2 + 4 TO 30:
+		 IF SUBSTR(DATA,I3,1) <> " "
+		 THEN DO:
+		    PROPSL.ZIP = SUBSTR(DATA,I3,5) + SUBSTR(DATA,I3 + 6,4).
+		    LEAVE.
+		 END.
+		 END.
+	      END.
+	      ELSE DO:
+		 PROPSL.ADDR2 = SUBSTR(DATA,1,25).
+	      END.
+	  END.
+	  IF SUBSTR(DATA,I1,3) <> "   "
+	  THEN
+	  PROPSL.TELE = SUBSTR(DATA,I1,3) + SUBSTR(DATA,I1 + 4,3) +
+				SUBSTR(DATA,I1 + 8,4).
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  IF SUBSTR(DATA,1,9) = "LOCATION:"
+	  THEN DO:
+	      LOC = "Y".
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     PROPSL.L-NAME = SUBSTR(DATA,I2,25).
+		     PROPSL.L-TELE = SUBSTR(DATA,I1,3) +
+				     SUBSTR(DATA,I1 + 4,3) +
+				     SUBSTR(DATA,I1 + 8,4).
+		     LEAVE.
+		  END.
+	      END.
+	  END.
+	  ELSE DO:
+	  REPEAT I2 = 1 TO 30:
+	      IF SUBSTR(DATA,I2,4) = " IL " OR
+		 SUBSTR(DATA,I2,4) = " IN " OR
+		 SUBSTR(DATA,I2,4) = " WI "
+	      THEN DO:
+		 PROPSL.ADDR3 = SUBSTR(DATA,1,I2 - 1).
+		 PROPSL.STATE = SUBSTR(DATA,I2 + 1,2).
+		 REPEAT I3 = I2 + 4 TO 30:
+		 IF SUBSTR(DATA,I3,1) <> " "
+		 THEN DO:
+		    PROPSL.ZIP = SUBSTR(DATA,I3,5) + SUBSTR(DATA,I3 + 6,4).
+		    LEAVE.
+		 END.
+		 END.
+	      END.
+	      ELSE DO:
+		  IF PROPSL.ADDR3 = "                         " THEN
+		     PROPSL.ADDR3 = SUBSTR(DATA,1,25).
+	      END.
+	    END.
+	  END.
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  IF LOC = "Y"
+	  THEN DO:
+	      IF SUBSTR(DATA,10,20) = "                    "
+	      THEN DO:
+		  LEAVE.
+	      END.
+	      ELSE DO:
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     PROPSL.LADDR01 = SUBSTR(DATA,I2,25).
+		     LEAVE.
+		  END.
+	      END.
+	      END.
+	  END.
+	  ELSE DO:
+	  IF SUBSTR(DATA,1,9) = "LOCATION:"
+	  THEN DO:
+	      LOC = "Y".
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     PROPSL.L-NAME = SUBSTR(DATA,I2,25).
+		     PROPSL.L-TELE = SUBSTR(DATA,I1,3) +
+				     SUBSTR(DATA,I1 + 4,3) +
+				     SUBSTR(DATA,I1 + 8,4).
+		     LEAVE.
+		  END.
+	      END.
+	  END.
+	  ELSE DO:
+	  REPEAT I2 = 1 TO 30:
+	      IF SUBSTR(DATA,I2,4) = " IL " OR
+		 SUBSTR(DATA,I2,4) = " IN " OR
+		 SUBSTR(DATA,I2,4) = " WI "
+	      THEN DO:
+		 PROPSL.ADDR4 = SUBSTR(DATA,1,I2 - 1).
+		 PROPSL.STATE = SUBSTR(DATA,I2 + 1,2).
+		 REPEAT I3 = I2 + 4 TO 30:
+		 IF SUBSTR(DATA,I3,1) <> " "
+		 THEN DO:
+		    PROPSL.ZIP = SUBSTR(DATA,I3,5) + SUBSTR(DATA,I3 + 6,4).
+		    LEAVE.
+		 END.
+		 END.
+	      END.
+	      ELSE DO:
+		  IF PROPSL.ADDR4 = "                        " THEN
+		     PROPSL.ADDR4 = SUBSTR(DATA,1,25).
+	      END.
+	    END.
+	  END.
+	END.
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  IF LOC = "Y"
+	  THEN DO:
+	      IF SUBSTR(DATA,10,20) = "                    "
+	      THEN DO:
+		  LEAVE.
+	      END.
+	      ELSE DO:
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     IF PROPSL.LADDR01 = "                         "
+		     THEN DO:
+		     PROPSL.LADDR01 = SUBSTR(DATA,I2,25).
+		     END.
+		     ELSE DO:
+		     PROPSL.LADDR02 = SUBSTR(DATA,I2,25).
+		     END.
+		     LEAVE.
+		  END.
+	      END.
+	      END.
+	  END.
+	  ELSE DO:
+	  IF SUBSTR(DATA,1,9) = "LOCATION:"
+	  THEN DO:
+	      LOC = "Y".
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     PROPSL.L-NAME = SUBSTR(DATA,I2,25).
+		     PROPSL.L-TELE = SUBSTR(DATA,I1,3) +
+				     SUBSTR(DATA,I1 + 4,3) +
+				     SUBSTR(DATA,I1 + 8,4).
+		     LEAVE.
+		  END.
+	      END.
+	  END.
+	END.
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  IF LOC = "Y"
+	  THEN DO:
+	      IF SUBSTR(DATA,10,20) = "                    "
+	      THEN DO:
+		  LEAVE.
+	      END.
+	      ELSE DO:
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     IF PROPSL.LADDR01 = "                         "
+		     THEN DO:
+		     PROPSL.LADDR01 = SUBSTR(DATA,I2,25).
+		     END.
+		     ELSE DO:
+		     IF PROPSL.LADDR02 = "                         "
+		     THEN DO:
+		      PROPSL.LADDR02 = SUBSTR(DATA,I2,25).
+		     END.
+		     ELSE DO:
+		      PROPSL.LADDR03 = SUBSTR(DATA,I2,25).
+		     END.
+		     END.
+		     LEAVE.
+		  END.
+	      END.
+	      END.
+	  END.
+	  ELSE DO:
+	  IF SUBSTR(DATA,1,9) = "LOCATION:"
+	  THEN DO:
+	      LOC = "Y".
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     PROPSL.L-NAME = SUBSTR(DATA,I2,25).
+		     PROPSL.L-TELE = SUBSTR(DATA,I1,3) +
+				     SUBSTR(DATA,I1 + 4,3) +
+				     SUBSTR(DATA,I1 + 8,4).
+		     LEAVE.
+		  END.
+	      END.
+	  END.
+	END.
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  IF LOC = "Y"
+	  THEN DO:
+	      IF SUBSTR(DATA,10,20) = "                    "
+	      THEN DO:
+		  LEAVE.
+	      END.
+	      ELSE DO:
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     IF PROPSL.LADDR01 = "                         "
+		     THEN DO:
+		     PROPSL.LADDR01 = SUBSTR(DATA,I2,25).
+		     END.
+		     ELSE DO:
+		     IF PROPSL.LADDR02 = "                         "
+		     THEN DO:
+		      PROPSL.LADDR02 = SUBSTR(DATA,I2,25).
+		     END.
+		     ELSE DO:
+		      PROPSL.LADDR03 = SUBSTR(DATA,I2,25).
+		     END.
+		     END.
+		     LEAVE.
+		  END.
+	      END.
+	      END.
+	  END.
+	  ELSE DO:
+	  IF SUBSTR(DATA,1,9) = "LOCATION:"
+	  THEN DO:
+	      LOC = "Y".
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     PROPSL.L-NAME = SUBSTR(DATA,I2,25).
+		     PROPSL.L-TELE = SUBSTR(DATA,I1,3) +
+				     SUBSTR(DATA,I1 + 4,3) +
+				     SUBSTR(DATA,I1 + 8,4).
+		     LEAVE.
+		  END.
+	      END.
+	  END.
+	END.
+	  SET DATA WITH NO-BOX NO-LABELS NO-ATTR-SPACE WIDTH 80.
+	  IF LOC = "Y"
+	  THEN DO:
+	      IF SUBSTR(DATA,10,20) = "                    "
+	      THEN DO:
+		  LEAVE.
+	      END.
+	      ELSE DO:
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     IF PROPSL.LADDR01 = "                         "
+		     THEN DO:
+		     PROPSL.LADDR01 = SUBSTR(DATA,I2,25).
+		     END.
+		     ELSE DO:
+		     IF PROPSL.LADDR02 = "                         "
+		     THEN DO:
+		      PROPSL.LADDR02 = SUBSTR(DATA,I2,25).
+		     END.
+		     ELSE DO:
+		      PROPSL.LADDR03 = SUBSTR(DATA,I2,25).
+		     END.
+		     END.
+		     LEAVE.
+		  END.
+	      END.
+	      END.
+	  END.
+	  ELSE DO:
+	  IF SUBSTR(DATA,1,9) = "LOCATION:"
+	  THEN DO:
+	      LOC = "Y".
+	      REPEAT I2 = 10 TO 30:
+		  IF SUBSTR(DATA,I2,1) <> " "
+		  THEN DO:
+		     PROPSL.L-NAME = SUBSTR(DATA,I2,25).
+		     PROPSL.L-TELE = SUBSTR(DATA,I1,3) +
+				     SUBSTR(DATA,I1 + 4,3) +
+				     SUBSTR(DATA,I1 + 8,4).
+		     LEAVE.
+		  END.
+	      END.
+	  END.
+	END.
+	  LEAVE.
+END.
+INPUT CLOSE.
+	  RUN IN2PROPL.P.
+	  LEAVE.

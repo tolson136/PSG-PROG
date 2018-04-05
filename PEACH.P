@@ -1,0 +1,7 @@
+FOR EACH PRO-DESP.
+IF SUB# = 1 THEN AC# = "400".
+IF SUB# = 2 THEN AC# = "402".
+IF SUB# = 3 THEN AC# = "414".
+IF SUB# = 0 AND ROUTE# = 0 THEN AC# = "415".
+IF SUB# = 0 AND ROUTE# > 0 THEN AC# = "413".
+IF DIV# = 5 THEN AC# = "412".

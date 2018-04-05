@@ -1,0 +1,4 @@
+DEF VAR filename AS CHAR NO-UNDO initial "c:\users\glc\desktop\gary\r-os-del.txt".
+
+   
+     OS-DELETE VALUE(filename).

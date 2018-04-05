@@ -1,0 +1,48 @@
+ADD TABLE "BigSearch"
+  AREA "Schema Area"
+  DUMP-NAME "bigsearch"
+
+ADD FIELD "PROPSL#" OF "BigSearch" AS decimal 
+  FORMAT "ZZZZZZZZZZ"
+  INITIAL "0"
+  POSITION 2
+  MAX-WIDTH 15
+  DECIMALS 0
+  ORDER 400
+  MANDATORY
+
+ADD FIELD "Val" OF "BigSearch" AS character 
+  FORMAT "x(40)"
+  INITIAL ""
+  LABEL "Value"
+  POSITION 3
+  MAX-WIDTH 80
+  ORDER 410
+
+ADD FIELD "Fld" OF "BigSearch" AS character 
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Field"
+  POSITION 4
+  MAX-WIDTH 24
+  ORDER 420
+
+ADD INDEX "ValueIndex" ON "BigSearch" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "Val" ASCENDING 
+
+ADD INDEX "PropslIndex" ON "BigSearch" 
+  AREA "Schema Area"
+  INDEX-FIELD "PROPSL#" ASCENDING 
+
+ADD INDEX "ValueWordIndex" ON "BigSearch" 
+  AREA "Schema Area"
+  WORD
+  INDEX-FIELD "Val" ASCENDING 
+
+.
+PSC
+cpstream=ISO8859-1
+.
+0000000829
