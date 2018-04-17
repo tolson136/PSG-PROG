@@ -1,12 +1,20 @@
+/*******************************************************************/
+/* tkmain.p                                                        */
+/*                                                                 */
+/* Monthly Ticket Main Menu                                        */
+/*                                                                 */
+/*  04/17/2018   TO    Changed header                              */
+/*******************************************************************/
+
 DEFINE VARIABLE SELECTION AS CHAR FORMAT "X".
 DEFINE SHARED VARIABLE XPROG AS LOGICAL.
 REPEAT:
     FORM
-                "                        OLD TYME SOLUTIONS             "
+                "                        Program One              (tkmain.p)"
 SKIP(0)
-    "A.) GENERATE MONTHLY TICKETS       M.) GENERATE ROLLING VOLUME LIST"
+    "A.) GENERATE MONTHLY TICKETS       M.) GENERATE ROLLING VOLUME"
 SKIP(0)
-    "B.) ENTER RETURNED TICKETS         N.) ROLLING VOLUME LIST by SUB & ROUTE"
+    "B.) ENTER RETURNED TICKETS         N.) ROLLING VOLUME by SUB & ROUTE"
 SKIP(0)
     "C.) ADD SINGLE TICKET              O.) GENERATE DIRECT LABOR LIST"
 SKIP(0)
@@ -18,9 +26,9 @@ SKIP(0)
 SKIP(0)
     "G.) REPRINT TICKET                 S.) OUTSTANDING D/L TICKET REPORT"
 SKIP(0)
-    "H.) OUTSTANDING TICKET REPORT      T.) OUTSTANDING D/L by LOC REPORT"
+    "H.) OUTSTANDING TICKET REPORT"
 SKIP(0)
-    "I.) GENERATE PAYROLL INFO RPT      U.) OUTSTANDING D/L by SUB & ROUTE"
+    "I.) GENERATE PAYROLL INFO RPT"
 SKIP(0)
     "J.) DELETE TICKET HISTORY          V.) Upcoming Proposal Expiration"
 SKIP(0)
@@ -34,7 +42,7 @@ SKIP(2)
         WITH CENTERED TITLE
         "M O N T H L Y   T I C K E T   M A I N   M E N U   S C R E E N".
     UPDATE  SPACE(7) SELECTION AUTO-RETURN
-        WITH SIDE-LABELS.
+        WITH SIDE-LABELS WIDTH 80.
     HIDE.
         IF SELECTION = "A" THEN RUN TK-CRE.P.
    ELSE IF SELECTION = "B" AND NOT XPROG THEN RUN TK-RET.P.
@@ -59,8 +67,6 @@ SKIP(2)
    ELSE IF SELECTION = "R" AND NOT XPROG THEN RUN TK-LAST.P.
    ELSE IF SELECTION = "R" AND XPROG THEN RUN TK-LASTP.P.
    ELSE IF SELECTION = "S" THEN RUN TK-DLOUT.P.
-   ELSE IF SELECTION = "T" THEN RUN TK-DLLOC.P.
-   ELSE IF SELECTION = "U" THEN RUN TK-DLSUB.P.
    ELSE IF SELECTION = "V" THEN RUN PropslExp.w.
    ELSE IF SELECTION = "W" AND XPROG THEN RUN TK-METRP.P.
    ELSE IF SELECTION = "Y" THEN RUN TK-COMP.P.
