@@ -1,8 +1,16 @@
+/*******************************************************************/
+/* tkwain.p                                                        */
+/*                                                                 */
+/* Weekly Ticket Main Menu                                         */
+/*                                                                 */
+/*  04/17/2018   TO    Changed header                              */
+/*******************************************************************/
+
 DEFINE VARIABLE SELECTION AS CHAR FORMAT "X".
 DEFINE SHARED VARIABLE XPROG AS LOGICAL.
 REPEAT:
     FORM
-                "                        OLD TYME SOLUTIONS             "
+                "                        Program One              (tkwain.p)"
 SKIP(0)
     "A.) GENERATE WEEKLY TICKETS"
 SKIP(0)
