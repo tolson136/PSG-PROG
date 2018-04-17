@@ -1,0 +1,127 @@
+/*************************************************/
+/* tk-dlout.p                                    */
+/*                                               */
+/* Outstanding D/L report                        */
+/*                                               */
+/*  04/04/2018   TO    General clean up          */
+/*                                               */
+/*                                               */
+/*************************************************/ 
+
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
+
+DEFINE VARIABLE TestMode AS LOGICAL INIT Yes.
+/*DEFINE VAR BDATE AS DATE FORMAT "99/99/9999".
+DEFINE VAR EDATE AS DATE FORMAT "99/99/9999".
+*/
+DEFINE VARIABLE ProcessMonth AS INT FORMAT "z9".
+DEFINE VAR NMO AS INTEGER FORMAT "ZZ".
+DEFINE VAR BudgetTotal AS DECIMAL FORMAT "$->>>,>>>,>>>.99".
+DEFINE VAR RemDLTotal  AS DECIMAL FORMAT "$->>>,>>>,>>>.99".
+DEFINE VAR WkBalTotal  AS DECIMAL FORMAT "$->>>,>>>,>>>.99".
+DEFINE VAR AmtRemTotal AS DECIMAL FORMAT "$->>>,>>>,>>>.99".
+DEF VAR BIRD-SONG AS LOGICAL
+  LABEL "INCLUDE WEEKLY BALANCE AND TOTAL AMOUNT REMAINING ?".
+
+IF (USERID = "LANDMARK") OR (USERID = "GARCIA")
+THEN DO:
+    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
+    RETURN.
+END.
+
+DISPLAY SPACE(9)
+   "O U T S T A N D I N G   D/L   T I C K E T   R E P O R T (tk-dlout.p)"
+   SKIP(2) WITH FRAME C NO-BOX SIDE-LABELS.
+
+UPDATE ProcessMonth LABEL "Month?"
+ WITH FRAME C NO-BOX SIDE-LABELS.
+IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN LEAVE.
+ 
+/*
+UPDATE BDATE LABEL "ENTER STARTING DATE RANGE"
+    WITH FRAME C NO-BOX SIDE-LABELS.
+IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN LEAVE.
+
+UPDATE EDATE LABEL "ENTER ENDING DATE RANGE  "
+    WITH FRAME C NO-BOX SIDE-LABELS.
+IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN LEAVE.
+
+UPDATE SKIP(1) NMO LABEL "ENTER ANY MONTH YOU WISH TO EXCLUDE"
+   WITH FRAME C NO-BOX SIDE-LABELS.
+IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN LEAVE.
+
+UPDATE SKIP(1) BIRD-SONG WITH FRAME C NO-BOX SIDE-LABELS.
+*/
+IF NOT TestMode THEN OUTPUT TO PRINTER.
+ELSE OUTPUT TO "c:\psg-work\tk-dlout.txt".
+
+FOR EACH TICKET WHERE  
+   TICKET.COMP#   = XCOM AND
+   TICKET.DIV#    = XDIV AND
+   (T-STAT = "I" OR T-STAT = "Z" OR
+   T-STAT  = "P" OR T-STAT = "Y") AND
+   /*(DATE-PRT >= BDATE AND DATE-PRT <= EDATE) AND*/
+   TICKET.MONTH# = ProcessMonth
+       NO-LOCK
+       BY TICKET.CUST#
+       BY TICKET.PROPSL#
+       BY TICKET.ITEM#
+       BY TICKET.MONTH#
+       BY TICKET.T-INDX:
+   FORM HEADER TODAY FORMAT "99/99/9999"
+        "OUTSTANDING D/L TICKET REPORT" AT 26 SKIP(1)
+        "COMPANY" AT 20 
+        TICKET.COMP# 
+        "DIVISION" AT 50 
+        TICKET.DIV# SKIP(1)
+        "Month: " ProcessMonth
+	 /*"FROM:" AT 20 
+	 BDATE "TO:" AT 40 
+	 EDATE SKIP(1)*/.
+   FIND FIRST ACCT-RCV WHERE 
+     ACCT-RCV.COMP#    = TICKET.COMP# AND
+     ACCT-RCV.DIV#     = TICKET.DIV# AND
+     ACCT-RCV.CUST#    = TICKET.CUST# AND
+     ACCT-RCV.C-STATUS <> "I"
+     NO-LOCK NO-ERROR.
+   IF NOT AVAILABLE ACCT-RCV THEN NEXT.
+   FIND FIRST PROPSL WHERE 
+     PROPSL.COMP#   = TICKET.COMP# AND
+     PROPSL.DIV#    = TICKET.DIV# AND
+     PROPSL.CUST#   = TICKET.CUST# AND
+     PROPSL.PROPSL# = TICKET.PROPSL# 
+     NO-LOCK NO-ERROR.
+
+   DISPLAY SKIP(0) 
+           ACCT-RCV.C-NAME 
+           PROPSL.L-NAME 
+           TICKET.FREQ
+	    SKIP(0) 
+	    TICKET.CUST# 
+	    TICKET.PROPSL# 
+	    TICKET.ITEM# 
+	    TICKET.MONTH#
+	    TICKET.T-INDX SPACE(10) 
+	    TICKET.DATE-PRT 
+	    TICKET.T-STAT SKIP(0)
+	    TICKET.DL-BUD SPACE(5) 
+	    TICKET.DL-BAL SPACE(5).
+   ASSIGN BudgetTotal = BudgetTotal + TICKET.DL-BUD
+          RemDLTotal  = RemDLTotal + TICKET.DL-BAL.
+   IF BIRD-SONG THEN DO:
+      ASSIGN WkBalTotal = WkBalTotal + TICKET.WK-BAL
+             AmtRemTotal = AmtRemTotal + TICKET.TOT-AMT-REM.
+      DISPLAY TICKET.WK-BAL SPACE(4) TICKET.TOT-AMT-REM SKIP(0).
+   END.
+END. /* FOR EACH Ticket */
+
+DISPLAY SKIP(2) 
+        BudgetTotal SPACE(5) 
+        RemDLTotal SPACE(5) 
+        WkBalTotal SPACE(4) 
+        AmtRemTotal SKIP(0)
+	 "          T  O  T  A  L  S" 
+	 with frame b no-labels.
+	 
+OUTPUT CLOSE.	 
