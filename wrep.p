@@ -1,37 +1,42 @@
-/* wrep.p */
-
-/* Weekly Ticket Reprint */
-
+/**************************************************/
+/* wrep.p                                         */
+/*                                                */
+/* Weekly Ticket Reprint                          */
+/*                                                */
 /*  4/10/2017    TO   Added StartDate and EndDate */
 /*  1/30/2018    TO   Added Laser Print           */
-
+/*  4/17/2018    TO   Add test mode               */
+/*                    Remove Start/End Date       */
+/*                    Clean up                    */
+/*                                                */
 /**************************************************/
 
-DEF SHARED VAR XPROG AS LOGICAL.
-DEF SHARED VAR XCOM AS INTEGER FORMAT "ZZ".
-DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
-DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
-DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
-DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+DEFINE SHARED VARIABLE XPROG    AS LOGICAL.
+DEFINE SHARED VARIABLE XCOM     AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV     AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XCOM-N   AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XDIV-N   AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XOPR     AS CHAR FORMAT "XXX".
 
-DEFINE NEW SHARED VARIABLE BEG# AS INTEGER FORMAT "ZZ"
+DEFINE NEW SHARED VARIABLE    TestMode AS LOGICAL INIT No.
+DEFINE NEW SHARED VARIABLE    BEG# AS INTEGER FORMAT "ZZ"
   LABEL "MONTH".
-DEFINE NEW SHARED VARIABLE F-CUST AS DECIMAL FORMAT "ZZZZZZZZZZ"
+DEFINE NEW SHARED VARIABLE    F-CUST AS DECIMAL FORMAT "ZZZZZZZZZZ"
     LABEL "CUST #".
-DEFINE NEW SHARED VARIABLE F-PROP AS DECIMAL FORMAT "ZZZZZZZZZZ"
+DEFINE NEW SHARED VARIABLE    F-PROP AS DECIMAL FORMAT "ZZZZZZZZZZ"
     LABEL "PROP #".
-DEFINE NEW SHARED VARIABLE F-ITEM AS INTEGER FORMAT "ZZZZ"
+DEFINE NEW SHARED VARIABLE    F-ITEM AS INTEGER FORMAT "ZZZZ"
     LABEL "ITEM #".
-DEFINE NEW SHARED VARIABLE F-INDX AS INTEGER FORMAT "ZZ"
+DEFINE NEW SHARED VARIABLE    F-INDX AS INTEGER FORMAT "ZZ"
     LABEL "TICK INDEX".
-def new shared var f-wk as int format "Z" label "WEEK #".
-DEFINE NEW SHARED VAR F-NUM AS CHAR FORMAT "X(4)".
-DEFINE NEW SHARED VAR F-MAN AS INTEGER FORMAT "ZZZ".
-DEF NEW SHARED VAR F-DATE AS DATE FORMAT "99/99/9999".
-DEF NEW SHARED VAR LaserPrinter AS LOG INIT No.
-DEF NEW SHARED VAR NumTickets AS INT INIT 2. 
+DEFINE NEW SHARED VARIABLE    f-wk as int format "Z" label "WEEK #".
+DEFINE NEW SHARED VARIABLE    F-NUM AS CHAR FORMAT "X(4)".
+DEFINE NEW SHARED VARIABLE    F-MAN AS INTEGER FORMAT "ZZZ".
+DEFINE NEW SHARED VARIABLE    F-DATE AS DATE FORMAT "99/99/9999".
+DEFINE NEW SHARED VARIABLE    LaserPrinter AS LOG INIT No.
+DEFINE NEW SHARED VARIABLE    NumTickets AS INT INIT 2. 
 
-DEF VAR dlog as logical.
+DEFINE VARIABLE dlog AS LOGICAL.
 
 IF (USERID = "LANDMARK") OR (USERID = "GARCIA")
 THEN DO:
@@ -41,7 +46,7 @@ END.
 
 REPEAT:
    DISPLAY SPACE(6)
-   "W E E K L Y   R E P R I N T   T I C K E T   I N P U T   S C R E E N"
+   "W E E K L Y   R E P R I N T   T I C K E T   I N P U T   S C R E E N (wrep.p)"
     SKIP(0)
     XCOM-N LABEL "CO" XDIV-N LABEL "DV" XOPR LABEL "OPER"
      SKIP(1) WITH FRAME X NO-BOX SIDE-LABELS.
@@ -75,19 +80,7 @@ REPEAT:
          BELL.
          UNDO, RETRY.
       END.
-  /**************    
-	  IF YEAR(propsl.,StartDate GE YEAR(TODAY)
-	     MONTH(propsl.EndDate) LT BEG# OR
-	     MONTH(propsl.StartDate) GT Beg# 
-		 THEN DO:
-		    BELL.
-            HIDE MESSAGE.
-            MESSAGE COLOR BLINK "Proposal is not active - check start/end date".
-            BELL.
-            UNDO, RETRY.
-	  END.	 
-	 dlog = debugger:SET-BREAK().
-*************************/	 
+ 
 	 IF PROPSL.JANITOR THEN RUN TK-REPJ.P.
      IF NOT PROPSL.JANITOR THEN RUN WREPR.P.
    END. /* IF NOT xprog */

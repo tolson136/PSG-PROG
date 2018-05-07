@@ -1,11 +1,19 @@
-/*  wrepr.p */
+/**************************************************/
+/* wrepr.p                                        */
+/*                                                */
+/* Weekly Ticket Reprint                          */
+/*                                                */
+/*  4/10/2017    TO   Added StartDate and EndDate */
+/*  1/30/2018    TO   Added Laser Print           */
+/*  4/17/2018    TO   Add test mode               */
+/*                    Remove Start/End Date       */
+/*                    Clean up                    */
+/*                                                */
+/**************************************************/
 
-/* Ticket reprint */
 
-/* 2/15/2017   TO   Added Hours Route and Equipment  */
-/* 01/30/2018  TO  Added Laser output                */
-
-DEF SHARED VAR XCOM AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE TestMode AS LOGICAL.
+DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
 DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
@@ -21,22 +29,22 @@ DEFINE SHARED VARIABLE F-ITEM AS INTEGER FORMAT "ZZZZ"
     LABEL "ITEM #".
 DEFINE SHARED VARIABLE F-INDX AS INTEGER FORMAT "ZZ"
     LABEL "TICK INDEX".
-DEFINE SHARED VAR F-NUM AS CHAR FORMAT "X(4)".
-DEFINE SHARED VAR F-MAN AS INTEGER FORMAT "ZZZ".
-def shared var f-wk as integer format "Z".
-DEF SHARED VAR F-DATE AS DATE FORMAT "99/99/9999".
+DEFINE SHARED VARIABLE F-NUM AS CHAR FORMAT "X(4)".
+DEFINE SHARED VARIABLE F-MAN AS INTEGER FORMAT "ZZZ".
+DEFINE SHARED VARIABLE f-wk  AS INTEGER FORMAT "Z".
+DEFINE SHARED VARIABLE F-DATE AS DATE FORMAT "99/99/9999".
 DEFINE SHARED VARIABLE LaserPrinter AS LOG.
 DEFINE SHARED VARIABLE NumTickets AS INT.
 
-DEF VAR JobWeek as CHAR FORMAT "X(8)".
-DEF VAR JobDay AS CHAR FORMAT "X(18)".
+DEFINE VARIABLE JobWeek as CHAR FORMAT "X(8)".
+DEFINE VARIABLE JobDay AS CHAR FORMAT "X(18)".
 DEFINE VARIABLE TicketsPerPage AS INT INIT 3.
 DEFINE VARIABLE CurrentTicket  AS INT INIT 1. /* count within expect tickets per*/
 DEFINE VARIABLE TicketCount    AS INT INIT 1. /* Count on page */
-DEF VAR CoProposal AS CHAR FORMAT "X(30)".
-DEF VAR ttDocXSequence AS INT.
-DEF VAR FileName AS CHAR.
-DEF VAR Cmd AS CHAR.
+DEFINE VARIABLE CoProposal AS CHAR FORMAT "X(30)".
+DEFINE VARIABLE ttDocXSequence AS INT.
+DEFINE VARIABLE FileName AS CHAR.
+DEFINE VARIABLE Cmd AS CHAR.
 
 DEF TEMP-TABLE ttDocXPrint
   FIELD Idx AS INT 
@@ -61,12 +69,9 @@ DEF TEMP-TABLE ttDocXPrint
 {include/stdutils.i}
 {slib/slibos.i}
   
-IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").  
-  
-IF (USERID = "LANDMARK") OR (USERID = "GARCIA")
-THEN DO:
-    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
-    RETURN.
+IF LaserPrinter THEN DO:
+   IF NOT TestMode THEN RUN docx_load("p:\template\Tickets2up.dfw").  
+   IF     TestMode THEN RUN docx_load("c:psg-prog\template\Tickets2up.dfw").
 END.
 OUTPUT TO TERMINAL.
 FIND FIRST TICKET WHERE TICKET.COMP# = XCOM AND
@@ -84,23 +89,7 @@ IF NOT AVAILABLE TICKET THEN DO:
     BELL.
     UNDO, RETRY.
 END.
-/*
-IF TICKET.T-STAT = "C" THEN DO:
-    BELL.
-    HIDE MESSAGE.
-    MESSAGE COLOR BLINK "THIS TICKET HAS BEEN COMPLETED THIS BILLING CYCLE".
-    BELL.
-    UNDO, RETRY.
-END.
-IF TICKET.DL-BAL <= 0.0 OR TICKET.WK-DL-BAL <= 0.0 THEN DO:
-    BELL.
-    HIDE MESSAGE.
-    MESSAGE COLOR BLINK "THERE IS NO D/L BALANCE LEFT ON THIS TICKET".
-    MESSAGE COLOR BLINK "AUTHORIZATION REQUIRED TO REPRINT TICKET".
-    BELL.
-    UNDO, RETRY.
-END.
-*/
+
 FIND FIRST PRO-DESP WHERE PRO-DESP.COMP# = XCOM AND
                           PRO-DESP.DIV# = XDIV AND
                           PRO-DESP.CUST# = F-CUST AND
@@ -184,7 +173,8 @@ END.
       IF WKDAY[6] THEN JObDay = JobDay + "R".
       IF WKDAY[7] THEN JObDay = JobDay + "F".
       
-      IF NOT LaserPrinter THEN OUTPUT TO PRINTER PAGE-SIZE 0. /*c:\psg-work\ticket.txt.*/
+      IF NOT LaserPrinter AND NOT TestMode THEN OUTPUT TO PRINTER PAGE-SIZE 0.
+      IF NOT LaserPrinter AND TestMode THEN OUTPUT TO c:\psg-work\ticket.txt.
       IF NOT LaserPrinter THEN
        DISPLAY SPACE(74) H-FREQ + TRIM(JobDay) + STRING(PRO-DESP.ROUTE#) SKIP(1) SPACE(44)
               STRING(TICKET.COMP#, ">>") + "-" +
@@ -210,19 +200,9 @@ END.
               PRO-DESP.DESC07 SKIP(0)
               PRO-DESP.DESC08 SKIP(0)
               PRO-DESP.DESC09 SKIP(0)
-              /*PRO-DESP.DESC10 SKIP(0)*/
-              
-              "St: " + 
-              PRO-DESP.StartTime  +
-              " End: " +  
-              PRO-DESP.EndTime  +
-              " COD$:" + 
-              STRING(pro-desp.COD-AMT) +
-              "  Equip: " +
-              PRO-DESP.EquipmentRequired FORMAT "X(80)" SKIP(0)
-             
+              PRO-DESP.DESC10 SKIP(0)             
               PRO-DESP.SPC-INTR SKIP(6) 
-              WITH FRAME P width 100 NO-BOX NO-LABELS
+                WITH FRAME P width 100 NO-BOX NO-LABELS
               .
               
    IF LaserPrinter THEN DO:
@@ -256,14 +236,6 @@ END.
                   ttDocXPrint.Note8            = PRO-DESP.DESC08
                   ttDocXPrint.Note9            = PRO-DESP.DESC09
                   ttDocXPrint.Note10           = PRO-DESP.DESC10
-                  ttDocXPrint.STartEndCodEquip =  "St: " + 
-                                                  PRO-DESP.StartTime  +
-                                                  " End: " +  
-                                                  PRO-DESP.EndTime  +
-                                                  " COD$:" + 
-                                                  STRING(pro-desp.COD-AMT) +
-                                                  "  Equip: " +
-                                                  PRO-DESP.EquipmentRequired
                   ttDocXPrint.SpcIntr          =  PRO-DESP.SPC-INTR
                   .
               ttDocXSequence = ttDocXSequence + 1.    
@@ -287,7 +259,6 @@ END.
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note8", ttDocXPrint.Note8).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note9", ttDocXPrint.Note9).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note10", ttDocXPrint.Note10).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "StartEndCodEquip", ttDocXPrint.StartEndCodEquip).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "SpcIntr", ttDocXPrint.SpcIntr).
                TicketCount = TicketCount + 1.
                IF TicketCount GE TicketsPerPage THEN DO: /* print page and set for next page */

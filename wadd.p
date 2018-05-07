@@ -4,6 +4,8 @@
 /* Print 1 weekly ticket                        */
 /*                                              */
 /*  1/26/2018   TO    Added laser print option  */
+/*  4/18/2018   TO    Removed hrs and equip     */
+/*                    Added TestMode            */
 /*                                              */
 /************************************************/
 
@@ -14,6 +16,7 @@ DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
 DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
 DEF SHARED VAR XPROG AS LOGICAL.
 
+DEFINE NEW SHARED VARIABLE TestMode AS LOGICAL INIT No.
 DEFINE NEW SHARED VARIABLE BEG# AS date FORMAT "99/99/9999"
   LABEL "ENTER NEW SATURDAY DATE FOR TICKET".
 DEF VAR JAN AS LOGICAL LABEL "PROCESS JANITORIAL TICKETS ?".
@@ -50,7 +53,7 @@ END.
 REPEAT:
 OUTPUT TO TERMINAL.
 DISPLAY SPACE(5)
-"W E E K L Y   S I N G L E   T I C K E T   R E Q U E S T   S C R E E N"
+"W E E K L Y   S I N G L E   T I C K E T   R E Q U E S T   S C R E E N (wadd.p)"
     SKIP(1) SPACE(20)
 XCOM-N LABEL "COMPANY" SKIP(0) SPACE(20)
 XDIV-N LABEL "DIVISION" SKIP(0) SPACE(20)

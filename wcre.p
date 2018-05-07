@@ -1,12 +1,14 @@
 
-/**********************************************/
-/* wcre.p                                     */
-/*                                            */
-/* Print weekly tickets                       */
-/*                                            */
-/*  1/15   TO    Added laser print option     */
-/*                                            */
-/**********************************************/
+/****************************************************/
+/* wcre.p                                           */
+/*                                                  */
+/* Print weekly tickets                             */
+/*                                                  */
+/*  01/15/2018   TO    Added laser print option     */
+/*  04/17/2018   TO    Added TestMode               */
+/*                     Remove start/end time        */
+/*                                                  */
+/****************************************************/
 
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
@@ -14,6 +16,7 @@ DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
 DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
 DEFINE SHARED VARIABLE XPROG AS LOGICAL.
 
+DEFINE NEW SHARED VARIABLE TestMode AS LOGICAL INIT No.
 DEFINE NEW SHARED VARIABLE BEG# AS date FORMAT "99/99/9999"
   LABEL "ENTER NEW SATURDAY DATE FOR TICKETS RUN".
 DEFINE NEW SHARED VARIABLE XROUTE AS INTEGER FORMAT "ZZ"
@@ -26,9 +29,9 @@ DEFINE NEW SHARED VARIABLE D4 AS DECIMAL FORMAT "9999.99".
 DEFINE NEW SHARED VARIABLE D5 AS INTEGER FORMAT "9999" LABEL "YEAR (4 DIGITS)".
 DEFINE NEW SHARED VARIABLE DY AS INTEGER FORMAT "99".
 DEFINE NEW SHARED VARIABLE UP-LIM AS INTEGER FORMAT "99".
-define new shared variable xweek as integer.
-DEF NEW SHARED VAR LaserPrinter AS LOG INIT No.
-DEF NEW SHARED VAR NumTickets AS INT INIT 2.
+DEFINE NEW SHARED VARIABLE xweek AS INTEGER.
+DEFINE NEW SHARED VARIABLE LaserPrinter AS LOG INIT No.
+DEFINE NEW SHARED VARIABLE NumTickets AS INT INIT 2.
 
 define variable xday as integer.
 DEF VAR JAN AS LOGICAL LABEL "PROCESS JANITORIAL TICKETS ?".

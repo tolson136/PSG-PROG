@@ -1,9 +1,11 @@
-/*   wcrer.p - print weekly tickets */
-
+/***************************************************/
+/*   wcrer.p - print weekly tickets                */
 /***************************************************/
 /* 2/16/2017 TO  Added new fields to ticket        */
 /* 4/10/2017 TO  Added StartDate and EndDate logic */
 /* 1/25/2018 TO  Added laser print option          */
+/* 4/17/2018 TO  Remove Start/EndDate              */
+/*               Add TestMode                      */
 /***************************************************/
 
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
@@ -24,6 +26,7 @@ DEFINE SHARED VARIABLE DY AS INTEGER FORMAT "99".
 DEFINE SHARED VARIABLE UP-LIM AS INTEGER FORMAT "99".
 DEFINE SHARED VARIABLE LaserPrinter AS LOG.
 DEFINE SHARED VARIABLE NumTickets AS INT.
+DEFINE SHARED VARIABLE TestMode AS LOGICAL.
 
 DEFINE VARIABLE H-FREQ         AS CHAR FORMAT "X(5)".
 DEFINE VARIABLE gxmonth        as int.
@@ -43,10 +46,10 @@ DEFINE VARIABLE LastMonthDate  AS DATE NO-UNDO.
 DEFINE VARIABLE TicketsPerPage AS INT INIT 3.
 DEFINE VARIABLE CurrentTicket  AS INT INIT 1. /* count within expect tickets per*/
 DEFINE VARIABLE TicketCount    AS INT INIT 1. /* Count on page */
-DEF VAR CoProposal AS CHAR FORMAT "X(30)".
-DEF VAR ttDocXSequence AS INT.
-DEF VAR FileName AS CHAR.
-DEF VAR Cmd AS CHAR.
+DEFINE VARIABLE CoProposal AS CHAR FORMAT "X(30)".
+DEFINE VARIABLE ttDocXSequence AS INT.
+DEFINE VARIABLE FileName AS CHAR.
+DEFINE VARIABLE Cmd AS CHAR.
 
 DEF TEMP-TABLE ttDocXPrint
   FIELD Idx AS INT 
@@ -75,14 +78,6 @@ ASSIGN
   FirstMonthDate  = DATE(MONTH(BEG#),1,YEAR(BEG#))
   LastMonthDate   = DATE(MONTH(BEG#),DaysInMonth(MONTH(BEG#),YEAR(BEG#)),YEAR(BEG#))
   .
-  
-IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
-THEN DO:
-    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
-    RETURN.
-END.
-
-
 display gweekly label "Print weekly tickets only?" skip(3).
 display gweek label "Which week do you want to print?" skip(3)
 .
@@ -110,15 +105,15 @@ update gweekly gweek gday[1] gday[2] gday[3] gday[4] gday[5] gday[6] gday[7]
        if gmonth[10] then gxmonth = 10.
        if gmonth[11] then gxmonth = 11.
        if gmonth[12] then gxmonth = 12.
-       
-/*pause.*/
 
-IF NOT LaserPrinter THEN OUTPUT TO PRINTER   /*c:\psg-work\weekly.txt*/ PAGE-SIZE 0.
-IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").
+IF NOT LaserPrinter AND NOT TestMode THEN OUTPUT TO PRINTER PAGE-SIZE 0.
+IF NOT LaserPrinter AND     TestMode THEN OUTPUT TO c:\psg-work\weekly.txt PAGE-SIZE 0.
+IF LaserPrinter THEN DO:
+   IF NOT TestMode THEN RUN docx_load("p:\template\Tickets2up.dfw").
+   IF     TestMode THEN RUN docx_load("c:\psg-prog\template\Tickets2up.dfw").
 
-
-
-  FOR EACH PROPSL WHERE 
+END.
+FOR EACH PROPSL WHERE 
     PROPSL.COMP# = XCOM AND
     PROPSL.DIV# = XDIV  AND
     ( Propsl.StartDate LE LastMonthDate OR Propsl.StartDate = ?) AND
@@ -168,7 +163,6 @@ IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").
           H-FREQ = "3XW".
           TICKS = 0.
           F-TICK = yes.
-/*          REPEAT DY = 0 TO 6:    */
               C-DATE = BEG# + DY.
               H-WEEK = WEEKDAY(C-DATE).
               IF gday[2] AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
@@ -178,22 +172,12 @@ IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").
               IF gday[6] AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
               IF gday[7] AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
               IF gday[1] AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-/*
-              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
 
-          END.  */
       END.
       IF PRO-DESP.FREQ = "FOUR_TIMES_PER_WEEK" THEN DO:
           H-FREQ = "4XW".
           TICKS = 0.
           F-TICK = yes.
-/*          REPEAT DY = 0 TO 6:    */
               C-DATE = BEG# + DY.
               H-WEEK = WEEKDAY(C-DATE).
               IF gday[2] AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
@@ -203,22 +187,11 @@ IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").
               IF gday[6] AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
               IF gday[7] AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
               IF gday[1] AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-/*              
-              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-
-          END.    */
       END.
       IF PRO-DESP.FREQ = "FIVE_TIMES_PER_WEEK" THEN DO:
           H-FREQ = "5XW".
           TICKS = 0.
           F-TICK = yes.
-/*          REPEAT DY = 0 TO 6:    */
               C-DATE = BEG# + DY.
               H-WEEK = WEEKDAY(C-DATE).
               IF gday[2] AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
@@ -228,22 +201,11 @@ IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").
               IF gday[6] AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
               IF gday[7] AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
               IF gday[1] AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-/*              
-              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-
-          END.     */
       END.
       IF PRO-DESP.FREQ = "SIX_TIMES_PER_WEEK" THEN DO:
           H-FREQ = "6XW".
           TICKS = 0.
           F-TICK = yes.
-/*          REPEAT DY = 0 TO 6:    */
               C-DATE = BEG# + DY.
               H-WEEK = WEEKDAY(C-DATE).
               IF gday[2] AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
@@ -253,22 +215,11 @@ IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").
               IF gday[6] AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
               IF gday[7] AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
               IF gday[1] AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-/*              
-              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-
-          END.   */
       END.
       IF PRO-DESP.FREQ = "WEEKLY" THEN DO:
           H-FREQ = "W".
           TICKS = 0.
           F-TICK = yes.
-/*          REPEAT DY = 0 TO 6:    */
               C-DATE = BEG# + DY.
               H-WEEK = WEEKDAY(C-DATE).
               IF gday[2] AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
@@ -278,19 +229,9 @@ IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").
               IF gday[6] AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
               IF gday[7] AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
               IF gday[1] AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-/*              
-              IF H-WEEK = 1 AND PRO-DESP.WKDAY[2] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 2 AND PRO-DESP.WKDAY[3] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 3 AND PRO-DESP.WKDAY[4] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 4 AND PRO-DESP.WKDAY[5] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 5 AND PRO-DESP.WKDAY[6] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 6 AND PRO-DESP.WKDAY[7] THEN TICKS = TICKS + 1.
-              IF H-WEEK = 7 AND PRO-DESP.WKDAY[1] THEN TICKS = TICKS + 1.
-
-          END.    */
       END.
-end.
-else do:      
+   end. /* IF gweekly? */
+   else do:      
       IF PRO-DESP.FREQ = "EVERY_TWO_WEEKS" THEN DO:
           H-FREQ = "2W".
           TICKS = 0.
@@ -539,7 +480,7 @@ else do:
           TICKS = 1.
           F-TICK = yes.
       END.
-end.      
+   end. /* ELSE DO */      
 
     IF F-TICK THEN DO:
       REPEAT DY = 1 TO TICKS:
@@ -592,19 +533,9 @@ end.
                  PRO-DESP.DESC06 SKIP(0)
                  PRO-DESP.DESC07 SKIP(0)
                  PRO-DESP.DESC08 SKIP(0)
-                 /*PRO-DESP.DESC09 SKIP(0)*/
-                 
-                 "St: " + 
-                 PRO-DESP.StartTime  +
-                 " End: " +  
-                 PRO-DESP.EndTime  +
-                 " COD$:" + 
-                 STRING(pro-desp.COD-AMT) +
-                 "  Equip: " +
-                 PRO-DESP.EquipmentRequired FORMAT "X(80)" SKIP(0)
-                 
-                 /*PRO-DESP.DESC10 SKIP(1)*/
-                 PRO-DESP.SPC-INTR SKIP(6)
+                 PRO-DESP.DESC09 SKIP(0)               
+                 PRO-DESP.DESC10 SKIP(1)
+                 PRO-DESP.SPC-INTR SKIP(4)
                     WITH FRAME P WIDTH 100 NO-BOX NO-LABELS.
       END. /* NOT LaserPrinter */
       IF LaserPrinter THEN DO:
@@ -638,14 +569,6 @@ end.
                   ttDocXPrint.Note8            = PRO-DESP.DESC08
                   ttDocXPrint.Note9            = PRO-DESP.DESC09
                   ttDocXPrint.Note10           = PRO-DESP.DESC10
-                  ttDocXPrint.STartEndCodEquip =  "St: " + 
-                                                  PRO-DESP.StartTime  +
-                                                  " End: " +  
-                                                  PRO-DESP.EndTime  +
-                                                  " COD$:" + 
-                                                  STRING(pro-desp.COD-AMT) +
-                                                  "  Equip: " +
-                                                  PRO-DESP.EquipmentRequired
                   ttDocXPrint.SpcIntr          =  PRO-DESP.SPC-INTR
                   .
               ttDocXSequence = ttDocXSequence + 1.    
@@ -720,7 +643,6 @@ IF LaserPrinter THEN DO: /* Print ticket data to Word if Laser */
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note8", ttDocXPrint.Note8).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note9", ttDocXPrint.Note9).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note10", ttDocXPrint.Note10).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "StartEndCodEquip", ttDocXPrint.StartEndCodEquip).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "SpcIntr", ttDocXPrint.SpcIntr).
                TicketCount = TicketCount + 1.
                IF TicketCount GE TicketsPerPage THEN DO: /* print page and set for next page */
@@ -730,11 +652,12 @@ IF LaserPrinter THEN DO: /* Print ticket data to Word if Laser */
     	   END. /* FOR EACH ttDocXPrint */
     	  
           run docx_paste("Ticket"). /* Output final page to Word.*/
-          FileName = os_getNextFile ( "c:\LaserTickets\WeeklyTicket" + 
-                                      STRING(YEAR(TODAY))  + 
-                                      STRING(MONTH(TODAY)) +
-                                      STRING(DAY(TODAY)) +
-                                      ".docx" ). 
+           FileName = os_getNextFile ( "c:\LaserTickets\WeeklyTicket" + 
+                                        STRING(YEAR(TODAY))  + 
+                                        STRING(MONTH(TODAY)) +
+                                        STRING(DAY(TODAY)) +
+                                        ".docx" ).  
+          
           run docx_save(FileName).
           Cmd = "start winword.exe /t " + FileName.
           OS-command silent VALUE(Cmd).

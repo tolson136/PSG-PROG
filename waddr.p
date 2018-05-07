@@ -1,12 +1,15 @@
-/************************************************/
-/* waddr.p                                      */
-/*                                              */
-/* Print 1 weekly ticket                        */
-/*                                              */
-/*  1/26/2018   TO    Added laser print option  */
-/*                                              */
-/************************************************/
+/***********************************************************/
+/* waddr.p                                                 */
+/*                                                         */
+/* Print 1 weekly ticket                                   */
+/*                                                         */
+/*  1/26/2018   TO    Added laser print option             */
+/*  4/18/2018   TO    Removed Start/Stop and Equip         */
+/*                    Added TestMode                       */
+/*                                                         */
+/***********************************************************/
 
+DEFINE SHARED VARIABLE TestMode AS LOGICAL.
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
@@ -106,7 +109,7 @@ display "What month do you want to print?" skip(2)
         gmonth[7] label "Jul" skip gmonth[8] label "Aug" skip gmonth[9] label "Sep" skip
         gmonth[10] label "Oct" skip gmonth[11] label "Nov" skip gmonth[12] label "Dec".
 update gweekly gweek gday[1] gday[2] gday[3] gday[4] gday[5] gday[6] gday[7]
-       gmonth[1] gmonth[2] gmonth[3] gmonth[4] gmonth[5] gmonth[6] gmonth[7] gmonth[8] gmonth[9]
+ gmonth[1] gmonth[2] gmonth[3] gmonth[4] gmonth[5] gmonth[6] gmonth[7] gmonth[8] gmonth[9]
        gmonth[10] gmonth[11] gmonth[12] with side-labels.
        if gmonth[1] then gxmonth = 1.
        if gmonth[2] then gxmonth = 2.
@@ -121,8 +124,10 @@ update gweekly gweek gday[1] gday[2] gday[3] gday[4] gday[5] gday[6] gday[7]
        if gmonth[11] then gxmonth = 11.
        if gmonth[12] then gxmonth = 12.
  
- IF LaserPrinter THEN RUN docx_load("p:\template\Tickets2up.dfw").
- 
+ IF LaserPrinter THEN DO:
+    IF NOT TestMode THEN RUN docx_load("p:\template\Tickets2up.dfw").
+    IF     TestMode THEN RUN docx_load("c:psg-prog\template\Tickets2up.dfw").
+END. 
   FIND FIRST ACCT-RCV WHERE ACCT-RCV.COMP# = XCOM AND
                             ACCT-RCV.DIV# = XDIV  AND
                             ACCT-RCV.CUST# = F-CUST AND
@@ -578,7 +583,8 @@ IF LASTKEY = KEYCODE("ESC") THEN LEAVE.
           TICKS = 1.
           F-TICK = yes.
       END.                                          
-      OUTPUT TO PRINTER PAGE-SIZE 0. /*"c:\psg-work\addone.txt".*/
+      IF NOT TestMode THEN OUTPUT TO PRINTER PAGE-SIZE 0. 
+      ELSE OUTPUT TO "c:\psg-work\addone.txt".
         
     IF F-TICK THEN DO:
       REPEAT DY = 1 TO TICKS:
@@ -655,14 +661,6 @@ IF LASTKEY = KEYCODE("ESC") THEN LEAVE.
                   ttDocXPrint.Note8            = PRO-DESP.DESC08
                   ttDocXPrint.Note9            = PRO-DESP.DESC09
                   ttDocXPrint.Note10           = PRO-DESP.DESC10
-                  ttDocXPrint.STartEndCodEquip =  "St: " + 
-                                                  PRO-DESP.StartTime  +
-                                                  " End: " +  
-                                                  PRO-DESP.EndTime  +
-                                                  " COD$:" + 
-                                                  STRING(pro-desp.COD-AMT) +
-                                                  "  Equip: " +
-                                                  PRO-DESP.EquipmentRequired
                   ttDocXPrint.SpcIntr          =  PRO-DESP.SPC-INTR
                   .
               ttDocXSequence = ttDocXSequence + 1.    
@@ -737,7 +735,6 @@ IF LASTKEY = KEYCODE("ESC") THEN LEAVE.
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note8", ttDocXPrint.Note8).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note9", ttDocXPrint.Note9).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "Note10", ttDocXPrint.Note10).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "StartEndCodEquip", ttDocXPrint.StartEndCodEquip).
                run docx_setClipboardValue("Ticket",string(TicketCount) + "SpcIntr", ttDocXPrint.SpcIntr).
                TicketCount = TicketCount + 1.
                IF TicketCount GE TicketsPerPage THEN DO: /* print page and set for next page */
