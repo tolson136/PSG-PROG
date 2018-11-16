@@ -7,8 +7,9 @@ display propsl.comp# propsl.div# propsl.cust# propsl.propsl#.
 
 
 for each ticket where 
- ticket.propsl# = 214483 /*propsl.propsl#*/:
- display ticket.comp# ticket.div# ticket.cust# ticket.propsl# .
+ ticket.propsl# = 200024  and ticket.month# = 4 and ticket.sub# = 0 /*propsl.propsl#*/:
+ display ticket with side-labels 1 col.
+   /*ticket.comp# ticket.div# ticket.cust# ticket.propsl# */.
 end.
 /*
 for each ticketdetail where 
