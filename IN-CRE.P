@@ -1,3 +1,13 @@
+/*************************************************/
+/* in-cre.p                                      */
+/*                                               */
+/* Generate orders from completed job orders     */
+/*                                               */
+/*            */
+/*                                               */
+/*                                               */
+/*************************************************/ 
+
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
