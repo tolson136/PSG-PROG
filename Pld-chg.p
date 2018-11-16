@@ -4,7 +4,8 @@
 /*  Proposal Description Maintenance           */
 /*                                             */
 /*   12/22/2017    TO   Changed Search Method  */
-/*   02/15/2018    TO   CHanged Address labels */
+/*   02/15/2018    TO   Changed Address labels */
+/*   04/20/2018    TO   BigSearch added        */
 /***********************************************/
 
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
@@ -43,15 +44,18 @@ UPDATE SEARCHED AUTO-RETURN WITH FRAME X NO-HIDE NO-LABEL.
 
 
 IF SEARCHED <> "" THEN DO:
-/*  IF Searched = "M" THEN DO:
-      RUN util\custsearch.w (OUTPUT SearchPropsl#).
+  IF Searched = "1" THEN DO:
+      RUN util\custsearch.w 
+        ( INPUT xcom,
+          INPUT xdiv,
+          OUTPUT SearchPropsl#).
       
       FIND FIRST Propsl WHERE propsl.propsl# = SearchPropsl# NO-ERROR.
       FIND FIRST pro-desp WHERE Pro-Desp.Propsl# = SearchPropsl# NO-ERROR.
   END.
  
-   ELSE DO: /* Searched not M */
-*/
+   ELSE DO: /* Searched not 1 */
+
    def var xnull as character initial "".
    def var cust-in as char format 'x(25)'
       label "Enter the first few letters of the Customer name".
@@ -134,7 +138,7 @@ IF SEARCHED <> "" THEN DO:
       end. /* ENTER */
    end. /* REPEAT */
   
-  /* END. /* NOT M */*/
+   END. /* NOT M */  
 end. /* SEARCHED */
 /*************************END*******************************************/
 
@@ -178,14 +182,6 @@ if noter then do:
    message color BLINK-Y
 "                           ___N O T E S   E X I S T___                          ".
 end.
-   /*RUN propsl\GetCurrentPropslPrice.p
-        ( INPUT pro-desp.comp#,
-          INPUT pro-desp.cust#,
-          INPUT pro-desp.div#,
-          INPUT pro-desp.propsl#,
-          INPUT pro-desp.item#,
-          INPUT TODAY,
-          OUTPUT NewAmt ).*/
 
     FORM
                PRO-DESP.PROPSL# LABEL "PROP #"
@@ -256,36 +252,7 @@ end.
                /*BudgetedHours LABEL "Budget Hrs"*/
                EquipmentRequired label "Equip Reqd"
                WITH FRAME X SIDE-LABELS NO-BOX no-hide.
-   /*RUN propsl\GetCurrentPropslPrice.p
-        ( INPUT pro-desp.comp#,
-          INPUT pro-desp.cust#,
-          INPUT pro-desp.div#,
-          INPUT pro-desp.propsl#,
-          INPUT pro-desp.item#,
-          INPUT TODAY,
-          OUTPUT NewAmt ).
-    
-ON 'ctrl-u':U OF FRAME X ANYWHERE 
-DO:
-   RUN propsl\fPropsPrice.p
-       ( INPUT pro-desp.comp#,
-         INPUT pro-desp.cust#,
-         INPUT pro-desp.div#,
-         INPUT pro-desp.propsl#,
-         INPUT pro-desp.item#
-        ).
-   RUN propsl\GetCurrentPropslPrice.p
-        ( INPUT pro-desp.comp#,
-          INPUT pro-desp.cust#,
-          INPUT pro-desp.div#,
-          INPUT pro-desp.propsl#,
-          INPUT pro-desp.item#,
-          INPUT TODAY,
-          OUTPUT NewAmt ).
-   DISPLAY NewAmt WITH FRAME X.
-    RETURN.
-END.
-*/
+
     DISPLAY
                PRO-DESP.PROPSL# PRO-DESP.ITEM# PRO-DESP.COMP# PRO-DESP.DIV#
                START-DT LABEL "START DT" PRO-DESP.CUST# FREQ LABEL "FREQ" AMT cod-amt
@@ -297,9 +264,7 @@ END.
                WKDAY[6] MTH[6] MTH[12] /*COMMIS*/ SUB-CON WKDAY[7] PRO-DESP.PO#
                /*BudgetedHours*/ EquipmentRequired
                WITH FRAME X SIDE-LABELS.
-/*
-UPDATE PRO-DESP.CUST# WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA no-hide.
-*/
+
 IF (USERID <> "OPERATIONS") AND (USERID <> "LANDMARK") AND (USERID <> "GARCIA")
 THEN DO:
 if noter then do:
@@ -308,17 +273,7 @@ if noter then do:
 "                           ___N O T E S   E X I S T___                          ".
 end.
   REPEAT:
-      /* 
-      RUN propsl\GetCurrentPropslPrice.p
-        ( INPUT pro-desp.comp#,
-          INPUT pro-desp.cust#,
-          INPUT pro-desp.div#,
-          INPUT pro-desp.propsl#,
-          INPUT pro-desp.item#,
-          INPUT TODAY,
-          OUTPUT NewAmt ).
-       DISPLAY NewAmt WITH FRAME X.
-       */
+
        UPDATE pro-desp.FREQ WITH FRAME X COLOR DISPLAY NORMAL PROMPT W/MA NO-HIDE.
        IF FREQ BEGINS "D" OR FREQ = "DAILY"
        THEN DO:
@@ -580,16 +535,7 @@ if noter then do:
 "                           ___N O T E S   E X I S T___                          ".
 end.
     IF LASTKEY = KEYCODE("F4") OR LASTKEY = KEYCODE("ESC") THEN UNDO, RETRY.
-       /* RUN propsl\GetCurrentPropslPrice.p
-        ( INPUT pro-desp.comp#,
-          INPUT pro-desp.cust#,
-          INPUT pro-desp.div#,
-          INPUT pro-desp.propsl#,
-          INPUT pro-desp.item#,
-          INPUT TODAY,
-          OUTPUT NewAmt ).
-       DISPLAY NewAmt WITH FRAME X.
-       */
+
        UPDATE  START-DT AMT cod-amt DESC01 DESC02 DESC03 DESC04 DESC05 DESC06
                DESC07 DESC08 DESC09 DESC10 SPC-INT StartTime EndTime /*DL WHCH-AMT AC# A2-DESP*/
                /*AMT2-MUL AMT2*/ CL-DATE /*COMMIS*/ SUB-CON /*pro-desp.BudgetedHours*/ EquipmentRequired
@@ -705,14 +651,7 @@ end.
                                  pro-desp.div# = propsl.div# and
                                  pro-desp.cust# = propsl.cust# no-error.
         end.
-       /*RUN propsl\GetCurrentPropslPrice.p
-        ( INPUT pro-desp.comp#,
-          INPUT pro-desp.cust#,
-          INPUT pro-desp.div#,
-          INPUT pro-desp.propsl#,
-          INPUT pro-desp.item#,
-          INPUT TODAY,
-          OUTPUT NewAmt ).*/
+
     DISPLAY
                PRO-DESP.PROPSL# PRO-DESP.ITEM# PRO-DESP.COMP# PRO-DESP.DIV#
                START-DT PRO-DESP.CUST# PRO-DESP.FREQ Amt cod-amt
@@ -736,14 +675,7 @@ end.
                                   pro-desp.div# = propsl.div# and
                                   pro-desp .cust# = propsl.cust# no-error.
         end.
-       /*RUN propsl\GetCurrentPropslPrice.p
-        ( INPUT pro-desp.comp#,
-          INPUT pro-desp.cust#,
-          INPUT pro-desp.div#,
-          INPUT pro-desp.propsl#,
-          INPUT pro-desp.item#,
-          INPUT TODAY,
-          OUTPUT NewAmt ).*/
+
     DISPLAY
                PRO-DESP.PROPSL# PRO-DESP.ITEM# PRO-DESP.COMP# PRO-DESP.DIV#
                START-DT PRO-DESP.CUST# PRO-DESP.FREQ AMT cod-amt

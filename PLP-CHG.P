@@ -1,7 +1,8 @@
 /***********************************************/
-/*  Proposal Master Maintenance */
+/*  Proposal Master Maintenance                */
 /* 4/10/2017   TO  Added StartDate and EndDate */
-/* 2/05/2018   TO  CHanged Address labels      */
+/* 2/05/2018   TO  Changed Address labels      */
+/* 4/27/2018   TO  Added BigSearch             */
 /***********************************************/
 
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
@@ -10,52 +11,73 @@ DEFINE VARIABLE XCUST AS INTEGER FORMAT "ZZZZZZZZZZ".
 DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
 DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
 DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
+
+DEFINE VARIABLE Searched AS CHAR FORMAT "X".
+DEFINE VARIABLE SearchPropsl# LIKE propsl.propsl#.
+
 REPEAT:
 DISPLAY SPACE(7)
-"P R O P O S A L   M A S T E R   M A I N T E N A N C E   S C R E E N"
+"P R O P O S A L   M A S T E R   M A I N T E N A N C E   S C R E E N (plp-chg.p)"
 SKIP(1) XCOM-N LABEL "CMP" SPACE(1)
         XDIV-N LABEL "DIV" SPACE(1)
         XOPR LABEL "OPR" SKIP(1).
-    PROMPT-FOR PROPSL.PROPSL#.
-    XCUST = INPUT PROPSL.PROPSL#.
-    FIND FIRST PROPSL WHERE PROPSL.PROPSL# = XCUST AND PROPSL.COMP# = XCOM AND
+    PROMPT-FOR Searched NO-LABEL.
+    ASSIGN Searched.
+    IF SEARCHED <> "" THEN DO:
+       IF Searched = "1" THEN DO:
+         RUN util\custsearch.w 
+           ( INPUT xcom,
+             INPUT xdiv,
+             OUTPUT SearchPropsl#).
+      
+         FIND FIRST Propsl WHERE propsl.propsl# = SearchPropsl# NO-ERROR.
+         FIND FIRST pro-desp WHERE Pro-Desp.Propsl# = SearchPropsl# NO-ERROR.
+      END.
+    END. /* Searched */
+    ELSE DO:     
+       PROMPT-FOR PROPSL.PROPSL#.
+       XCUST = INPUT PROPSL.PROPSL#.
+    
+       FIND FIRST PROPSL WHERE PROPSL.PROPSL# = XCUST AND PROPSL.COMP# = XCOM AND
          PROPSL.DIV# = XDIV.
-    IF LASTKEY = KEYCODE("F4") THEN LEAVE.
+       IF LASTKEY = KEYCODE("F4") THEN LEAVE.
+    END. /* ELSE DO */
     DISPLAY
-            PROPSL# LABEL "PROPOSAL NUMBER"
-            COMP# LABEL "COMPANY NUMBER"
-            DIV# LABEL "DIVISION NUMBER" SKIP(1)
-            CUST# LABEL "CUSTOMER NUMBER "
-            SUB# ROUTE# SKIP(1)
-            C-NAME LABEL "Customer " SPACE(5)
-            L-NAME LABEL "L-Name " SKIP(0)
-            ADDR1 LABEL "   Street" SPACE(5)
-            LADDR01 LABEL "L-Addr1" SKIP(0)
-            ADDR2 LABEL "Address 2" SPACE(5)
-            LADDR02 LABEL " L-City" SKIP(0)
-            ADDR3 LABEL "     City" SPACE(5)
-            LADDR03 LABEL "  L-Zip" SKIP(0)
-            ADDR4 LABEL "Contact 1" SPACE(5)
-            L-STATE
-            L-TELE SKIP(0)
-            ADDR5 LABEL "Contact 2" SPACE(5)
-            L-TELE2 LABEL "2ND PHONE OR EXT#" SKIP(0)
-            STATE LABEL "STATE    " SPACE(5)
-            ZIP SPACE(8)
-            L-COMMENTS LABEL "COMMENT" SKIP(0)
-            TELE LABEL "TELEPHONE" SPACE(16)
-            TOT-AMT SKIP(0)
-            FAX-TELE LABEL "FAX PHONE" SPACE(16)
-            DATE-P LABEL "PROPOSAL DATE" SKIP(0)
-            EMAIL LABEL "Extension" SPACE(5)
-            CUST-TRF LABEL "CUSTOMER TRANSFERED" SKIP(0)
-            JANITOR LABEL "JANITORIAL ?" SPACE(24)
-            ACTIVE LABEL "CUSTOMER STATUS" SKIP(0)
-            MLABEL LABEL "MAILING LIST ?" skip(0)
-            email1 label "1st email" skip(0)
-            email2 label "2nd email"
-            StartDate
-            EndDate
+            Propsl.PROPSL# LABEL "PROPOSAL NUMBER"
+            Propsl.COMP# LABEL "COMPANY NUMBER"
+            Propsl.DIV# LABEL "DIVISION NUMBER" SKIP(1)
+            Propsl.CUST# LABEL "CUSTOMER NUMBER "
+            Propsl.SUB# 
+            Propsl.ROUTE# SKIP(1)
+            Propsl.C-NAME LABEL "Customer " SPACE(5)
+            Propsl.L-NAME LABEL "L-Name " SKIP(0)
+            Propsl.ADDR1 LABEL "   Street" SPACE(5)
+            Propsl.LADDR01 LABEL "L-Addr1" SKIP(0)
+            Propsl.ADDR2 LABEL "Address 2" SPACE(5)
+            Propsl.LADDR02 LABEL " L-City" SKIP(0)
+            Propsl.ADDR3 LABEL "     City" SPACE(5)
+            Propsl.LADDR03 LABEL "  L-Zip" SKIP(0)
+            Propsl.ADDR4 LABEL "Contact 1" SPACE(5)
+            Propsl.L-STATE
+            Propsl.L-TELE SKIP(0)
+            Propsl.ADDR5 LABEL "Contact 2" SPACE(5)
+            Propsl.L-TELE2 LABEL "2ND PHONE OR EXT#" SKIP(0)
+            Propsl.STATE LABEL "STATE    " SPACE(5)
+            Propsl.ZIP SPACE(8)
+            Propsl.L-COMMENTS LABEL "COMMENT" SKIP(0)
+            Propsl.TELE LABEL "TELEPHONE" SPACE(16)
+            Propsl.TOT-AMT SKIP(0)
+            Propsl.FAX-TELE LABEL "FAX PHONE" SPACE(16)
+            Propsl.DATE-P LABEL "PROPOSAL DATE" SKIP(0)
+            Propsl.EMAIL LABEL "Extension" SPACE(5)
+            Propsl.CUST-TRF LABEL "CUSTOMER TRANSFERED" SKIP(0)
+            Propsl.JANITOR LABEL "JANITORIAL ?" SPACE(24)
+            Propsl.ACTIVE LABEL "CUSTOMER STATUS" SKIP(0)
+            Propsl.MLABEL LABEL "MAILING LIST ?" skip(0)
+            Propsl.email1 label "1st email" skip(0)
+            Propsl.email2 label "2nd email"
+            Propsl.StartDate
+            Propsl.EndDate
                WITH SIDE-LABELS NO-BOX.
 IF (USERID <> "OPERATIONS") AND (USERID <> "LANDMARK") AND (USERID <> "GARCIA")
 THEN DO:
