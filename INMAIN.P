@@ -1,3 +1,13 @@
+/*************************************************/
+/* inmain.p                                      */
+/*                                               */
+/* Invoice manu                                  */
+/*                                               */
+/*                                               */
+/*                                               */
+/*                                               */
+/*************************************************/
+
 DEFINE VARIABLE SELECTION AS CHAR FORMAT "X".
 DEF SHARED VAR XPROG AS LOGICAL.
 DEF SHARED VAR XOPR AS CHAR FORMAT "XXX".
@@ -8,7 +18,7 @@ THEN DO:
 END.
 REPEAT:
     FORM
-                "              OLD TYME SOLUTIONS             "
+                "              Program One  (inmain.p) "
         SKIP(1) "A.) GENERATE ORDERS FROM COMPLETED JOB ORDERS"
         SKIP(0) "B.) PRINT JOB ORDER AUDIT LIST"
         SKIP(1) "C.) GENERATE SINGLE JOB ORDER"
