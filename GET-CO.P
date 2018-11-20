@@ -1,3 +1,13 @@
+/*************************************************/
+/* get-co.p                                      */
+/*                                               */
+/* Gets company input and determines correct     */
+/* menu to run                                   */
+/*                                               */
+/*                                               */
+/*                                               */
+/*************************************************/
+
 DEFINE NEW SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
 DEFINE SHARED VARIABLE CHOICE AS CHAR FORMAT "X".
 DEFINE NEW SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
