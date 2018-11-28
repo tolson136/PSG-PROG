@@ -1,17 +1,17 @@
-/*************************************************/
-/* tk-dlout.p                                    */
-/*                                               */
-/* Outstanding D/L report                        */
-/*                                               */
-/*  04/04/2018   TO    General clean up          */
-/*                                               */
-/*                                               */
-/*************************************************/ 
+/******************************************************/
+/* tk-dlout.p                                         */
+/*                                                    */
+/* Outstanding D/L report                             */
+/*                                                    */
+/*  04/04/2018   TO    General clean up               */
+/*  11/28/2018   TO    Changed to only report Route 0 */
+/*                                                    */
+/******************************************************/ 
 
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
 
-DEFINE VARIABLE TestMode AS LOGICAL INIT Yes.
+DEFINE VARIABLE TestMode AS LOGICAL INIT No.
 DEFINE VAR BDATE AS DATE FORMAT "99/99/9999".
 DEFINE VAR EDATE AS DATE FORMAT "99/99/9999".
 DEFINE VAR NMO AS INTEGER FORMAT "ZZ".
@@ -55,7 +55,8 @@ FOR EACH TICKET WHERE
    (T-STAT = "I" OR T-STAT = "Z" OR
    T-STAT  = "P" OR T-STAT = "Y") AND
    (DATE-PRT >= BDATE AND DATE-PRT <= EDATE) AND
-   (TICKET.MONTH# <> NMO)
+   (TICKET.MONTH# <> NMO)  AND
+   Ticket.ROUTE# = 0
        NO-LOCK
        BY TICKET.CUST#
        BY TICKET.PROPSL#
