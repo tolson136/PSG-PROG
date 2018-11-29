@@ -10,13 +10,14 @@ DISPLAY NUM-ENTRIES(PropslList).
 
 DISPLAY NUM-ENTRIES(ItemList).
 
-OUTPUT TO c:\psg-wrk\tickets.out.
+/*OUTPUT TO c:\psg-wrk\tickets.out.*/
 REPEAT X = 1 TO NUM-ENTRIES(PropslList):
    FOR EACH ticket WHERE
      ticket.propsl# = integer(ENTRY(x,propsllist)) AND
      ticket.item# = INTEGER(ENTRY(X,ItemList)) AND
      ticket.t-stat NE "X":
-        DISPLAY
+     DELETE Ticket.
+     /*        DISPLAY
          TICKET.PROPSL#
          TICKET.ITEM#
          TICKET.T-INDX
@@ -26,6 +27,7 @@ REPEAT X = 1 TO NUM-ENTRIES(PropslList):
          TICKET.TicketDate
          TICKET.T-STAT
          WITH WIDTH 120.
+*/         
    END.
 END.
   
