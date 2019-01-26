@@ -4,6 +4,7 @@
 /* Generate invoice audit report                 */
 /*                                               */
 /*  12/24/2018  TO  General Cleanup              */
+/*  01/26/2019  TO  Enter and run by month       */
 /*                                               */
 /*                                               */
 /*************************************************/ 
@@ -20,6 +21,9 @@ DEF VAR XINV  AS DECIMAL FORMAT "$->,>>>,>>>.99".
 DEF VAR XDATE AS DATE    FORMAT "99/99/9999".
 DEF VAR S-TOT AS DECIMAL FORMAT "$->>>,>>>.99".
 DEF VAR T-TOT AS DECIMAL FORMAT "$->>,>>>,>>>.99".
+DEF VAR BDate AS DATE FORMAT "99/99/9999".
+DEF VAR StartMonth AS DATE.
+DEF VAR EndMonth AS DATE.
 DEFINE VARIABLE TestMode AS LOGICAL INITIAL YES.
 
 IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
@@ -28,16 +32,27 @@ THEN DO:
     RETURN.
 END.
 
+UPDATE SKIP(2) 
+       BDate LABEL "Enter last day within month to run"
+       SKIP(2).
+
+
 ASSIGN S-TOT = 0.0
-       T-TOT = 0.0.
+       T-TOT = 0.0
+       StartMonth = DATE(MONTH(BDate),1,YEAR(BDate))
+       EndMonth = BDate
+       .
        
 IF NOT TestMode THEN OUTPUT TO PRINTER.
 ELSE OUTPUT TO C:\psg-work\AuditReport.TEXT.
 
 FOR EACH INVOICE WHERE
-    INVOICE.COMP#  = XCOM AND INVOICE.DIV# = XDIV AND
-    invoice.route# = 0 and
-    INVOICE.I-TYPE = "N" 
+    INVOICE.COMP#   = XCOM        AND 
+    INVOICE.DIV#    = XDIV        AND
+    invoice.route#  = 0           AND
+    INVOICE.I-TYPE  = "N"         AND
+    INVOICE.C-DATE  GE StartMonth AND
+    INVOICE.C-DATE  LE EndMonth 
         NO-LOCK 
         BREAK BY INVOICE.CUST#:
     FIND FIRST PROPSL WHERE
