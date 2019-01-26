@@ -1,7 +1,8 @@
 /*************************************************/
 /* in-pro.p                                      */
 /*                                               */
-/* Print invoices from job orders                */
+/* Print invoices from job orders for Quickbooks */
+/* entry                                         */
 /*                                               */
 /*  11/28/2018 TO general cleanup                */
 /*                                               */
@@ -58,15 +59,15 @@ REPEAT:
    IF BEGG > 0 AND BEGG < 13 THEN LEAVE.
 END.
 
-IF BEGG = 1 THEN XMONTH = "JANUARY  ".
-IF BEGG = 2 THEN XMONTH = "FEBRUARY ".
-IF BEGG = 3 THEN XMONTH = "MARCH    ".
-IF BEGG = 4 THEN XMONTH = "APRIL    ".
-IF BEGG = 5 THEN XMONTH = "MAY      ".
-IF BEGG = 6 THEN XMONTH = "JUNE     ".
-IF BEGG = 7 THEN XMONTH = "JULY     ".
-IF BEGG = 8 THEN XMONTH = "AUGUST   ".
-IF BEGG = 9 THEN XMONTH = "SEPTEMBER".
+IF BEGG = 1 THEN XMONTH  = "JANUARY  ".
+IF BEGG = 2 THEN XMONTH  = "FEBRUARY ".
+IF BEGG = 3 THEN XMONTH  = "MARCH    ".
+IF BEGG = 4 THEN XMONTH  = "APRIL    ".
+IF BEGG = 5 THEN XMONTH  = "MAY      ".
+IF BEGG = 6 THEN XMONTH  = "JUNE     ".
+IF BEGG = 7 THEN XMONTH  = "JULY     ".
+IF BEGG = 8 THEN XMONTH  = "AUGUST   ".
+IF BEGG = 9 THEN XMONTH  = "SEPTEMBER".
 IF BEGG = 10 THEN XMONTH = "OCTOBER  ".
 IF BEGG = 11 THEN XMONTH = "NOVEMBER ".
 IF BEGG = 12 THEN XMONTH = "DECEMBER ".
