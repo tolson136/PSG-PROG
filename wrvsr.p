@@ -2,6 +2,7 @@
 /* Weekly Rolling VOlume */
 
 /*      3//13/2018   TO    Changed SS layout */
+/*       10/1/2019   TO    Chnage Excel method */
 
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
@@ -42,6 +43,10 @@ DEFINE VARIABLE LastMonthDate    AS DATE NO-UNDO.
 DEFINE VARIABLE MonthName        AS CHAR NO-UNDO.
 DEFINE VARIABLE DayDate          AS CHAR EXTENT 6 NO-UNDO.
 DEFINE VARIABLE BlankLines       AS INT.
+DEFINE VARIABLE FILENAME         AS CHARACTER.
+DEFINE VARIABLE CmdName          AS CHARACTER.
+DEFINE VARIABLE VolTotal AS DECIMAL.
+DEFINE VARIABLE CODTotal AS DECIMAL.
 
 DEFINE VARIABLE chExcel          AS COM-HANDLE NO-UNDO.
 DEFINE VARIABLE chWorkbook       AS COM-HANDLE NO-UNDO.
@@ -221,7 +226,7 @@ DEFINE NEW SHARED TEMP-TABLE RollVol12
     FIELD Notes AS CHAR.
     
  
-    
+   
 {slibooxml/slibxlsx.i}
 
 {slib/slibos.i}
@@ -327,7 +332,7 @@ IF NOT OutputToExcel THEN DO:
       "SUB-DIVISION" AT 20 XSUB "ROUTE" AT 50 XROUTE SKIP(1)
       "CUSTOMER" AT 1 "LOCATION" AT 36 "FREQUENCY" AT 60 SKIP(0)
       "TICKET #" AT 1 "BILLING" AT 61 "D/L" AT 76 SKIP(1)
-      WITH FRAME X PAGE-TOP NO-BOX NO-LABELS NO-UNDERLINE.
+      WITH FRAME X PAGE-TOP NO-BOX NO-LABELS NO-UNDERLINE WIDTH 100.
       VIEW FRAME X.
    END.
    ELSE DO:
@@ -338,7 +343,7 @@ IF NOT OutputToExcel THEN DO:
       "CUSTOMER" AT 1 "LOCATION" AT 36 "FREQUENCY" AT 60 SKIP(0)
       "BRIEF DESCRIPTION" AT 1 SKIP(0)
       "TICKET #" AT 1 "BILLING" AT 61 "D/L" AT 76 SKIP(1)
-      WITH FRAME Y PAGE-TOP NO-BOX NO-LABELS NO-UNDERLINE.
+      WITH FRAME Y PAGE-TOP NO-BOX NO-LABELS NO-UNDERLINE WIDTH 100.
       VIEW FRAME Y.
    END.
 END.
@@ -727,8 +732,8 @@ END.
             
             /*RUN DayOfWeek.p (INPUT pro-desp.wkday, OUTPUT DayOfWeek).*/
             CREATE RollVol1.
-            ASSIGN RollVol1.Location = propsl.l-Name
-                   RollVol1.Address = propsl.laddr01
+            ASSIGN RollVol1.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol1.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol1.City = propsl.laddr02
                    RollVol1.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol1.Freq = h-freq
@@ -745,8 +750,8 @@ END.
          IF pro-desp.route# = 2 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol2.
-            ASSIGN RollVol2.Location = propsl.l-Name
-                   RollVol2.Address = propsl.laddr01
+            ASSIGN RollVol2.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol2.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol2.City = propsl.laddr02
                    RollVol2.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol2.Freq = h-freq
@@ -763,8 +768,8 @@ END.
          IF pro-desp.route# = 3 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol3.
-            ASSIGN RollVol3.Location = propsl.l-Name
-                   RollVol3.Address = propsl.laddr01
+            ASSIGN RollVol3.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol3.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol3.City = propsl.laddr02
                    RollVol3.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol3.Freq = h-freq
@@ -781,8 +786,8 @@ END.
          IF pro-desp.route# = 4 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol4.
-            ASSIGN RollVol4.Location = propsl.l-Name
-                   RollVol4.Address = propsl.laddr01
+            ASSIGN RollVol4.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol4.Address =REPLACE(propsl.laddr01,","," ")
                    RollVol4.City = propsl.laddr02
                    RollVol4.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol4.Freq = h-freq
@@ -799,8 +804,8 @@ END.
          IF pro-desp.route# = 5 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol5.
-            ASSIGN RollVol5.Location = propsl.l-Name
-                   RollVol5.Address = propsl.laddr01
+            ASSIGN RollVol5.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol5.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol5.City = propsl.laddr02
                    RollVol5.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol5.Freq = h-freq
@@ -817,8 +822,8 @@ END.
          IF pro-desp.route# = 6 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol6.
-            ASSIGN RollVol6.Location = propsl.l-Name
-                   RollVol6.Address = propsl.laddr01
+            ASSIGN RollVol6.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol6.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol6.City = propsl.laddr02
                    RollVol6.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol6.Freq = h-freq
@@ -835,8 +840,8 @@ END.
          IF pro-desp.route# = 7 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol7.
-            ASSIGN RollVol7.Location = propsl.l-Name
-                   RollVol7.Address = propsl.laddr01
+            ASSIGN RollVol7.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol7.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol7.City = propsl.laddr02
                    RollVol7.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol7.Freq = h-freq
@@ -853,8 +858,8 @@ END.
          IF pro-desp.route# = 8 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol8.
-            ASSIGN RollVol8.Location = propsl.l-Name
-                   RollVol8.Address = propsl.laddr01
+            ASSIGN RollVol8.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol8.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol8.City = propsl.laddr02
                    RollVol8.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol8.Freq = h-freq
@@ -871,8 +876,8 @@ END.
          IF pro-desp.route# = 9 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol9.
-            ASSIGN RollVol9.Location = propsl.l-Name
-                   RollVol9.Address = propsl.laddr01
+            ASSIGN RollVol9.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol9.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol9.City = propsl.laddr02
                    RollVol9.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol9.Freq = h-freq
@@ -889,8 +894,8 @@ END.
          IF pro-desp.route# = 10 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol10.
-            ASSIGN RollVol10.Location = propsl.l-Name
-                   RollVol10.Address = propsl.laddr01
+            ASSIGN RollVol10.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol10.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol10.City = propsl.laddr02
                    RollVol10.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol10.Freq = h-freq
@@ -907,8 +912,8 @@ END.
          IF pro-desp.route# = 11 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol11.
-            ASSIGN RollVol11.Location = propsl.l-Name
-                   RollVol11.Address = propsl.laddr01
+            ASSIGN RollVol11.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol11.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol11.City = propsl.laddr02
                    RollVol11.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol11.Freq = h-freq
@@ -925,8 +930,8 @@ END.
          IF pro-desp.route# = 12 THEN DO:
             IF CodOnly AND pro-desp.cod-amt = 0 THEN NEXT.
             CREATE RollVol12.
-            ASSIGN RollVol12.Location = propsl.l-Name
-                   RollVol12.Address = propsl.laddr01
+            ASSIGN RollVol12.Location = REPLACE(propsl.l-Name,","," ")
+                   RollVol12.Address = REPLACE(propsl.laddr01,","," ")
                    RollVol12.City = propsl.laddr02
                    RollVol12.tICKET = string(pro-desp.propsl#) + "-" + string(pro-desp.item#)
                    RollVol12.Freq = h-freq
@@ -952,7 +957,7 @@ IF T-PRT THEN DO:
       "SUB-DIVISION" AT 20 XSUB "ROUTE" AT 50 XROUTE SKIP(1)
       "CUSTOMER" AT 1 "LOCATION" AT 36 "FREQUENCY" AT 60 SKIP(0)
       "TICKET #" AT 1 "BILLING" AT 61 "D/L" AT 76 SKIP(1)
-      WITH FRAME XX PAGE-TOP NO-BOX NO-LABELS NO-UNDERLINE.
+      WITH FRAME XX PAGE-TOP NO-BOX NO-LABELS NO-UNDERLINE WIDTH 90.
       VIEW FRAME XX.
  END.
       DISPLAY SKIP(1) SPACE(51) T-BILL T-DL WITH NO-BOX NO-LABELS.
@@ -973,268 +978,678 @@ IF OutputToExcel THEN DO:
    END.
 END.
 
-IF OutputToExcel THEN RUN REPLACE_BASIC.
+OS-COMMAND  SILENT DEL C:\RollVolTemp\   /Q     .
+ FILENAME = os_getNextFile( "c:\rollvol\RollingVolume-" + "AllRoutesWeek" + "-" + string(xweek) + ".xlsx"). 
+/* Generate individueal temporary CSV files to pass into node.js process */
+OUTPUT TO c:\RollVolTemp\Route01.csv.
+PUT UNFORMATTED "Route 1 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+                                         "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+                                         SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP .    
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol1:
+   ASSIGN VolTotal = VolTotal + RollVol1.Vol
+                    CODTotal = CODTotal + RollVol1.COD.
+   PUT UNFORMATTED RollVol1.Location      ","
+                   RollVol1.Address     ","
+                   RollVol1.City          ","
+                   RollVol1.tICKET        ","
+                   RollVol1.Freq          ","
+                   "," "," "," "," "," ","
+                   /*RollVol1.DAY           ","
+                   RollVol1.CompletedDate ","
+                   RollVol1.StartTime     ","
+                   RollVol1.EndTime       ","
+                   */
+                   RollVol1.EmployeeName  ","
+                   RollVol1.Vol           ","
+                   RollVol1.COD           ","
+                   RollVol1.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+  
+OUTPUT TO c:\RollVolTemp\Route02.csv.
+PUT UNFORMATTED "Route 2 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+      "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+      SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.    
+
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.                              
+FOR EACH RollVol2:
+   ASSIGN VolTotal = VolTotal + RollVol2.Vol
+                    CODTotal = CODTotal + RollVol2.COD.
+   PUT UNFORMATTED RollVol2.Location      ","
+                   RollVol2.Address       ","
+                   RollVol2.City          ","
+                   RollVol2.tICKET       ","
+                   RollVol2.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol2.EmployeeName  ","
+                   RollVol2.Vol           ","
+                   RollVol2.COD           ","
+                   RollVol2.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route03.csv.
+PUT UNFORMATTED "Route 3 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+      "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+      SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP. 
+                
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+
+FOR EACH RollVol3:
+   ASSIGN VolTotal = VolTotal + RollVol3.Vol
+                    CODTotal = CODTotal + RollVol3.COD.
+   PUT UNFORMATTED RollVol3.Location      ","
+                   RollVol3.Address     ","
+                   RollVol3.City          ","
+                   RollVol3.tICKET        ","
+                   RollVol3.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol3.EmployeeName  ","
+                   RollVol3.Vol           ","
+                   RollVol3.COD           ","
+                   RollVol3.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route04.csv.
+PUT UNFORMATTED "Route 4 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+       "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+       SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.    
+                
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+
+FOR EACH RollVol4:
+   ASSIGN VolTotal = VolTotal + RollVol4.Vol
+                    CODTotal = CODTotal + RollVol4.COD.
+   PUT UNFORMATTED RollVol4.Location      ","
+                   RollVol4.Address    ","
+                   RollVol4.City          ","
+                   RollVol4.tICKET        ","
+                   RollVol4.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol4.EmployeeName  ","
+                   RollVol4.Vol           ","
+                   RollVol4.COD           ","
+                   RollVol4.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route05.csv.
+PUT UNFORMATTED "Route 5 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+        "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+        SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.    
+
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol5:
+   ASSIGN VolTotal = VolTotal + RollVol5.Vol
+                    CODTotal = CODTotal + RollVol5.COD.
+   PUT UNFORMATTED RollVol5.Location      ","
+                   RollVol5.Address      ","
+                   RollVol5.City          ","
+                   RollVol5.tICKET        ","
+                   RollVol5.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol5.EmployeeName  ","
+                   RollVol5.Vol           ","
+                   RollVol5.COD           ","
+                   RollVol5.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route06.csv.
+PUT UNFORMATTED "Route 6 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+      "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+      SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.   
+                
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol6:
+   ASSIGN VolTotal = VolTotal + RollVol6.Vol
+                    CODTotal = CODTotal + RollVol6.COD.
+   PUT UNFORMATTED RollVol6.Location      ","
+                   RollVol6.Address      ","
+                   RollVol6.City          ","
+                   RollVol6.tICKET        ","
+                   RollVol6.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol6.EmployeeName  ","
+                   RollVol6.Vol           ","
+                   RollVol6.COD           ","
+                   RollVol6.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route07.csv.
+PUT UNFORMATTED "Route 7 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+      "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+      SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.    
+                
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol7:
+   ASSIGN VolTotal = VolTotal + RollVol7.Vol
+                    CODTotal = CODTotal + RollVol7.COD.
+   PUT UNFORMATTED RollVol7.Location      ","
+                   RollVol7.Address     ","
+                   RollVol7.City          ","
+                   RollVol7.tICKET        ","
+                   RollVol7.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol7.EmployeeName  ","
+                   RollVol7.Vol           ","
+                   RollVol7.COD           ","
+                   RollVol7.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route08.csv.
+PUT UNFORMATTED "Route 8 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+       "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+       SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.    
+                
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol8:
+   ASSIGN VolTotal = VolTotal + RollVol8.Vol
+                    CODTotal = CODTotal + RollVol8.COD.
+   PUT UNFORMATTED RollVol8.Location      ","
+                   RollVol8.Address      ","
+                   RollVol8.City          ","
+                   RollVol8.tICKET        ","
+                   RollVol8.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol8.EmployeeName  ","
+                   RollVol8.Vol           ","
+                   RollVol8.COD           ","
+                   RollVol8.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route09.csv.
+PUT UNFORMATTED "Route 9 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+      "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+      SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.    
+                
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol9:
+   ASSIGN VolTotal = VolTotal + RollVol9.Vol
+                    CODTotal = CODTotal + RollVol9.COD.
+   PUT UNFORMATTED RollVol9.Location      ","
+                   RollVol9.Address      ","
+                   RollVol9.City          ","
+                   RollVol9.tICKET        ","
+                   RollVol9.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol9.EmployeeName  ","
+                   RollVol9.Vol           ","
+                   RollVol9.COD           ","
+                   RollVol9.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route10.csv.
+PUT UNFORMATTED "Route 10 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+     "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+     SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.    
+                
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol10:
+   ASSIGN VolTotal = VolTotal + RollVol10.Vol
+                    CODTotal = CODTotal + RollVol10.COD.
+   PUT UNFORMATTED RollVol10.Location      ","
+                   RollVol10.Address      ","
+                   RollVol10.City          ","
+                   RollVol10.tICKET        ","
+                   RollVol10.Freq          ","
+                   RollVol10.DAY           ","
+                   "," "," "," "," ","
+                   RollVol10.EmployeeName  ","
+                   RollVol10.Vol           ","
+                   RollVol10.COD           ","
+                   RollVol10.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT TO c:\RollVolTemp\Route11.csv.
+PUT UNFORMATTED "Route 11 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+     "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+     SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP.    
+                
+ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol11:
+   ASSIGN VolTotal = VolTotal + RollVol11.Vol
+                    CODTotal = CODTotal + RollVol11.COD.
+   PUT UNFORMATTED RollVol11.Location      ","
+                   RollVol11.Address     ","
+                   RollVol11.City          ","
+                   RollVol11.tICKET        ","
+                   RollVol11.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol11.EmployeeName  ","
+                   RollVol11.Vol           ","
+                   RollVol11.COD           ","
+                   RollVol11.Notes   
+                   SKIP
+                   .
+END.
+OUTPUT TO c:\RollVolTemp\Route12.csv.
+PUT UNFORMATTED "Route 12 Summary - "  + MonthName + " - Week " + STRING(XWeek) 
+                                         "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","  FILENAME
+                                         SKIP.
+PUT UNFORMATTED "Location"                ","
+                "Address"                 ","
+                "City"                    ","
+                "Ticket"                  ","
+                "Freq"                    ","
+                DayDate[1]                ","
+                DayDate[2]                ","
+                DayDate[3]                ","
+                DayDate[4]                ","
+                DayDate[5]                ","
+                DayDate[6]                ","
+                "Tech"                    ","
+                "Vol"                     ","
+                "COD"                     ","
+                "Notes"
+                SKIP. 
+                
+ ASSIGN VolTotal     = 0
+                 CODTotal = 0.              
+FOR EACH RollVol12:
+   ASSIGN VolTotal = VolTotal + RollVol12.Vol
+                    CODTotal = CODTotal + RollVol12.COD.
+   PUT UNFORMATTED RollVol12.Location      ","
+                   RollVol12.Address      ","
+                   RollVol12.City          ","
+                   RollVol12.tICKET        ","
+                   RollVol12.Freq          ","
+                   "," "," "," "," "," ","
+                   RollVol12.EmployeeName  ","
+                   RollVol12.Vol           ","
+                   RollVol12.COD           ","
+                   RollVol12.Notes   
+                   SKIP
+                   .
+END.
+PUT UNFORMATTED 
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+   ","
+  VolTotal  "," 
+  CODTotal 
+  SKIP. 
+OUTPUT CLOSE.
 
 
-PROCEDURE REPLACE_BASIC:
-/**
- * replace_basic.p -
- *
- * (c) Copyright ABC Alon Blich Consulting Tech Ltd.
- *
- * Contact Information
- * Email: alonblich@gmail.com
- * Phone: +972-54-218-8086
+/*CmdName =  "node c:\nodeproj\generate c:\RollVolTemp " + FILENAME. */
+CmdName = "start Excel p:\Template\RollVolTemp2.xltm".
+
+OS-COMMAND  SILENT VALUE( CmdName ).
+/*OS-COMMAND SILENT "start Excel " + VALUE(FILENAME).*/
+/* Open file to add headers */
+/*
+CREATE "Excel.Application" chExcel.
+chWorkbook  = chExcel:Workbooks.
+chExcel:Workbooks:open(FILENAME).
  */
 
-
-
-define var cError       as char no-undo.
-define var cErrorMsg    as char no-undo.
-define var cStackTrace  as char no-undo.
-DEF VAR FILENAME AS CHAR NO-UNDO.
-
-/* Catch and handle any thrown exceptions */
-
-{slib/err_try}:
-
-    /* 1. Every file starts out as a template */
-
-    run xlsx_copyTemplate(
-
-        input "stXlsx",                                 /* Stream name */
-        input "template\rollvoltab6.xlsx" ). /* Template file */
-
-/* The field columns location and ranges are defined in Excel, using named ranges. 
-       You can create an Excel named range quickly by typing in the Excel name box (to the left of the formula bar). 
-
-        1. Select the cell(s) to be named 
-        2. Click in the Excel name box (to the left of the formula bar)
-        3. Type a one-word name for the list, for example: ItemNum
-        4. Press the Enter key.
-      
-       Another way to create and also edit and delete Excel named ranges is to use the Excel define name dialog box.
-       In the Excel menu bar - Insert > Name > Define. */
-
-
-    /* 2. Replace template data with temp-table data */
-
-    run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol1:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location1       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address1        = Address,"
-            + "City1           = City,"
-            + "Ticket1         = Ticket,"
-            + "Freq1           = Freq,"
-            + "Employee1       = EmployeeName,"
-            + "Volume1         = Vol,"
-            + "Cash1           = COD,"
-            + "Notes1          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-        run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol2:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location2       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address2        = Address,"
-            + "City2           = City,"
-            + "Ticket2         = Ticket,"
-            + "Freq2           = Freq,"            
-            + "Employee2       = EmployeeName,"
-            + "Volume2         = Vol,"
-            + "Cash2           = COD,"
-            + "Notes2          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-        run xlsx_replaceLongRange(
-        
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol3:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location3       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address3        = Address,"
-            + "City3           = City,"
-            + "Ticket3         = Ticket,"
-            + "Freq3           = Freq,"          
-            + "Employee3   = EmployeeName,"
-            + "Volume3            = Vol,"
-            + "Cash3            = COD,"
-            + "Notes3          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-        run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol4:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location4       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address4        = Address,"
-            + "City4           = City,"
-            + "Ticket4         = Ticket,"
-            + "Freq4           = Freq,"
-            + "Employee4   = EmployeeName,"
-            + "Volume4            = Vol,"
-            + "Cash4            = COD,"
-            + "Notes4          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-        run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol5:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location5       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address5        = Address,"
-            + "City5           = City,"
-            + "Ticket5         = Ticket,"
-            + "Freq5           = Freq,"
-            + "Employee5   = EmployeeName,"
-            + "Volume5            = Vol,"
-            + "Cash5            = COD,"
-            + "Notes5          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-        run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol6:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location6       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address6        = Address,"
-            + "City6           = City,"
-            + "Ticket6         = Ticket,"
-            + "Freq6           = Freq,"
-            + "Employee6   = EmployeeName,"
-            + "Volume6            = Vol,"
-            + "Cash6            = COD,"
-            + "Notes6          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-        run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol7:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location7       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address7        = Address,"
-            + "City7           = City,"
-            + "Ticket7         = Ticket,"
-            + "Freq7           = Freq,"
-            + "Employee7   = EmployeeName,"
-            + "Volume7            = Vol,"
-            + "Cash7            = COD,"
-            + "Notes7          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-        run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol8:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location8       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address8        = Address,"
-            + "City8           = City,"
-            + "Ticket8         = Ticket,"
-            + "Freq8           = Freq,"
-            + "Employee8   = EmployeeName,"
-            + "Volume8            = Vol,"
-            + "Cash8            = COD,"
-            + "Notes8          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-                run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol9:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location9       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address9        = Address,"
-            + "City9           = City,"
-            + "Ticket9         = Ticket,"
-            + "Freq9           = Freq,"
-            + "Employee9   = EmployeeName,"
-            + "Volume9            = Vol,"
-            + "Cash9            = COD,"
-            + "Notes9          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-     run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol10:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location10       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address10        = Address,"
-            + "City10           = City,"
-            + "Ticket10         = Ticket,"
-            + "Freq10           = Freq,"
-            + "Employee10       = EmployeeName,"
-            + "Volume10         = Vol,"
-            + "Cash10           = COD,"
-            + "Notes10          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-      run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol11:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location11       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address11        = Address,"
-            + "City11           = City,"
-            + "Ticket11         = Ticket,"
-            + "Freq11           = Freq,"
-            + "Employee11   = EmployeeName,"
-            + "Volume11            = Vol,"
-            + "Cash11            = COD,"
-            + "Notes11          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
-     run xlsx_replaceLongRange(
-
-        input "stXlsx",                                 /* Stream name */
-        input buffer RollVol12:handle,                       /* Dataset handle or temp-table handle or query handle or buffer handle */
-        input "Location12       = Location,"                /* <named range> = <buffer field> mapping */
-            + "Address12        = Address,"
-            + "City12           = City,"
-            + "Ticket12         = Ticket,"
-            + "Freq12           = Freq,"
-            + "Employee12       = EmployeeName,"
-            + "Volume12         = Vol,"
-            + "Cash12           = COD,"
-            + "Notes12          = Notes"
-            
-            ,
-        input "",                                       /* Buffer can-do list */
-        input "" ).                                     /* Field  can-do list */
-
+/*IF OutputToExcel THEN RUN REPLACE_BASIC.*/
+/********************
     /* 3. save file */
     FILENAME = os_getNextFile( "c:\rollvol\RollingVolume-" + "All Routes Week " + "-" + string(xweek) + ".xlsx" ). 
     run xlsx_save(
@@ -1243,16 +1658,6 @@ DEF VAR FILENAME AS CHAR NO-UNDO.
         input FILENAME).
 
            /* os_getNextFile( ) adds a counter to the file name incase the file already exists */
-
-{slib/err_catch cError cErrorMsg cStackTrace}:
-
-    message
-        cErrorMsg
-        skip(1)
-        cStackTrace
-    view-as alert-box.
-
-{slib/err_end}.
 
    /* Open file to add headers */
 create "Excel.Application" chExcel.
@@ -1404,7 +1809,9 @@ REPEAT SheetCount = 1 TO 12:
    chWorksheet:Range ("o:o"):ColumnWidth=22. /* Notes */
    /*chWorksheet:Range ("p:v"):ColumnWidth=8.*/
 END.
+
 chExcel:Visible = TRUE.
 MESSAGE "".
 
 END.
+  *************************/
