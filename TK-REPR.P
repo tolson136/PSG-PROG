@@ -4,6 +4,7 @@
 /* Monthly Ticket Reprint                                       */
 /*                                                              */ 
 /*      3//27/2018   TO    Added option to print through Word   */
+/*      10/1/2019    TO    Commented out Word stuff temporarily */
 /****************************************************************/
 
 DEFINE SHARED VARIABLE Test AS LOGICAL.
@@ -32,11 +33,11 @@ DEFINE VARIABLE TicketsPerPage AS INT INIT 3.
 DEFINE VARIABLE CurrentTicket  AS INT INIT 1. /* count within expect tickets per*/
 DEFINE VARIABLE TicketCount    AS INT INIT 1. /* Count on page */
 DEFINE VARIABLE CoProposal     AS CHAR FORMAT "X(30)".
-DEFINE VARIABLE ttDocXSequence AS INT.
+/*DEFINE VARIABLE ttDocXSequence AS INT.*/
 DEFINE VARIABLE FileName       AS CHAR.
 DEFINE VARIABLE Cmd            AS CHAR.
 DEFINE VARIABLE itemcount      AS INT.
-
+/*
 DEFINE TEMP-TABLE ttDocXPrint
   FIELD Idx AS INT 
   FIELD Week AS CHAR
@@ -70,7 +71,7 @@ DEFINE TEMP-TABLE ttDocXPrint
 {slibooxml/slibdocx.i}
 {include/stdutils.i}
 {slib/slibos.i}
-  
+*/  
 IF (USERID = "LANDMARK") OR (USERID = "GARCIA")
 THEN DO:
     MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
@@ -199,6 +200,7 @@ END.
           OUTPUT CLOSE.       
        END. /* NOT LaserPrinter */
        ELSE DO:
+          /*
           CoProposal = 
                  STRING(Ticket.COMP#, ">>") + "-" +
  	          TRIM(STRING(Ticket.DIV#, ">>")) + "-" + 
@@ -359,4 +361,5 @@ END.
           run docx_save(FileName).
           Cmd = "start winword.exe /t " + FileName.
           OS-command silent VALUE(Cmd).        
+          */
        END. /* ELSE DO - LaserPrinter */   

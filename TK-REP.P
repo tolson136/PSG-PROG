@@ -7,7 +7,7 @@
 /*                                               */
 /*************************************************/
 
-DEFINE NEW SHARED VARIABLE Test AS LOGICAL INIT yes.
+DEFINE NEW SHARED VARIABLE Test AS LOGICAL INIT No.
 DEFINE NEW SHARED VARIABLE BEG# AS INTEGER FORMAT "ZZ"
   LABEL "MONTH".
 DEFINE NEW SHARED VARIABLE F-CUST AS DECIMAL FORMAT "ZZZZZZZZZZ"
