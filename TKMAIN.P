@@ -4,6 +4,7 @@
 /* Monthly Ticket Main Menu                                        */
 /*                                                                 */
 /*  04/17/2018   TO    Changed header                              */
+/*  08/12/2019   TO    Added filter for month/year to query        */
 /*******************************************************************/
 
 DEFINE VARIABLE SELECTION AS CHAR FORMAT "X".
