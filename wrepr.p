@@ -8,9 +8,9 @@
 /*  4/17/2018    TO   Add test mode               */
 /*                    Remove Start/End Date       */
 /*                    Clean up                    */
+/*  10/22/2019   TO   Node print for Word/Laser   */
 /*                                                */
 /**************************************************/
-
 
 DEFINE SHARED VARIABLE TestMode AS LOGICAL.
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
@@ -42,11 +42,11 @@ DEFINE VARIABLE TicketsPerPage AS INT INIT 3.
 DEFINE VARIABLE CurrentTicket  AS INT INIT 1. /* count within expect tickets per*/
 DEFINE VARIABLE TicketCount    AS INT INIT 1. /* Count on page */
 DEFINE VARIABLE CoProposal AS CHAR FORMAT "X(30)".
-DEFINE VARIABLE ttDocXSequence AS INT.
+DEFINE VARIABLE ttDocSequence AS INT.
 DEFINE VARIABLE FileName AS CHAR.
 DEFINE VARIABLE Cmd AS CHAR.
 
-DEF TEMP-TABLE ttDocXPrint
+DEF TEMP-TABLE ttDocPrint
   FIELD Idx AS INT 
   FIELD Week AS CHAR
   FIELD CoProposal AS CHAR
@@ -64,15 +64,10 @@ DEF TEMP-TABLE ttDocXPrint
   FIELD StartEndCodEquip AS CHAR
   FIELD SpcIntr AS CHAR
   .
-
-{slibooxml/slibdocx.i}
-{include/stdutils.i}
-{slib/slibos.i}
   
-IF LaserPrinter THEN DO:
-   IF NOT TestMode THEN RUN docx_load("p:\template\Tickets2up.dfw").  
-   IF     TestMode THEN RUN docx_load("c:psg-prog\template\Tickets2up.dfw").
-END.
+/* Various OS uilities */  
+{slib/slibos.i}
+
 OUTPUT TO TERMINAL.
 FIND FIRST TICKET WHERE TICKET.COMP# = XCOM AND
                         TICKET.DIV# = XDIV AND
@@ -208,7 +203,7 @@ END.
    IF LaserPrinter THEN DO:
 
            CoProposal = 
-                 STRING(PRO-DESP.COMP#, ">>") + "-" +
+                   STRING(PRO-DESP.COMP#, ">>") + "-" +
               TRIM(STRING(PRO-DESP.DIV#, ">>")) + "-" + 
               TRIM(STRING(PRO-DESP.CUST#, ">>>>>>>>>>")) + "-" +
               TRIM(STRING(PRO-DESP.PROPSL#, ">>>>>>>>>>")) + "-" +
@@ -216,65 +211,68 @@ END.
               TRIM(STRING(ticket.month#, ">>")) + "-" +
               trim(string(ticket.wk#, ">>")) + "-" +
               TRIM(STRING(ticket.t-indx, ">>")).
-        REPEAT CurrentTicket = 1 TO NumTickets: /* how many of each to print */  
-           CREATE ttDocXPrint.
+
+           
+           CREATE ttDocPrint.
               ASSIGN 
-                  ttDocXPrint.Idx              = ttDocXSequence
-                  ttDocXPrint.Week             = h-Freq
-                  ttDocXPrint.CoProposal       = CoProposal
-                  ttDocXPrint.Location         = Propsl.L-Name + " " + 
+                  ttDocPrint.Idx              = ttDocSequence
+                  ttDocPrint.Week             = h-Freq
+                  ttDocPrint.CoProposal       = CoProposal
+                  ttDocPrint.Location         = Propsl.L-Name + " " + 
                                                  Propsl.Laddr01 + " " +
                                                  Propsl.Laddr02 + " " +
                                                  propsl.laddr03
-                  ttDocXPrint.Note1            = PRO-DESP.DESC01
-                  ttDocXPrint.Note2            = PRO-DESP.DESC02
-                  ttDocXPrint.Note3            = PRO-DESP.DESC03
-                  ttDocXPrint.Note4            = PRO-DESP.DESC04
-                  ttDocXPrint.Note5            = PRO-DESP.DESC05
-                  ttDocXPrint.Note6            = PRO-DESP.DESC06
-                  ttDocXPrint.Note7            = PRO-DESP.DESC07
-                  ttDocXPrint.Note8            = PRO-DESP.DESC08
-                  ttDocXPrint.Note9            = PRO-DESP.DESC09
-                  ttDocXPrint.Note10           = PRO-DESP.DESC10
-                  ttDocXPrint.SpcIntr          =  PRO-DESP.SPC-INTR
+                  ttDocPrint.Note1            = PRO-DESP.DESC01
+                  ttDocPrint.Note2            = PRO-DESP.DESC02
+                  ttDocPrint.Note3            = PRO-DESP.DESC03
+                  ttDocPrint.Note4            = PRO-DESP.DESC04
+                  ttDocPrint.Note5            = PRO-DESP.DESC05
+                  ttDocPrint.Note6            = PRO-DESP.DESC06
+                  ttDocPrint.Note7            = PRO-DESP.DESC07
+                  ttDocPrint.Note8            = PRO-DESP.DESC08
+                  ttDocPrint.Note9            = PRO-DESP.DESC09
+                  ttDocPrint.Note10           = PRO-DESP.DESC10
+                  ttDocPrint.SpcIntr          =  PRO-DESP.SPC-INTR
                   .
-              ttDocXSequence = ttDocXSequence + 1.    
-                          
-          END. /* REPEAT CurrentTicket */
+              ttDocSequence = ttDocSequence + 1.                  
       END. /* IF Laser */   
       IF LaserPrinter THEN DO: /* Print ticket data to Word if Laser */
-     
-          FOR EACH ttDocXPrint BY Idx:
-               /*display idx ttDocXPrint.CoProposal ttDocXPrint.Location. pause.*/
-                run docx_setClipboardValue("Ticket",string(TicketCount) + "Week", ttDocXPrint.Week).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "ProposalNumber", ttDocXPrint.CoProposal).  
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Location", ttDocXPrint.Location).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note1", ttDocXPrint.Note1).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note2", ttDocXPrint.Note2).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note3", ttDocXPrint.Note3).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note4", ttDocXPrint.Note4).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note5", ttDocXPrint.Note5).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note6", ttDocXPrint.Note6).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note7", ttDocXPrint.Note7).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note8", ttDocXPrint.Note8).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note9", ttDocXPrint.Note9).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note10", ttDocXPrint.Note10).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "SpcIntr", ttDocXPrint.SpcIntr).
-               TicketCount = TicketCount + 1.
-               IF TicketCount GE TicketsPerPage THEN DO: /* print page and set for next page */
-                  run docx_paste("Ticket"). /* Output page to Word.*/
-                  TicketCount = 1.
-               END.  
-           END. /* FOR EACH ttDocXPrint */
-          
-          /*run docx_paste("Ticket"). /* Output final page to Word.*/ */
-          FileName = os_getNextFile ( "c:\LaserTickets\ReprintTicket" + 
+          /* Output ticket data to CSV file for processing by NODE */
+          OUTPUT TO c:\LaserTickets\TicketData.csv.
+          FOR EACH ttDocPrint BY Idx:
+               PUT UNFORMATTED "'" + ttDocPrint.Week + "'" + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.CoProposal + "'"  + ",".  
+               PUT UNFORMATTED "'" + ttDocPrint.Location + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note1 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note2 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note3 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note4 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note5 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note6 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note7 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note8 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note9 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.Note10 + "'"  + ",".
+               PUT UNFORMATTED "'" + ttDocPrint.SpcIntr + "'"   /*SKIP*/.
+           END. /* FOR EACH ttDocPrint */
+           OUTPUT CLOSE.
+           FileName = os_getNextFile ( "c:/LaserTickets/ReprintTicket" + 
                                       STRING(YEAR(TODAY))  + 
                                       STRING(MONTH(TODAY)) +
                                       STRING(DAY(TODAY)) +
                                       ".docx" ). 
-          run docx_save(FileName).
+           /* process arg1=csv file arg2=template arg3=output doc*/
+           Cmd = "node c:/nodeproj/docxtemplater/ticketsnode " +
+                 "c:/lasertickets/TicketData.csv " +
+                 "c:/psg-prog/template/tickets2upnode.docx " + 
+                 /*"c:/lasertickets/test.docx"*/ FILENAME. 
+           OS-COMMAND VALUE(Cmd).      
+           
+           /*OS-COMMAND /*SILENT*/ "node c:/nodeproj/docxtemplater/ticketsnode c:/lasertickets/TicketData.csv c:/psg-prog/template/tickets2upnode.docx " + "c:/lasertickets/test.docx" /*FILENAME*/.*/
+           /*OS-COMMAND SILENT "node c:\nodeproj\docxtemplater\\ticketsnode c:/psg-node/psg-node/TicketData.csv c:/psg-prog/template/tickets2upnode.docx c:/lasertickets/test.docx > c:/lasertickets/ticketsnode.err".*/                           
+                                      
           Cmd = "start winword.exe /t " + FileName.
           OS-command silent VALUE(Cmd).
+          
       END.                 
              

@@ -4,6 +4,7 @@
 /* Print monthly tickets                         */
 /*                                               */
 /*  02/01/2018   TO    Added laser print option  */
+/*  10/01/2019   TO    Removed Laser temporarily */
 /*                                               */
 /*************************************************/
 
@@ -36,12 +37,12 @@ DEFINE VARIABLE TicketsPerPage AS INT INIT 3.
 DEFINE VARIABLE CurrentTicket  AS INT INIT 1. /* count within expect tickets per*/
 DEFINE VARIABLE TicketCount    AS INT INIT 1. /* Count on page */
 DEF VAR CoProposal AS CHAR FORMAT "X(30)".
-DEF VAR ttDocXSequence AS INT.
+/*DEF VAR ttDocXSequence AS INT.*/
 DEF VAR FileName AS CHAR.
 DEF VAR Cmd AS CHAR.
 def var itemcount as int.
 DEFINE VARIABLE Test AS LOG INIT No.
-
+/*
 DEF TEMP-TABLE ttDocXPrint
   FIELD Idx AS INT 
   FIELD Week AS CHAR
@@ -75,7 +76,7 @@ DEF TEMP-TABLE ttDocXPrint
 {slibooxml/slibdocx.i}
 {include/stdutils.i}
 {slib/slibos.i}
-
+*/
 IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
 THEN DO:
     MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
@@ -486,7 +487,7 @@ END.
 		  TICKET.WK-START = AMT2 * AMT2-MUL.
 		  TICKET.TOT-AMT-REM = AMT2 * AMT2-MUL.
 	      END.
-         
+/*****************         
          IF LaserPrinter THEN DO:
 
            CoProposal = 
@@ -559,12 +560,14 @@ END.
                           
            END. /* REPEAT CurrentTicket */
         END. /* IF Laser */ 	      
-	 RELEASE TICKET.
+	    ******************************/
+     RELEASE TICKET.
 	  END.
 	END.
 
     END.
  END.   
+    /*******************************
     IF LaserPrinter THEN DO: /* Print ticket data to Word if Laser */
          IF NOT Test THEN RUN docx_load("p:\template\TicketsMonthly1Page.dfw").
          IF Test     THEN RUN docx_load("c:\psg-prog\template\TicketsMonthly1Page.dfw").
@@ -744,7 +747,7 @@ END.
                END.
                */  
     	   END. /* FOR EACH ttDocXPrint */
-
+    
           /*run docx_paste("Ticket"). /* Output final page to Word.*/ */
           FileName = os_getNextFile ( "c:\LaserTickets\MonthlyTicket" + 
                                       STRING(YEAR(TODAY))  + 
@@ -755,4 +758,4 @@ END.
           Cmd = "start winword.exe /t " + FileName.
           OS-command silent VALUE(Cmd).    
       END. /* IF Laser */    
-  
+      ****************************/

@@ -9,7 +9,7 @@
 /*                    Remove Start/End Date       */
 /*                    Clean up                    */
 /*                                                */
-/**************************************************/
+/**************************************************/ 
 
 DEFINE SHARED VARIABLE XPROG    AS LOGICAL.
 DEFINE SHARED VARIABLE XCOM     AS INTEGER FORMAT "ZZ".
@@ -18,7 +18,7 @@ DEFINE SHARED VARIABLE XCOM-N   AS CHAR FORMAT "X(30)".
 DEFINE SHARED VARIABLE XDIV-N   AS CHAR FORMAT "X(30)".
 DEFINE SHARED VARIABLE XOPR     AS CHAR FORMAT "XXX".
 
-DEFINE NEW SHARED VARIABLE    TestMode AS LOGICAL INIT No.
+DEFINE NEW SHARED VARIABLE    TestMode AS LOGICAL INIT Yes.
 DEFINE NEW SHARED VARIABLE    BEG# AS INTEGER FORMAT "ZZ"
   LABEL "MONTH".
 DEFINE NEW SHARED VARIABLE    F-CUST AS DECIMAL FORMAT "ZZZZZZZZZZ"

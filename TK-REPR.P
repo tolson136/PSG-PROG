@@ -34,11 +34,12 @@ DEFINE VARIABLE CurrentTicket  AS INT INIT 1. /* count within expect tickets per
 DEFINE VARIABLE TicketCount    AS INT INIT 1. /* Count on page */
 DEFINE VARIABLE CoProposal     AS CHAR FORMAT "X(30)".
 /*DEFINE VARIABLE ttDocXSequence AS INT.*/
-DEFINE VARIABLE FileName       AS CHAR.
+DEFINE VARIABLE FilName       AS CHAR.
 DEFINE VARIABLE Cmd            AS CHAR.
 DEFINE VARIABLE itemcount      AS INT.
-/*
-DEFINE TEMP-TABLE ttDocXPrint
+DEFINE VARIABLE ttWordSequence AS INT.
+
+DEFINE TEMP-TABLE ttWordPrint
   FIELD Idx AS INT 
   FIELD Week AS CHAR
   FIELD CoProposal AS CHAR
@@ -68,10 +69,7 @@ DEFINE TEMP-TABLE ttDocXPrint
   FIELD dScheduled AS LOG
   .
   
-{slibooxml/slibdocx.i}
-{include/stdutils.i}
-{slib/slibos.i}
-*/  
+ 
 IF (USERID = "LANDMARK") OR (USERID = "GARCIA")
 THEN DO:
     MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
@@ -200,7 +198,7 @@ END.
           OUTPUT CLOSE.       
        END. /* NOT LaserPrinter */
        ELSE DO:
-          /*
+          
           CoProposal = 
                  STRING(Ticket.COMP#, ">>") + "-" +
  	          TRIM(STRING(Ticket.DIV#, ">>")) + "-" + 
@@ -211,54 +209,54 @@ END.
 	          /*trim(string(gweek, ">>")) + "-" +*/
 	          TRIM(STRING(Ticket.T-Indx, ">>")).
 	          
-          CREATE ttDocXPrint.
+          CREATE ttWordPrint.
           ASSIGN 
-                  ttDocXPrint.Idx              = ttDocXSequence
-                  ttDocXPrint.Week             = h-Freq
-                  ttDocXPrint.CoProposal       = CoProposal
-                  ttDocXPrint.Location         = Propsl.L-Name + " " + 
+                  ttWordPrint.Idx              = ttWordSequence
+                  ttWordPrint.Week             = h-Freq
+                  ttWordPrint.CoProposal       = CoProposal
+                  ttWordPrint.Location         = Propsl.L-Name + " " + 
                                                  Propsl.Laddr01 + " " +
                                                  Propsl.Laddr02 + " " +
                                                  propsl.laddr03
-                  ttDocXPrint.Note1            = PRO-DESP.DESC01
-                  ttDocXPrint.Note2            = PRO-DESP.DESC02
-                  ttDocXPrint.Note3            = PRO-DESP.DESC03
-                  ttDocXPrint.Note4            = PRO-DESP.DESC04
-                  ttDocXPrint.Note5            = PRO-DESP.DESC05
-                  ttDocXPrint.Note6            = PRO-DESP.DESC06
-                  ttDocXPrint.Note7            = PRO-DESP.DESC07
-                  ttDocXPrint.Note8            = PRO-DESP.DESC08
-                  ttDocXPrint.Note9            = PRO-DESP.DESC09
-                  ttDocXPrint.Note10           = PRO-DESP.DESC10
-                  ttDocXPrint.STartEndCodEquip =  "  Equip: " +
+                  ttWordPrint.Note1            = PRO-DESP.DESC01
+                  ttWordPrint.Note2            = PRO-DESP.DESC02
+                  ttWordPrint.Note3            = PRO-DESP.DESC03
+                  ttWordPrint.Note4            = PRO-DESP.DESC04
+                  ttWordPrint.Note5            = PRO-DESP.DESC05
+                  ttWordPrint.Note6            = PRO-DESP.DESC06
+                  ttWordPrint.Note7            = PRO-DESP.DESC07
+                  ttWordPrint.Note8            = PRO-DESP.DESC08
+                  ttWordPrint.Note9            = PRO-DESP.DESC09
+                  ttWordPrint.Note10           = PRO-DESP.DESC10
+                  ttWordPrint.STartEndCodEquip =  "  Equip: " +
                                                   PRO-DESP.EquipmentRequired
-                  ttDocXPrint.SpcIntr          =  PRO-DESP.SPC-INTR
-                  ttDocXPrint.Name             = PROPSL.ADDR4
-                  ttDocXPrint.Address          = PROPSL.ADDR1
-                  ttDocXPrint.Address2         = PROPSL.ADDR2
-                  ttDocXPrint.City             = PROPSL.ADDR3
-                  ttDocXPrint.Phone            = PROPSL.TELE
-                  ttDocXPrint.EMail            = PROPSL.email1
-                  ttDocXPrint.Price            = PRO-DESP.AMT
-                  ttDocXPrint.Weeks            = IF PRO-DESP.wks[1]   THEN ttDocXPrint.Weeks + "1 "  ELSE ttDocXPrint.Weeks
-                  ttDocXPrint.Weeks            = IF PRO-DESP.wks[2]   THEN ttDocXPrint.Weeks + "2 "  ELSE ttDocXPrint.Weeks
-                  ttDocXPrint.Weeks            = IF PRO-DESP.wks[3]   THEN ttDocXPrint.Weeks + "3 "  ELSE ttDocXPrint.Weeks
-                  ttDocXPrint.Weeks            = IF PRO-DESP.wks[4]   THEN ttDocXPrint.Weeks + "4 "  ELSE ttDocXPrint.Weeks
-                  ttDocXPrint.Weeks            = IF PRO-DESP.wks[5]   THEN ttDocXPrint.Weeks + "5 "  ELSE ttDocXPrint.Weeks
-                  ttDocXPrint.Days             = IF PRO-DESP.WKDAY[1] THEN ttDocXPrint.Days  + "Sa " ELSE ttDocxPrint.Days
-                  ttDocXPrint.Days             = IF PRO-DESP.WKDAY[2] THEN ttDocXPrint.Days  + "Su " ELSE ttDocxPrint.Days
-                  ttDocXPrint.Days             = IF PRO-DESP.WKDAY[3] THEN ttDocXPrint.Days  + "Mo " ELSE ttDocxPrint.Days
-                  ttDocXPrint.Days             = IF PRO-DESP.WKDAY[4] THEN ttDocXPrint.Days  + "Tu " ELSE ttDocxPrint.Days
-                  ttDocXPrint.Days             = IF PRO-DESP.WKDAY[5] THEN ttDocXPrint.Days  + "We " ELSE ttDocxPrint.Days
-                  ttDocXPrint.Days             = IF PRO-DESP.WKDAY[6] THEN ttDocXPrint.Days  + "Th " ELSE ttDocxPrint.Days
-                  ttDocXPrint.Days             = IF PRO-DESP.WKDAY[7] THEN ttDocXPrint.Days  + "Fr " ELSE ttDocxPrint.Days
-                  ttDocXPrint.wScheduled       = IF PRO-DESP.wks[1]      THEN Yes 
+                  ttWordPrint.SpcIntr          =  PRO-DESP.SPC-INTR
+                  ttWordPrint.Name             = PROPSL.ADDR4
+                  ttWordPrint.Address          = PROPSL.ADDR1
+                  ttWordPrint.Address2         = PROPSL.ADDR2
+                  ttWordPrint.City             = PROPSL.ADDR3
+                  ttWordPrint.Phone            = PROPSL.TELE
+                  ttWordPrint.EMail            = PROPSL.email1
+                  ttWordPrint.Price            = PRO-DESP.AMT
+                  ttWordPrint.Weeks            = IF PRO-DESP.wks[1]   THEN ttWordPrint.Weeks + "1 "  ELSE ttWordPrint.Weeks
+                  ttWordPrint.Weeks            = IF PRO-DESP.wks[2]   THEN ttWordPrint.Weeks + "2 "  ELSE ttWordPrint.Weeks
+                  ttWordPrint.Weeks            = IF PRO-DESP.wks[3]   THEN ttWordPrint.Weeks + "3 "  ELSE ttWordPrint.Weeks
+                  ttWordPrint.Weeks            = IF PRO-DESP.wks[4]   THEN ttWordPrint.Weeks + "4 "  ELSE ttWordPrint.Weeks
+                  ttWordPrint.Weeks            = IF PRO-DESP.wks[5]   THEN ttWordPrint.Weeks + "5 "  ELSE ttWordPrint.Weeks
+                  ttWordPrint.Days             = IF PRO-DESP.WKDAY[1] THEN ttWordPrint.Days  + "Sa " ELSE ttWordPrint.Days
+                  ttWordPrint.Days             = IF PRO-DESP.WKDAY[2] THEN ttWordPrint.Days  + "Su " ELSE ttWordPrint.Days
+                  ttWordPrint.Days             = IF PRO-DESP.WKDAY[3] THEN ttWordPrint.Days  + "Mo " ELSE ttWordPrint.Days
+                  ttWordPrint.Days             = IF PRO-DESP.WKDAY[4] THEN ttWordPrint.Days  + "Tu " ELSE ttWordPrint.Days
+                  ttWordPrint.Days             = IF PRO-DESP.WKDAY[5] THEN ttWordPrint.Days  + "We " ELSE ttWordPrint.Days
+                  ttWordPrint.Days             = IF PRO-DESP.WKDAY[6] THEN ttWordPrint.Days  + "Th " ELSE ttWordPrint.Days
+                  ttWordPrint.Days             = IF PRO-DESP.WKDAY[7] THEN ttWordPrint.Days  + "Fr " ELSE ttWordPrint.Days
+                  ttWordPrint.wScheduled       = IF PRO-DESP.wks[1]      THEN Yes 
                                                  ELSE IF PRO-DESP.wks[2] THEN YES
                                                  ELSE IF PRO-DESP.wks[3] THEN YES
                                                  ELSE IF PRO-DESP.wks[4] THEN YES
                                                  ELSE IF PRO-DESP.wks[5] THEN YES
                                                  ELSE No
-                  ttDocXPrint.dScheduled       = IF PRO-DESP.WKDAY[1]       THEN YES
+                  ttWordPrint.dScheduled       = IF PRO-DESP.WKDAY[1]       THEN YES
                                                  ELSE IF PRO-DESP.WKDAY[2]  THEN YES
                                                  ELSE IF PRO-DESP.WKDAY[3]  THEN YES
                                                  ELSE IF PRO-DESP.WKDAY[4]  THEN YES
@@ -267,97 +265,15 @@ END.
                                                  ELSE IF PRO-DESP.WKDAY[7]  THEN YES                     
                                                  ELSE No
                   .
-              ttDocXSequence = ttDocXSequence + 1.    
-              
-          IF NOT Test THEN RUN docx_load("p:\template\TicketsMonthly1Page.dfw").
-          IF Test     THEN RUN docx_load("c:\psg-prog\template\TicketsMonthly1Page.dfw").
-    	   FOR EACH ttDocXPrint BY Idx:
-
-    	        run docx_setClipboardValue("Ticket",string(1) + "Week", ttDocXPrint.Week).
-               run docx_setClipboardValue("Ticket",string(1) + "ProposalNumber", ttDocXPrint.CoProposal).  
-               run docx_setClipboardValue("Ticket",string(1) + "Location", ttDocXPrint.Location).
-               run docx_setClipboardValue("Ticket",string(1) + "Note1", ttDocXPrint.Note1).
-               run docx_setClipboardValue("Ticket",string(1) + "Note2", ttDocXPrint.Note2).
-               run docx_setClipboardValue("Ticket",string(1) + "Note3", ttDocXPrint.Note3).
-               run docx_setClipboardValue("Ticket",string(1) + "Note4", ttDocXPrint.Note4).
-               run docx_setClipboardValue("Ticket",string(1) + "Note5", ttDocXPrint.Note5).
-               run docx_setClipboardValue("Ticket",string(1) + "Note6", ttDocXPrint.Note6).
-               run docx_setClipboardValue("Ticket",string(1) + "Note7", ttDocXPrint.Note7).
-               run docx_setClipboardValue("Ticket",string(1) + "Note8", ttDocXPrint.Note8).
-               run docx_setClipboardValue("Ticket",string(1) + "Note9", ttDocXPrint.Note9).
-               run docx_setClipboardValue("Ticket",string(1) + "Note10", ttDocXPrint.Note10).
-               run docx_setClipboardValue("Ticket",string(1) + "StartEndCodEquip", ttDocXPrint.StartEndCodEquip).
-               run docx_setClipboardValue("Ticket",string(1) + "SpcIntr", ttDocXPrint.SpcIntr).
-               
-    	        run docx_setClipboardValue("Ticket",string(2) + "Week", ttDocXPrint.Week).
-               run docx_setClipboardValue("Ticket",string(2) + "ProposalNumber", ttDocXPrint.CoProposal).  
-               run docx_setClipboardValue("Ticket",string(2) + "Location", ttDocXPrint.Location).
-               run docx_setClipboardValue("Ticket",string(2) + "Note1", ttDocXPrint.Note1).
-               run docx_setClipboardValue("Ticket",string(2) + "Note2", ttDocXPrint.Note2).
-               run docx_setClipboardValue("Ticket",string(2) + "Note3", ttDocXPrint.Note3).
-               run docx_setClipboardValue("Ticket",string(2) + "Note4", ttDocXPrint.Note4).
-               run docx_setClipboardValue("Ticket",string(2) + "Note5", ttDocXPrint.Note5).
-               run docx_setClipboardValue("Ticket",string(2) + "Note6", ttDocXPrint.Note6).
-               run docx_setClipboardValue("Ticket",string(2) + "Note7", ttDocXPrint.Note7).
-               run docx_setClipboardValue("Ticket",string(2) + "Note8", ttDocXPrint.Note8).
-               run docx_setClipboardValue("Ticket",string(2) + "Note9", ttDocXPrint.Note9).
-               run docx_setClipboardValue("Ticket",string(2) + "Note10", ttDocXPrint.Note10).
-               run docx_setClipboardValue("Ticket",string(2) + "StartEndCodEquip", ttDocXPrint.StartEndCodEquip).
-               run docx_setClipboardValue("Ticket",string(2) + "SpcIntr", ttDocXPrint.SpcIntr).               
-               run docx_paste("Ticket").
-               
-    	        run docx_setClipboardValue("Ticket",string(1) + "Week", ttDocXPrint.Week).
-               run docx_setClipboardValue("Ticket",string(1) + "ProposalNumber", ttDocXPrint.CoProposal).  
-               run docx_setClipboardValue("Ticket",string(1) + "Location", ttDocXPrint.Location).
-               run docx_setClipboardValue("Ticket",string(1) + "Note1", ttDocXPrint.Name +
-                                                                        "                                       " +
-                                                                        STRING(ttDocXPrint.Price,"$ZZ,ZZ9.99")   + 
-                                                                        "      Weeks: " + ttDocXPrint.Weeks      +
-                                                                        "      Days: " + ttDocXPrint.Days).
-               run docx_setClipboardValue("Ticket",string(1) + "Note2", ttDocXPrint.Address).
-               run docx_setClipboardValue("Ticket",string(1) + "Note3", ttDocXPrint.City).
-               run docx_setClipboardValue("Ticket",string(1) + "Note4", ttDocXPrint.Phone).
-               run docx_setClipboardValue("Ticket",string(1) + "Note5", ttDocXPrint.EMail).
-               run docx_setClipboardValue("Ticket",string(1) + "Note6", 
-                "____________________________________________________________________________________________________").
-               run docx_setClipboardValue("Ticket",string(1) + "Note7", 
-               "_____________________________________________________________________________________________________").
-               run docx_setClipboardValue("Ticket",string(1) + "Note8", 
-               "_____________________________________________________________________________________________________").
-               run docx_setClipboardValue("Ticket",string(1) + "Note9", 
-               "_____________________________________________________________________________________________________").
-               run docx_setClipboardValue("Ticket",string(1) + "Note10", 
-               "_____________________________________________________________________________________________________").
-               run docx_setClipboardValue("Ticket",string(1) + "StartEndCodEquip", 
-               "_____________________________________________________________________________________________________").
-               run docx_setClipboardValue("Ticket",string(1) + "SpcIntr", 
-               "_____________________________________________________________________________________________________").
-               
-    	        run docx_setClipboardValue("Ticket",string(2) + "Week", ttDocXPrint.Week).
-               run docx_setClipboardValue("Ticket",string(2) + "ProposalNumber", ttDocXPrint.CoProposal).  
-               run docx_setClipboardValue("Ticket",string(2) + "Location", ttDocXPrint.Location).
-               run docx_setClipboardValue("Ticket",string(2) + "Note1", ttDocXPrint.Note1).
-               run docx_setClipboardValue("Ticket",string(2) + "Note2", ttDocXPrint.Note2).
-               run docx_setClipboardValue("Ticket",string(2) + "Note3", ttDocXPrint.Note3).
-               run docx_setClipboardValue("Ticket",string(2) + "Note4", ttDocXPrint.Note4).
-               run docx_setClipboardValue("Ticket",string(2) + "Note5", ttDocXPrint.Note5).
-               run docx_setClipboardValue("Ticket",string(2) + "Note6", ttDocXPrint.Note6).
-               run docx_setClipboardValue("Ticket",string(2) + "Note7", ttDocXPrint.Note7).
-               run docx_setClipboardValue("Ticket",string(2) + "Note8", ttDocXPrint.Note8).
-               run docx_setClipboardValue("Ticket",string(2) + "Note9", ttDocXPrint.Note9).
-               run docx_setClipboardValue("Ticket",string(2) + "Note10", ttDocXPrint.Note10).
-               run docx_setClipboardValue("Ticket",string(2) + "StartEndCodEquip", ttDocXPrint.StartEndCodEquip).
-               run docx_setClipboardValue("Ticket",string(2) + "SpcIntr", ttDocXPrint.SpcIntr).               
-               run docx_paste("Ticket").     
-                         
-	
-          END. /* FOR EACH ttDocXPrint */  
+              ttWordSequence = ttWordSequence + 1.    
+ 
   
-          FileName = os_getNextFile ( "c:\LaserTickets\MonthlyReprint" + 
+          /*FileName = os_getNextFile ( "c:\LaserTickets\MonthlyReprint" + 
                      STRING(YEAR(TODAY))  + 
                      STRING(MONTH(TODAY)) +
                      STRING(DAY(TODAY)) +
-                     ".docx" ). 
+                     ".docx" ).*/ 
+          FILENAME = os_getNextFile( "c:\LaserTickets-" + "MonthlyReprint" + "-" + string(xweek) + ".docx").            
           run docx_save(FileName).
           Cmd = "start winword.exe /t " + FileName.
           OS-command silent VALUE(Cmd).        

@@ -1,4 +1,4 @@
-10:24:37 Looking for *.p in C:\Psg-Prog
+19:05:53 Looking for *.p in C:\Psg-Prog
 Compiling A-LIST.P
 Compiling A.P
 Compiling AR-ACTIV.P
@@ -105,6 +105,7 @@ Compiling PL-MAIL.P
 Compiling PL-RPT.P
 Compiling PLD-ADD.P
 Compiling Pld-chg.p
+WARNING: Executable statement at line 212 of file C:\Psg-Prog\pld-chg.i will not be reached. (15090)
 Compiling PLMAIN.P
 Compiling PLP-ADD.P
 Compiling PLP-CHG.P
@@ -136,29 +137,29 @@ Compiling TICKET1.P
 Compiling TICKET2.P
 Compiling TIMER.P
 Compiling tk-5thwk.p
+Compiling TK-ADD-new.P
+Compiling TK-ADD-old.P
 Compiling TK-ADD.P
 Compiling TK-ADDJ.P
 Compiling TK-ADDPR.P
+Compiling TK-ADDR-new (2).P
 Compiling TK-ADDR-NEW.P
+Compiling TK-ADDR-old.P
 Compiling TK-ADDR.P
 Compiling TK-ADDRP.P
 Compiling TK-CHG.P
 Compiling TK-CLEN.P
 Compiling TK-COMP.P
-Compiling TK-CRE-laser old.P
 Compiling TK-CRE.P
 Compiling TK-CREJ.P
 Compiling TK-CREPR.P
-Compiling TK-CRER-laser old.P
 Compiling TK-CRER-NEW.P
 Compiling TK-CRER-old.P
 Compiling TK-CRER.P
 Compiling TK-CREW.P
 Compiling TK-DEL.P
 Compiling TK-DELTK.P
-Compiling TK-DLLOC.P
 Compiling TK-DLOUT.P
-Compiling TK-DLSUB.P
 Compiling TK-INC.P
 Compiling TK-LAST.P
 Compiling TK-LASTP.P
@@ -175,6 +176,7 @@ Compiling TK-REPR-NEW.P
 Compiling TK-REPR.P
 Compiling TK-REPRP.P
 Compiling TK-RET.p
+WARNING: Executable statement at line 109 of file C:\Psg-Prog\TK-RET.p will not be reached. (15090)
 Compiling TK-RETC.P
 Compiling TK-RNG.P
 Compiling TK-RVSR.P
@@ -209,37 +211,86 @@ Compiling wpro.p
 Compiling wrep.p
 Compiling wrepr.p
 Compiling wret.p
+WARNING: Executable statement at line 114 of file C:\Psg-Prog\wret.p will not be reached. (15090)
 Compiling wrvsr.p
 Compiling wwomp.p
 Compiling ZIRCON1.P
 Compiling ZIRCON2.P
-10:24:42 Looking for 104___07\*.p in C:\Psg-Prog
-10:24:43 Looking for download\*.p in C:\Psg-Prog
-10:24:43 Looking for excel\*.p in C:\Psg-Prog
-10:24:43 Looking for include\*.p in C:\Psg-Prog
-10:24:43 Looking for Old versions\*.p in C:\Psg-Prog
+19:06:07 Looking for .git\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\hooks\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\info\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\logs\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\logs\refs\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\logs\refs\heads\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\logs\refs\remotes\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\logs\refs\remotes\origin\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\06\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\0b\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\1e\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\20\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\23\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\2c\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\36\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\41\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\44\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\47\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\49\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\4c\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\52\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\60\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\67\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\68\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\6d\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\79\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\7a\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\8e\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\8f\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\a8\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\c0\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\cb\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\cf\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\d1\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\d5\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\e5\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\fb\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\info\*.p in C:\Psg-Prog
+19:06:08 Looking for .git\objects\pack\*.p in C:\Psg-Prog
+19:06:09 Looking for .git\refs\*.p in C:\Psg-Prog
+19:06:09 Looking for .git\refs\heads\*.p in C:\Psg-Prog
+19:06:09 Looking for .git\refs\remotes\*.p in C:\Psg-Prog
+19:06:09 Looking for .git\refs\remotes\origin\*.p in C:\Psg-Prog
+19:06:09 Looking for .git\refs\tags\*.p in C:\Psg-Prog
+19:06:09 Looking for database files\*.p in C:\Psg-Prog
+19:06:09 Looking for Deprecated\*.p in C:\Psg-Prog
+Compiling Deprecated\TK-DLLOC.P
+Compiling Deprecated\TK-DLSUB.P
+19:06:09 Looking for include\*.p in C:\Psg-Prog
+19:06:09 Looking for Old versions\*.p in C:\Psg-Prog
 Compiling Old versions\PLMAIN.P
-10:24:43 Looking for propsl\*.p in C:\Psg-Prog
+19:06:10 Looking for propsl\*.p in C:\Psg-Prog
 Compiling propsl\exportprices.p
-10:24:43 Looking for samples\*.p in C:\Psg-Prog
-10:24:43 Looking for samples\jpgs\*.p in C:\Psg-Prog
-10:24:43 Looking for samples\src\*.p in C:\Psg-Prog
+19:06:10 Looking for samples\*.p in C:\Psg-Prog
+19:06:10 Looking for samples\jpgs\*.p in C:\Psg-Prog
+19:06:10 Looking for samples\src\*.p in C:\Psg-Prog
 Compiling samples\src\convert_print.p
 Compiling samples\src\no_sliberr.p
 Compiling samples\src\slow_activex.p
 Unknown or ambiguous table Customer. (725)
 ** C:\Psg-Prog\samples\src\slow_activex.p Could not understand line 72. (196)
-10:24:43 Looking for samples\src\excel\*.p in C:\Psg-Prog
+19:06:10 Looking for samples\src\excel\*.p in C:\Psg-Prog
 Compiling samples\src\excel\create_template.p
 Unknown or ambiguous table Item. (725)
 ** C:\Psg-Prog\samples\src\excel\create_template.p Could not understand line 32. (196)
 Compiling samples\src\excel\create_template_dataset.p
-** C:\Psg-Prog\samples\src\excel\create_template_dataset.p Could not understand line 16. (196)
+Unknown or ambiguous table Customer. (725)
+** C:\Psg-Prog\samples\src\excel\create_template_dataset.p Could not understand line 22. (196)
 Compiling samples\src\excel\create_template_multi_tt_v9.p
 Unknown or ambiguous table item. (725)
 ** C:\Psg-Prog\samples\src\excel\create_template_multi_tt_v9.p Could not understand line 54. (196)
 Compiling samples\src\excel\create_template_ttmeta.p
-** C:\Psg-Prog\samples\src\excel\create_template_ttmeta.p Could not understand line 16. (196)
+Unknown or ambiguous table Customer. (725)
+** C:\Psg-Prog\samples\src\excel\create_template_ttmeta.p Could not understand line 22. (196)
 Compiling samples\src\excel\cut_paste_basic.p
 Compiling samples\src\excel\cut_paste_pic.p
 Unknown or ambiguous table item. (725)
@@ -260,8 +311,8 @@ Unknown or ambiguous table Customer. (725)
 Compiling samples\src\excel\replace_pivot.p
 Unknown or ambiguous table Customer. (725)
 ** C:\Psg-Prog\samples\src\excel\replace_pivot.p Could not understand line 30. (196)
-10:24:43 Looking for samples\templates\*.p in C:\Psg-Prog
-10:24:43 Looking for slib\*.p in C:\Psg-Prog
+19:06:11 Looking for samples\templates\*.p in C:\Psg-Prog
+19:06:11 Looking for slib\*.p in C:\Psg-Prog
 Compiling slib\getbarcode128b.p
 Compiling slib\slibbidi_ansi.p
 Compiling slib\slibbidi_win9x.p
@@ -277,66 +328,157 @@ Compiling slib\slibunix.p
 Compiling slib\slibwin.p
 Compiling slib\slibxml.p
 Compiling slib\start-slib.p
-10:24:44 Looking for slib\bin\*.p in C:\Psg-Prog
-10:24:44 Looking for slibooxml\*.p in C:\Psg-Prog
+19:06:14 Looking for slib\bin\*.p in C:\Psg-Prog
+19:06:14 Looking for slibooxml\*.p in C:\Psg-Prog
 Compiling slibooxml\slibdocx.p
 Compiling slibooxml\slibooxml.p
 Compiling slibooxml\slibooxmltxt.p
 Compiling slibooxml\slibxlsx.p
 Compiling slibooxml\slibxlsxext.p
-10:24:46 Looking for Template\*.p in C:\Psg-Prog
-10:24:46 Looking for Template\old\*.p in C:\Psg-Prog
-10:24:46 Looking for tim work\*.p in C:\Psg-Prog
+19:06:16 Looking for Template\*.p in C:\Psg-Prog
+19:06:17 Looking for Template\old\*.p in C:\Psg-Prog
+19:06:17 Looking for tim work\*.p in C:\Psg-Prog
 Compiling tim work\ADDRESS_REPORT.P
 Compiling tim work\ADDRESS_REPORT2.P
+Compiling tim work\qb research.p
 Compiling tim work\routechg.p
+Compiling tim work\Texas Propsls additional 2.p
 Compiling tim work\Texas Propsls additional.p
 Compiling tim work\TExas Propsls.p
-10:24:46 Looking for util\*.p in C:\Psg-Prog
+Compiling tim work\ticket research.p
+Compiling tim work\TicketsDelete.p
+Compiling tim work\WeeklyTicketsCompile.p
+19:06:17 Looking for util\*.p in C:\Psg-Prog
 Compiling util\ADDRESSREPORT2.P
 Compiling util\BigSearchPopulate.p
-Unknown or ambiguous table BigSearch. (725)
-** C:\Psg-Prog\util\BigSearchPopulate.p Could not understand line 1. (196)
 Compiling util\FreqUpdate.P
-10:24:46 Looking for *.w in C:\Psg-Prog
+Compiling util\propath.p
+Compiling util\syntax.p
+19:06:18 Looking for *.w in C:\Psg-Prog
 Compiling PropslExp.w
-10:24:47 Looking for 104___07\*.w in C:\Psg-Prog
-10:24:48 Looking for download\*.w in C:\Psg-Prog
-10:24:48 Looking for excel\*.w in C:\Psg-Prog
-10:24:48 Looking for include\*.w in C:\Psg-Prog
-10:24:48 Looking for Old versions\*.w in C:\Psg-Prog
-10:24:48 Looking for propsl\*.w in C:\Psg-Prog
-10:24:48 Looking for samples\*.w in C:\Psg-Prog
-10:24:48 Looking for samples\jpgs\*.w in C:\Psg-Prog
-10:24:48 Looking for samples\src\*.w in C:\Psg-Prog
-10:24:48 Looking for samples\src\excel\*.w in C:\Psg-Prog
-10:24:48 Looking for samples\templates\*.w in C:\Psg-Prog
-10:24:48 Looking for slib\*.w in C:\Psg-Prog
-10:24:49 Looking for slib\bin\*.w in C:\Psg-Prog
-10:24:49 Looking for slibooxml\*.w in C:\Psg-Prog
-10:24:49 Looking for Template\*.w in C:\Psg-Prog
-10:24:49 Looking for Template\old\*.w in C:\Psg-Prog
-10:24:49 Looking for tim work\*.w in C:\Psg-Prog
-10:24:49 Looking for util\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\hooks\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\info\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\logs\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\logs\refs\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\logs\refs\heads\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\logs\refs\remotes\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\logs\refs\remotes\origin\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\06\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\0b\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\1e\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\20\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\23\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\2c\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\36\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\41\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\44\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\47\*.w in C:\Psg-Prog
+19:06:19 Looking for .git\objects\49\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\4c\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\52\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\60\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\67\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\68\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\6d\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\79\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\7a\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\8e\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\8f\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\a8\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\c0\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\cb\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\cf\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\d1\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\d5\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\e5\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\fb\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\info\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\objects\pack\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\refs\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\refs\heads\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\refs\remotes\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\refs\remotes\origin\*.w in C:\Psg-Prog
+19:06:20 Looking for .git\refs\tags\*.w in C:\Psg-Prog
+19:06:20 Looking for database files\*.w in C:\Psg-Prog
+19:06:20 Looking for Deprecated\*.w in C:\Psg-Prog
+19:06:21 Looking for include\*.w in C:\Psg-Prog
+19:06:21 Looking for Old versions\*.w in C:\Psg-Prog
+19:06:21 Looking for propsl\*.w in C:\Psg-Prog
+19:06:21 Looking for samples\*.w in C:\Psg-Prog
+19:06:21 Looking for samples\jpgs\*.w in C:\Psg-Prog
+19:06:21 Looking for samples\src\*.w in C:\Psg-Prog
+19:06:21 Looking for samples\src\excel\*.w in C:\Psg-Prog
+19:06:21 Looking for samples\templates\*.w in C:\Psg-Prog
+19:06:21 Looking for slib\*.w in C:\Psg-Prog
+19:06:22 Looking for slib\bin\*.w in C:\Psg-Prog
+19:06:22 Looking for slibooxml\*.w in C:\Psg-Prog
+19:06:22 Looking for Template\*.w in C:\Psg-Prog
+19:06:22 Looking for Template\old\*.w in C:\Psg-Prog
+19:06:22 Looking for tim work\*.w in C:\Psg-Prog
+19:06:22 Looking for util\*.w in C:\Psg-Prog
 Compiling util\CustSearch.w
-Unknown or ambiguous table BigSearch. (725)
-** C:\Psg-Prog\util\CustSearch.w Could not understand line 105. (196)
-10:24:49 Looking for *.cls in C:\Psg-Prog
-10:24:50 Looking for 104___07\*.cls in C:\Psg-Prog
-10:24:51 Looking for download\*.cls in C:\Psg-Prog
-10:24:51 Looking for excel\*.cls in C:\Psg-Prog
-10:24:51 Looking for include\*.cls in C:\Psg-Prog
-10:24:51 Looking for Old versions\*.cls in C:\Psg-Prog
-10:24:51 Looking for propsl\*.cls in C:\Psg-Prog
-10:24:51 Looking for samples\*.cls in C:\Psg-Prog
-10:24:51 Looking for samples\jpgs\*.cls in C:\Psg-Prog
-10:24:51 Looking for samples\src\*.cls in C:\Psg-Prog
-10:24:51 Looking for samples\src\excel\*.cls in C:\Psg-Prog
-10:24:51 Looking for samples\templates\*.cls in C:\Psg-Prog
-10:24:51 Looking for slib\*.cls in C:\Psg-Prog
-10:24:51 Looking for slib\bin\*.cls in C:\Psg-Prog
-10:24:51 Looking for slibooxml\*.cls in C:\Psg-Prog
-10:24:51 Looking for Template\*.cls in C:\Psg-Prog
-10:24:51 Looking for Template\old\*.cls in C:\Psg-Prog
-10:24:52 Looking for tim work\*.cls in C:\Psg-Prog
-10:24:52 Looking for util\*.cls in C:\Psg-Prog
+19:06:23 Looking for *.cls in C:\Psg-Prog
+19:06:24 Looking for .git\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\hooks\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\info\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\logs\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\logs\refs\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\logs\refs\heads\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\logs\refs\remotes\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\logs\refs\remotes\origin\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\06\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\0b\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\1e\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\20\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\23\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\2c\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\36\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\41\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\44\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\47\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\49\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\4c\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\52\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\60\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\67\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\68\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\6d\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\79\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\7a\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\8e\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\8f\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\a8\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\c0\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\cb\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\cf\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\d1\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\d5\*.cls in C:\Psg-Prog
+19:06:24 Looking for .git\objects\e5\*.cls in C:\Psg-Prog
+19:06:25 Looking for .git\objects\fb\*.cls in C:\Psg-Prog
+19:06:25 Looking for .git\objects\info\*.cls in C:\Psg-Prog
+19:06:25 Looking for .git\objects\pack\*.cls in C:\Psg-Prog
+19:06:25 Looking for .git\refs\*.cls in C:\Psg-Prog
+19:06:25 Looking for .git\refs\heads\*.cls in C:\Psg-Prog
+19:06:25 Looking for .git\refs\remotes\*.cls in C:\Psg-Prog
+19:06:25 Looking for .git\refs\remotes\origin\*.cls in C:\Psg-Prog
+19:06:25 Looking for .git\refs\tags\*.cls in C:\Psg-Prog
+19:06:25 Looking for database files\*.cls in C:\Psg-Prog
+19:06:25 Looking for Deprecated\*.cls in C:\Psg-Prog
+19:06:25 Looking for include\*.cls in C:\Psg-Prog
+19:06:25 Looking for Old versions\*.cls in C:\Psg-Prog
+19:06:25 Looking for propsl\*.cls in C:\Psg-Prog
+19:06:25 Looking for samples\*.cls in C:\Psg-Prog
+19:06:25 Looking for samples\jpgs\*.cls in C:\Psg-Prog
+19:06:26 Looking for samples\src\*.cls in C:\Psg-Prog
+19:06:26 Looking for samples\src\excel\*.cls in C:\Psg-Prog
+19:06:26 Looking for samples\templates\*.cls in C:\Psg-Prog
+19:06:26 Looking for slib\*.cls in C:\Psg-Prog
+19:06:26 Looking for slib\bin\*.cls in C:\Psg-Prog
+19:06:26 Looking for slibooxml\*.cls in C:\Psg-Prog
+19:06:26 Looking for Template\*.cls in C:\Psg-Prog
+19:06:27 Looking for Template\old\*.cls in C:\Psg-Prog
+19:06:27 Looking for tim work\*.cls in C:\Psg-Prog
+19:06:27 Looking for util\*.cls in C:\Psg-Prog

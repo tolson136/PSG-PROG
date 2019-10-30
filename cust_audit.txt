@@ -1,0 +1,366 @@
+12/24/2018 11:55:58.223 OpenEdge Auditing Report
+Custom Audit Data Filter:  (Detail)
+
+          ********************Summary Information********************
+
+   PUB.TICKET2123200024131
+
+
+          ***********************Event Details:**********************
+
+            Audit data guid: hLN+C1IDn7DpEaMHvoc5qg
+             Transaction id: 12168
+       Transaction sequence:
+          Audit date / time: 12/24/2018 11:45:12 AM
+                 Event Name: _sys.db.rec.delete
+                 Event Type: Data
+              Database guid: lpC4BuaAb7jpEb8DO1K7wA
+       Database description: psg
+     Database connection id: hLN+C1IDn7DpEdQGRrG4Eg
+        Client session uuid:
+  Audit Data Security Level: Message Digest
+        Data Seal Generated: x(50)
+
+     ********************Changed Fields********************
+
+Field name: BudgetedHours
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: CABLE
+ Data type: Character
+ Old value:
+
+ New value:
+
+
+
+Field name: CABLE-AMT
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: COMP#
+ Data type: Integer
+ Old value: 2
+
+ New value:
+
+
+
+Field name: CUST#
+ Data type: Decimal
+ Old value: 23
+
+ New value:
+
+
+
+Field name: DATE-PRT
+ Data type: Date
+ Old value: 02/19/2018
+
+ New value:
+
+
+
+Field name: DATE-RET
+ Data type: Date
+ Old value: 03/31/2003
+
+ New value:
+
+
+
+Field name: DIV#
+ Data type: Integer
+ Old value: 1
+
+ New value:
+
+
+
+Field name: DL
+ Data type: Decimal
+ Old value: 81
+
+ New value:
+
+
+
+Field name: DL-BAL
+ Data type: Decimal
+ Old value: 81
+
+ New value:
+
+
+
+Field name: DL-BUD
+ Data type: Decimal
+ Old value: 81
+
+ New value:
+
+
+
+Field name: DL-LAST
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: FREQ
+ Data type: Character
+ Old value: MONTHLY
+
+ New value:
+
+
+
+Field name: ITEM#
+ Data type: Integer
+ Old value: 1
+
+ New value:
+
+
+
+Field name: M-NAME
+ Data type: Character
+ Old value: PPS
+
+ New value:
+
+
+
+Field name: M-NUM
+ Data type: Integer
+ Old value: 1
+
+ New value:
+
+
+
+Field name: MONTH#
+ Data type: Integer
+ Old value: 3
+
+ New value:
+
+
+
+Field name: MTD-VOL
+ Data type: Decimal
+ Old value: 257
+
+ New value:
+
+
+
+Field name: OTH-AMT
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: OTHER
+ Data type: Character
+ Old value:
+
+ New value:
+
+
+
+Field name: PRISEC
+ Data type: Character
+ Old value:
+
+ New value:
+
+
+
+Field name: PROPSL#
+ Data type: Decimal
+ Old value: 200024
+
+ New value:
+
+
+
+Field name: PRT
+ Data type: Character
+ Old value: Y
+
+ New value:
+
+
+
+Field name: RET
+ Data type: Character
+ Old value: Y
+
+ New value:
+
+
+
+Field name: ROUTE#
+ Data type: Integer
+ Old value: 0
+
+ New value:
+
+
+
+Field name: SCAFF-AMT
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: SCAFFOLD
+ Data type: Character
+ Old value:
+
+ New value:
+
+
+
+Field name: SUB#
+ Data type: Integer
+ Old value: 0
+
+ New value:
+
+
+
+Field name: T-INDX
+ Data type: Integer
+ Old value: 1
+
+ New value:
+
+
+
+Field name: T-STAT
+ Data type: Character
+ Old value: X
+
+ New value:
+
+
+
+Field name: TicketDate
+ Data type: Date
+ Old value: ?
+
+ New value:
+
+
+
+Field name: TicketDateConfirmed
+ Data type: Logical
+ Old value: 0
+
+ New value:
+
+
+
+Field name: TOT-AMT
+ Data type: Decimal
+ Old value: 257
+
+ New value:
+
+
+
+Field name: TOT-AMT-REM
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: wk#
+ Data type: Integer
+ Old value: 0
+
+ New value:
+
+
+
+Field name: WK-BAL
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: WK-DL
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: WK-DL-BAL
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: WK-DL-BUD
+ Data type: Decimal
+ Old value: 81
+
+ New value:
+
+
+
+Field name: WK-START
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: WK-USED
+ Data type: Decimal
+ Old value: 0
+
+ New value:
+
+
+
+Field name: WTD-VOL
+ Data type: Decimal
+ Old value: 257
+
+ New value:
+
+
+
+------------------------------------------------------------------------------------
+
+1 Audit Data records processed
+42 Audit Data Value records processed
+
