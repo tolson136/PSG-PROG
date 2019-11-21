@@ -1,8 +1,8 @@
 /*wrvsr.p*/
 /* Weekly Rolling VOlume */
 
-/*      3//13/2018   TO    Changed SS layout */
-/*       10/1/2019   TO    Chnage Excel method */
+/*      3//13/2018   TO    Changed SS layout   */
+/*       10/1/2019   TO    Change Excel method */
 
 DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
 DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
@@ -1634,7 +1634,6 @@ PUT UNFORMATTED
   CODTotal 
   SKIP. 
 OUTPUT CLOSE.
-
 
 /*CmdName =  "node c:\nodeproj\generate c:\RollVolTemp " + FILENAME. */
 CmdName = "start Excel p:\Template\RollVolTemp2.xltm".
