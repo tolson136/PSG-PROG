@@ -115,6 +115,7 @@ IF PROPSL.JANITOR = yes THEN DO:
     BELL.
     UNDO, RETRY.
 END.
+         
       IF PRO-DESP.FREQ = "DAILY" THEN H-FREQ = "D".
       IF PRO-DESP.FREQ = "TWO_TIMES_PER_WEEK" THEN H-FREQ = "2XW".
       IF PRO-DESP.FREQ = "THREE_TIMES_PER_WEEK" THEN H-FREQ = "3XW".
@@ -167,7 +168,7 @@ END.
       IF WKDAY[5] THEN JObDay = JobDay + "W".
       IF WKDAY[6] THEN JObDay = JobDay + "R".
       IF WKDAY[7] THEN JObDay = JobDay + "F".
-      
+                
       IF NOT LaserPrinter AND NOT TestMode THEN OUTPUT TO PRINTER PAGE-SIZE 0.
       IF NOT LaserPrinter AND TestMode THEN OUTPUT TO c:\psg-work\ticket.txt.
       IF NOT LaserPrinter THEN
@@ -199,7 +200,7 @@ END.
               PRO-DESP.SPC-INTR SKIP(6) 
                 WITH FRAME P width 100 NO-BOX NO-LABELS
               .
-              
+          
    IF LaserPrinter THEN DO:
 
            CoProposal = 
@@ -212,11 +213,11 @@ END.
               trim(string(ticket.wk#, ">>")) + "-" +
               TRIM(STRING(ticket.t-indx, ">>")).
 
-           
+                
            CREATE ttDocPrint.
               ASSIGN 
                   ttDocPrint.Idx              = ttDocSequence
-                  ttDocPrint.Week             = h-Freq
+                  ttDocPrint.Week             = h-Freq + string(pro-desp.route#)
                   ttDocPrint.CoProposal       = CoProposal
                   ttDocPrint.Location         = Propsl.L-Name + " " + 
                                                  Propsl.Laddr01 + " " +
@@ -235,39 +236,46 @@ END.
                   ttDocPrint.SpcIntr          =  PRO-DESP.SPC-INTR
                   .
               ttDocSequence = ttDocSequence + 1.                  
-      END. /* IF Laser */   
+ 
+ END. /* IF Laser */   
       IF LaserPrinter THEN DO: /* Print ticket data to Word if Laser */
           /* Output ticket data to CSV file for processing by NODE */
           OUTPUT TO c:\LaserTickets\TicketData.csv.
+        
           FOR EACH ttDocPrint BY Idx:
-               PUT UNFORMATTED "'" + ttDocPrint.Week + "'" + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.CoProposal + "'"  + ",".  
-               PUT UNFORMATTED "'" + ttDocPrint.Location + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note1 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note2 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note3 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note4 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note5 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note6 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note7 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note8 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note9 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.Note10 + "'"  + ",".
-               PUT UNFORMATTED "'" + ttDocPrint.SpcIntr + "'"   /*SKIP*/.
+               PUT UNFORMATTED '"' + ttDocPrint.Week       + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.CoProposal + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Location   + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note1      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note2      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note3      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note4      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note5      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note6      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note7      + '"' + ",".                               
+               PUT UNFORMATTED '"' + ttDocPrint.Note8      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note9      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note10     + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.SpcIntr    + '"' + ",". /*SKIP*/.
+               /*IF Idx LT ttDocSequence THEN PUT UNFORMATTED SKIP.*/
+.          
            END. /* FOR EACH ttDocPrint */
            OUTPUT CLOSE.
-           FileName = os_getNextFile ( "c:/LaserTickets/ReprintTicket" + 
+          FileName = os_getNextFile ( "c:/LaserTickets/ReprintTicket" + 
                                       STRING(YEAR(TODAY))  + 
                                       STRING(MONTH(TODAY)) +
                                       STRING(DAY(TODAY)) +
                                       ".docx" ). 
-           /* process arg1=csv file arg2=template arg3=output doc*/
-           Cmd = "node c:/nodeproj/docxtemplater/ticketsnode " +
+           /* run node procdess process arg1=csv file arg2=template arg3=output doc*/
+                     
+           Cmd = "node c:/nodeproj/DocXTemplater\ticketsnode " +
                  "c:/lasertickets/TicketData.csv " +
-                 "c:/psg-prog/template/tickets2upnode.docx " + 
-                 /*"c:/lasertickets/test.docx"*/ FILENAME. 
-           OS-COMMAND VALUE(Cmd).      
-           
+                 "m:/template/tickets2upnode.docx " + 
+                 /*"c:/lasertickets/test.docx"*/ 
+                 FILENAME +
+                 " 1> c:\lasertickets\ticketnodereprint.err 2>&1". 
+           OS-COMMAND SILENT VALUE(Cmd).      
+         
            /*OS-COMMAND /*SILENT*/ "node c:/nodeproj/docxtemplater/ticketsnode c:/lasertickets/TicketData.csv c:/psg-prog/template/tickets2upnode.docx " + "c:/lasertickets/test.docx" /*FILENAME*/.*/
            /*OS-COMMAND SILENT "node c:\nodeproj\docxtemplater\\ticketsnode c:/psg-node/psg-node/TicketData.csv c:/psg-prog/template/tickets2upnode.docx c:/lasertickets/test.docx > c:/lasertickets/ticketsnode.err".*/                           
                                       
