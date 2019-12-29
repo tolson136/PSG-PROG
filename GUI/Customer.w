@@ -52,10 +52,20 @@ CREATE WIDGET-POOL.
 
 /* Name of designated FRAME-NAME and/or first browse and/or first query */
 &Scoped-define FRAME-NAME DEFAULT-FRAME
-&Scoped-define BROWSE-NAME BrowseProposal
+&Scoped-define BROWSE-NAME BrowseByTicket
 
 /* Internal Tables (found by Frame, Query & Browse Queries)             */
-&Scoped-define INTERNAL-TABLES PROPSL PRO-DESP
+&Scoped-define INTERNAL-TABLES TICKET PROPSL PRO-DESP
+
+/* Definitions for BROWSE BrowseByTicket                                */
+&Scoped-define FIELDS-IN-QUERY-BrowseByTicket TICKET.SUB# TICKET.ROUTE# ~
+TICKET.ITEM# TICKET.TicketDate TICKET.MONTH# TICKET.TOT-AMT 
+&Scoped-define ENABLED-FIELDS-IN-QUERY-BrowseByTicket 
+&Scoped-define QUERY-STRING-BrowseByTicket FOR EACH TICKET NO-LOCK INDEXED-REPOSITION
+&Scoped-define OPEN-QUERY-BrowseByTicket OPEN QUERY BrowseByTicket FOR EACH TICKET NO-LOCK INDEXED-REPOSITION.
+&Scoped-define TABLES-IN-QUERY-BrowseByTicket TICKET
+&Scoped-define FIRST-TABLE-IN-QUERY-BrowseByTicket TICKET
+
 
 /* Definitions for BROWSE BrowseProposal                                */
 &Scoped-define FIELDS-IN-QUERY-BrowseProposal PROPSL.CUST# PROPSL.PROPSL# ~
@@ -70,7 +80,10 @@ PROPSL.ADDR5
 
 /* Definitions for BROWSE BrowseProposals                               */
 &Scoped-define FIELDS-IN-QUERY-BrowseProposals PRO-DESP.PROPSL# ~
-PRO-DESP.ITEM# PRO-DESP.ROUTE# PRO-DESP.FREQ 
+PRO-DESP.ITEM# PRO-DESP.ROUTE# PRO-DESP.FREQ PRO-DESP.wks[1] ~
+PRO-DESP.wks[2] PRO-DESP.wks[3] PRO-DESP.wks[4] PRO-DESP.wks[5] ~
+PRO-DESP.WKDAY[1] PRO-DESP.WKDAY[2] PRO-DESP.WKDAY[3] PRO-DESP.WKDAY[4] ~
+PRO-DESP.WKDAY[5] PRO-DESP.WKDAY[6] PRO-DESP.WKDAY[7] 
 &Scoped-define ENABLED-FIELDS-IN-QUERY-BrowseProposals 
 &Scoped-define QUERY-STRING-BrowseProposals FOR EACH PRO-DESP NO-LOCK INDEXED-REPOSITION
 &Scoped-define OPEN-QUERY-BrowseProposals OPEN QUERY BrowseProposals FOR EACH PRO-DESP NO-LOCK INDEXED-REPOSITION.
@@ -80,11 +93,12 @@ PRO-DESP.ITEM# PRO-DESP.ROUTE# PRO-DESP.FREQ
 
 /* Definitions for FRAME DEFAULT-FRAME                                  */
 &Scoped-define OPEN-BROWSERS-IN-QUERY-DEFAULT-FRAME ~
+    ~{&OPEN-QUERY-BrowseByTicket}~
     ~{&OPEN-QUERY-BrowseProposals}
 
 /* Standard List Definitions                                            */
 &Scoped-Define ENABLED-OBJECTS RECT-1 ComboDiv FillProposalNumber ~
-FillCustNum FillCustName BrowseProposal BrowseProposals 
+FillCustNum FillCustName BrowseProposal BrowseProposals BrowseByTicket 
 &Scoped-Define DISPLAYED-OBJECTS ComboDiv FillProposalNumber FillCustNum ~
 FillCustName FillCustomer FillAddress1 
 
@@ -105,7 +119,7 @@ DEFINE VAR C-Win AS WIDGET-HANDLE NO-UNDO.
 DEFINE VARIABLE ComboDiv AS INTEGER FORMAT "->,>>>,>>9":U INITIAL 0 
      LABEL "Div" 
      VIEW-AS COMBO-BOX INNER-LINES 5
-     LIST-ITEM-PAIRS "Item 1",         0
+     LIST-ITEM-PAIRS "Item 1",0
      DROP-DOWN-LIST
      SIZE 16 BY 1 NO-UNDO.
 
@@ -140,6 +154,9 @@ DEFINE RECTANGLE RECT-1
 
 /* Query definitions                                                    */
 &ANALYZE-SUSPEND
+DEFINE QUERY BrowseByTicket FOR 
+      TICKET SCROLLING.
+
 DEFINE QUERY BrowseProposal FOR 
       PROPSL SCROLLING.
 
@@ -148,6 +165,19 @@ DEFINE QUERY BrowseProposals FOR
 &ANALYZE-RESUME
 
 /* Browse definitions                                                   */
+DEFINE BROWSE BrowseByTicket
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _DISPLAY-FIELDS BrowseByTicket C-Win _STRUCTURED
+  QUERY BrowseByTicket NO-LOCK DISPLAY
+      TICKET.SUB# FORMAT "ZZ":U
+      TICKET.ROUTE# FORMAT "ZZ":U
+      TICKET.ITEM# FORMAT "ZZZZ":U
+      TICKET.TicketDate FORMAT "99/99/9999":U
+      TICKET.MONTH# FORMAT "ZZ":U
+      TICKET.TOT-AMT FORMAT "$->>>,>>>,>>>.99":U WIDTH 13
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+    WITH NO-ROW-MARKERS SEPARATORS SIZE 64 BY 4.52 FIT-LAST-COLUMN.
+
 DEFINE BROWSE BrowseProposal
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _DISPLAY-FIELDS BrowseProposal C-Win _STRUCTURED
   QUERY BrowseProposal NO-LOCK DISPLAY
@@ -169,10 +199,22 @@ DEFINE BROWSE BrowseProposals
       PRO-DESP.PROPSL# FORMAT "ZZZZZZZZZZ":U
       PRO-DESP.ITEM# FORMAT "ZZZZ":U
       PRO-DESP.ROUTE# FORMAT "ZZ":U
-      PRO-DESP.FREQ FORMAT "X(25)":U WIDTH 21.4
+      PRO-DESP.FREQ FORMAT "X(25)":U
+      PRO-DESP.wks[1] FORMAT "yes/no":U
+      PRO-DESP.wks[2] FORMAT "yes/no":U
+      PRO-DESP.wks[3] FORMAT "yes/no":U
+      PRO-DESP.wks[4] FORMAT "yes/no":U
+      PRO-DESP.wks[5] FORMAT "yes/no":U
+      PRO-DESP.WKDAY[1] FORMAT "yes/no":U
+      PRO-DESP.WKDAY[2] FORMAT "yes/no":U
+      PRO-DESP.WKDAY[3] FORMAT "yes/no":U
+      PRO-DESP.WKDAY[4] FORMAT "yes/no":U
+      PRO-DESP.WKDAY[5] FORMAT "yes/no":U
+      PRO-DESP.WKDAY[6] FORMAT "yes/no":U
+      PRO-DESP.WKDAY[7] FORMAT "yes/no":U WIDTH 7.4
 /* _UIB-CODE-BLOCK-END */
 &ANALYZE-RESUME
-    WITH NO-ROW-MARKERS SEPARATORS SIZE 58 BY 7.86 ROW-HEIGHT-CHARS .52 FIT-LAST-COLUMN.
+    WITH NO-ROW-MARKERS SEPARATORS SIZE 142 BY 7.86 ROW-HEIGHT-CHARS .52 FIT-LAST-COLUMN.
 
 
 /* ************************  Frame Definitions  *********************** */
@@ -183,9 +225,10 @@ DEFINE FRAME DEFAULT-FRAME
      FillCustNum AT ROW 3.14 COL 68 COLON-ALIGNED WIDGET-ID 10
      FillCustName AT ROW 3.38 COL 118 COLON-ALIGNED WIDGET-ID 16
      BrowseProposal AT ROW 5.29 COL 10 WIDGET-ID 200
+     BrowseProposals AT ROW 12.91 COL 61 WIDGET-ID 300
      FillCustomer AT ROW 13.14 COL 19 COLON-ALIGNED WIDGET-ID 12
      FillAddress1 AT ROW 14.33 COL 19 COLON-ALIGNED WIDGET-ID 18
-     BrowseProposals AT ROW 18.86 COL 11 WIDGET-ID 300
+     BrowseByTicket AT ROW 22.91 COL 16 WIDGET-ID 400
      RECT-1 AT ROW 2.67 COL 4 WIDGET-ID 14
     WITH 1 DOWN NO-BOX KEEP-TAB-ORDER OVERLAY 
          SIDE-LABELS NO-UNDERLINE THREE-D 
@@ -239,7 +282,8 @@ ELSE {&WINDOW-NAME} = CURRENT-WINDOW.
 /* SETTINGS FOR FRAME DEFAULT-FRAME
    FRAME-NAME                                                           */
 /* BROWSE-TAB BrowseProposal FillCustName DEFAULT-FRAME */
-/* BROWSE-TAB BrowseProposals FillAddress1 DEFAULT-FRAME */
+/* BROWSE-TAB BrowseProposals BrowseProposal DEFAULT-FRAME */
+/* BROWSE-TAB BrowseByTicket FillAddress1 DEFAULT-FRAME */
 /* SETTINGS FOR FILL-IN FillAddress1 IN FRAME DEFAULT-FRAME
    NO-ENABLE                                                            */
 /* SETTINGS FOR FILL-IN FillCustomer IN FRAME DEFAULT-FRAME
@@ -253,6 +297,21 @@ THEN C-Win:HIDDEN = no.
 
 /* Setting information for Queries and Browse Widgets fields            */
 
+&ANALYZE-SUSPEND _QUERY-BLOCK BROWSE BrowseByTicket
+/* Query rebuild information for BROWSE BrowseByTicket
+     _TblList          = "psg.TICKET"
+     _Options          = "NO-LOCK INDEXED-REPOSITION"
+     _FldNameList[1]   = psg.TICKET.SUB#
+     _FldNameList[2]   = psg.TICKET.ROUTE#
+     _FldNameList[3]   = psg.TICKET.ITEM#
+     _FldNameList[4]   = psg.TICKET.TicketDate
+     _FldNameList[5]   = psg.TICKET.MONTH#
+     _FldNameList[6]   > psg.TICKET.TOT-AMT
+"TOT-AMT" ? ? "decimal" ? ? ? ? ? ? no ? no no "13" yes no no "U" "" "" "" "" "" "" 0 no 0 no no
+     _Query            is OPENED
+*/  /* BROWSE BrowseByTicket */
+&ANALYZE-RESUME
+
 &ANALYZE-SUSPEND _QUERY-BLOCK BROWSE BrowseProposal
 /* Query rebuild information for BROWSE BrowseProposal
      _TblList          = "psg.PROPSL"
@@ -265,7 +324,7 @@ THEN C-Win:HIDDEN = no.
      _FldNameList[6]   = psg.PROPSL.ADDR3
      _FldNameList[7]   = psg.PROPSL.ADDR4
      _FldNameList[8]   > psg.PROPSL.ADDR5
-"ADDR5" ? ? "character" ? ? ? ? ? ? no ? no no "36.8" yes no no "U" "" "" "" "" "" "" 0 no 0 no no
+"PROPSL.ADDR5" ? ? "character" ? ? ? ? ? ? no ? no no "36.8" yes no no "U" "" "" "" "" "" "" 0 no 0 no no
      _Query            is NOT OPENED
 */  /* BROWSE BrowseProposal */
 &ANALYZE-RESUME
@@ -277,8 +336,20 @@ THEN C-Win:HIDDEN = no.
      _FldNameList[1]   = psg.PRO-DESP.PROPSL#
      _FldNameList[2]   = psg.PRO-DESP.ITEM#
      _FldNameList[3]   = psg.PRO-DESP.ROUTE#
-     _FldNameList[4]   > psg.PRO-DESP.FREQ
-"FREQ" ? ? "character" ? ? ? ? ? ? no ? no no "21.4" yes no no "U" "" "" "" "" "" "" 0 no 0 no no
+     _FldNameList[4]   = psg.PRO-DESP.FREQ
+     _FldNameList[5]   = psg.PRO-DESP.wks[1]
+     _FldNameList[6]   = psg.PRO-DESP.wks[2]
+     _FldNameList[7]   = psg.PRO-DESP.wks[3]
+     _FldNameList[8]   = psg.PRO-DESP.wks[4]
+     _FldNameList[9]   = psg.PRO-DESP.wks[5]
+     _FldNameList[10]   = psg.PRO-DESP.WKDAY[1]
+     _FldNameList[11]   = psg.PRO-DESP.WKDAY[2]
+     _FldNameList[12]   = psg.PRO-DESP.WKDAY[3]
+     _FldNameList[13]   = psg.PRO-DESP.WKDAY[4]
+     _FldNameList[14]   = psg.PRO-DESP.WKDAY[5]
+     _FldNameList[15]   = psg.PRO-DESP.WKDAY[6]
+     _FldNameList[16]   > psg.PRO-DESP.WKDAY[7]
+"WKDAY[7]" ? ? "logical" ? ? ? ? ? ? no ? no no "7.4" yes no no "U" "" "" "" "" "" "" 0 no 0 no no
      _Query            is OPENED
 */  /* BROWSE BrowseProposals */
 &ANALYZE-RESUME
@@ -318,9 +389,21 @@ END.
 &Scoped-define BROWSE-NAME BrowseProposal
 &Scoped-define SELF-NAME BrowseProposal
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _CONTROL BrowseProposal C-Win
-ON VALUE-CHANGED OF BrowseProposal IN FRAME DEFAULT-FRAME /* Proposal */
+ON VALUE-CHANGED OF BrowseProposal IN FRAME DEFAULT-FRAME
 DO:
         RUN DisplayProposal.
+END.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+
+&Scoped-define BROWSE-NAME BrowseProposals
+&Scoped-define SELF-NAME BrowseProposals
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _CONTROL BrowseProposals C-Win
+ON VALUE-CHANGED OF BrowseProposals IN FRAME DEFAULT-FRAME
+DO:
+  RUN displaytickets.
 END.
 
 /* _UIB-CODE-BLOCK-END */
@@ -371,6 +454,7 @@ END.
 &ANALYZE-RESUME
 
 
+&Scoped-define BROWSE-NAME BrowseByTicket
 &UNDEFINE SELF-NAME
 
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _CUSTOM _MAIN-BLOCK C-Win 
@@ -461,6 +545,25 @@ END PROCEDURE.
 /* _UIB-CODE-BLOCK-END */
 &ANALYZE-RESUME
 
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE DisplayTickets C-Win 
+PROCEDURE DisplayTickets :
+/*------------------------------------------------------------------------------
+  Purpose:     
+  Parameters:  <none>
+  Notes:       
+------------------------------------------------------------------------------*/
+      OPEN QUERY BrowseByTicket FOR EACH Ticket WHERE 
+        TICKET.COMP# = pro-desp.comp# AND
+        TICKET.DIV#  = PRO-DESP.DIV# AND
+        TICKET.SUB#  = pro-desp.sub# AND
+        TICKET.CUST# = pro-desp.cust# AND
+        TICKET.PROPSL# = pro-desp.propsl#
+        NO-LOCK.
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE enable_UI C-Win  _DEFAULT-ENABLE
 PROCEDURE enable_UI :
 /*------------------------------------------------------------------------------
@@ -476,7 +579,7 @@ PROCEDURE enable_UI :
           FillAddress1 
       WITH FRAME DEFAULT-FRAME IN WINDOW C-Win.
   ENABLE RECT-1 ComboDiv FillProposalNumber FillCustNum FillCustName 
-         BrowseProposal BrowseProposals 
+         BrowseProposal BrowseProposals BrowseByTicket 
       WITH FRAME DEFAULT-FRAME IN WINDOW C-Win.
   {&OPEN-BROWSERS-IN-QUERY-DEFAULT-FRAME}
   VIEW C-Win.
