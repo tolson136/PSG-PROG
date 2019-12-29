@@ -1,0 +1,64 @@
+Setting up SQL ODBC Access
+https://knowledgebase.progress.com/articles/Article/000031840
+It appears that new users do not/cannot be created for existing DB users
+Not sure how to create user only privs.  grant DBA to clint; works but too broad
+  granting 'resource' doesnt appear to work
+
+
+    Create a SYSPROGRESS user in the Data Administration tool
+    Log into the database with a SQL connection and user SYSPROGRESS.
+    Execute the command: 
+
+ 
+select * from pub."_sysdbauth"; 
+ 
+_Grantee _Dbaacc _Resacc _Grantee-DomainId 
+-------------------------------- ------- ------- -------------------- 
+jsmith y y 0 
+SYSPROGRESS y y 0 
+ 
+
+    Run : 
+
+create user 'user1','user1'; 
+grant resource,dba to user1; 
+commit; 
+
+                     
+
+    Check the access:  The query below shows which users have DBA and Resource access to the SQL database
+
+ 
+SQLExplorer>select * from pub."_sysdbauth"; 
+_Grantee _Dbaacc _Resacc _Grantee-DomainId 
+-------------------------------- ------- ------- -------------------- 
+jsmith y y 0 
+SYSPROGRESS y y 0 
+USER1 y y 0 
+ 
+
+    This extra check is necessary: log out and in again as SYSPROGRESS
+    Check the access: 
+
+ 
+SQLExplorer>select * from pub."_sysdbauth"; 
+_Grantee _Dbaacc _Resacc _Grantee-DomainId 
+-------------------------------- ------- ------- -------------------- 
+jsmith y y 0 
+SYSPROGRESS y y 0 
+USER1 y y 0 
+ 
+** Here we see that the user User1 has Resource and DBA access to the database. 
+ 
+
+    Log out and then in as user1.
+    The command:
+
+create user 'a','a'; 
+ 
+now works to create a new user from the new account. 
+Workaround	
+Notes	
+In SQL, DBA and RESOURCE are database-wide privileges that can be assigned to individual users. Users with DBA privileges have the ability to access, modify, or delete a database object and to grant privileges to other users. RESOURCE privileges are limited compared to DBA privileges. Users with RESOURCE privileges can create database objects, but cannot modify or delete database objects. They cannot grant privileges to other users.
+
+If the tool being used does not issue an auto commit went making changes, updates/creates/deletes, one must be done to commit work, otherwise changes will not be saved.
