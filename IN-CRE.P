@@ -15,16 +15,16 @@ DEFINE SHARED VARIABLE XCOM-N AS CHAR    FORMAT "X(30)".
 DEFINE SHARED VARIABLE XDIV-N AS CHAR    FORMAT "X(30)".
 DEFINE SHARED VARIABLE XOPR   AS CHAR    FORMAT "XXX".
 
-DEFINE VARIABLE ProcessYear AS INTEGER FORMAT "9999" LABEL "YEAR (4 DIGITS)".
+DEFINE VARIABLE ProcessYear AS INTEGER FORMAT "9999" LABEL "YEAR".
 DEFINE VARIABLE BEG# AS INTEGER FORMAT "ZZ"
-  LABEL "ENTER MONTH & YEAR FOR WHICH YOU WANT TO CREATE ORD/INV".
-DEF VAR PALL AS LOGICAL
+  LABEL "Month".
+DEF VAR ProcessP AS LOGICAL
   LABEL "PROCESS P-STATUS TICKETS FOR THIS CUSTOMER ?".
-DEF VAR IALL AS LOGICAL
+DEF VAR ProcessIncomplete AS LOGICAL
   LABEL "PROCESS INCOMPLETE TICKETS FOR THIS CUSTOMER ?".
-DEF VAR ZALL AS LOGICAL
+DEF VAR ProcessComplete AS LOGICAL
   LABEL "PROCESS COMPLETED TICKETS FOR THIS CUSTOMER  ?".
-DEF VAR IPAR AS CHAR FORMAT "X"
+DEF VAR ProcessPartWhole AS CHAR FORMAT "X"
   LABEL "CHARGE <M>ONTH TODATE OR <W>HOLE AMOUNT ?".
 DEF VAR XORD AS DECIMAL FORMAT "ZZZZZZZZZZ".
 DEF VAR XITM AS INTEGER FORMAT "ZZZZ".
@@ -33,100 +33,137 @@ DEF WORKFILE WKX
     FIELD WKXCUST AS DECIMAL FORMAT "ZZZZZZZZZZ"
     FIELD WKXCODE AS CHAR FORMAT "X"
     FIELD WKXPROP AS DECIMAL FORMAT "ZZZZZZZZZZ".
-    
-IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
-THEN DO:
-    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
-    RETURN.
-END.
 
-UPDATE BEG# ProcessYear SKIP(5) WITH NO-BOX SIDE-LABELS.
+ASSIGN Beg# = MONTH(TODAY)
+       ProcessYear = YEAR(TODAY).
+
+UPDATE 
+   SKIP(1)
+   BEG# 
+   SKIP(1)
+   ProcessYear 
+ WITH FRAME P 
+ WIDTH 60 
+ SIDE-LABELS
+ 1 COLUMN
+ TITLE "Enter month/year to process                (in-cre.p)".
+
 FOR EACH ACCT-RCV WHERE
     ACCT-RCV.COMP# = XCOM AND
     ACCT-RCV.DIV# = XDIV AND
     ACCT-RCV.C-STATUS <> "I"
+       NO-LOCK
        BY ACCT-RCV.CUST#:
                            
     HIDE FRAME A.
     HIDE FRAME C.
     HIDE FRAME I.
     HIDE FRAME P.
-    ASSIGN PALL = NO
-           IALL = NO
-           ZALL = NO
-           IPAR = "".
+    ASSIGN ProcessP = NO
+           ProcessIncomplete = NO
+           ProcessComplete = NO
+           ProcessPartWhole = "".
+    
+    /* 1st check to see if we have any Complete or Incomplete tickets for this customer */
     FIND FIRST TICKET WHERE
-       TICKET.COMP# = ACCT-RCV.COMP# AND
-       TICKET.DIV# = ACCT-RCV.DIV# AND
-       TICKET.CUST# = ACCT-RCV.CUST# AND
-       ticket.route = 0 and
-       MONTH(TICKET.DATE-RET) = BEG# AND
-       YEAR(TICKET.DATE-RET)  = ProcessYear AND
-       (TICKET.T-STAT = "C" OR
-        TICKET.T-STAT = "I") NO-ERROR.
+       TICKET.COMP#           = ACCT-RCV.COMP# AND
+       TICKET.DIV#            = ACCT-RCV.DIV#  AND
+       TICKET.CUST#           = ACCT-RCV.CUST# AND
+       ticket.route           = 0              AND
+       MONTH(TICKET.DATE-RET) = BEG#           AND
+       YEAR(TICKET.DATE-RET)  = ProcessYear    AND
+       (TICKET.T-STAT         = "C"            OR
+        TICKET.T-STAT         = "I") 
+        NO-LOCK NO-ERROR.
     IF NOT AVAILABLE TICKET THEN NEXT.
+    
+    /* Set ProcessComplete flag if there are any Complete tickets for this customer */
     FIND FIRST TICKET WHERE
-        TICKET.COMP# = ACCT-RCV.COMP# AND
-        TICKET.DIV# = ACCT-RCV.DIV# AND
-        TICKET.CUST# = ACCT-RCV.CUST# AND
-        ticket.route# = 0 and
-        MONTH(TICKET.DATE-RET) = BEG# AND
-        TICKET.T-STAT = "C" NO-ERROR.
-    IF AVAILABLE TICKET THEN ZALL = yes.
+        TICKET.COMP#           = ACCT-RCV.COMP# AND
+        TICKET.DIV#            = ACCT-RCV.DIV#  AND
+        TICKET.CUST#           = ACCT-RCV.CUST# AND
+        ticket.route#          = 0              AND
+        MONTH(TICKET.DATE-RET) = BEG#           AND
+        YEAR(TICKET.DATE-RET)  = ProcessYear    AND
+        TICKET.T-STAT          = "C" 
+        NO-LOCK NO-ERROR.
+    IF AVAILABLE TICKET THEN ProcessComplete = yes.
+    
+    /* Set ProcessP flag if there are any P tickets for this customer */
     FIND FIRST TICKET WHERE
-        TICKET.COMP# = ACCT-RCV.COMP# AND
-        TICKET.DIV# = ACCT-RCV.DIV# AND
-        TICKET.CUST# = ACCT-RCV.CUST# AND
-        ticket.route# = 0 and
-        MONTH(TICKET.DATE-RET) = BEG# AND
-        TICKET.T-STAT = "P" NO-ERROR.
-    IF AVAILABLE TICKET THEN PALL = yes.
-    FIND FIRST TICKET /* USE-INDEX INDX1 */
-                     WHERE TICKET.COMP# = ACCT-RCV.COMP# AND
-                           TICKET.DIV# = ACCT-RCV.DIV# AND
-                           TICKET.CUST# = ACCT-RCV.CUST# AND
-                           ticket.route# = 0 and
-                           MONTH(TICKET.DATE-RET) = BEG# AND
-                           TICKET.T-STAT = "I" NO-ERROR.
-   IF AVAILABLE TICKET THEN IALL = yes.
+        TICKET.COMP#           = ACCT-RCV.COMP# AND
+        TICKET.DIV#            = ACCT-RCV.DIV#  AND
+        TICKET.CUST#           = ACCT-RCV.CUST# AND
+        ticket.route#          = 0              AND
+        MONTH(TICKET.DATE-RET) = BEG#           AND
+        YEAR(TICKET.DATE-RET)  = ProcessYear    AND
+        TICKET.T-STAT          = "P" 
+        NO-LOCK NO-ERROR.
+    IF AVAILABLE TICKET THEN ProcessP = yes.
+    
+    /* Set ProcessIncomplete flag if there are any I status tickets for this customer */
+    FIND FIRST TICKET WHERE
+        TICKET.COMP#           = ACCT-RCV.COMP# AND
+        TICKET.DIV#            = ACCT-RCV.DIV#  AND
+        TICKET.CUST#           = ACCT-RCV.CUST# AND
+        ticket.route#          = 0              AND
+        MONTH(TICKET.DATE-RET) = BEG#           AND
+        YEAR(TICKET.DATE-RET)  = ProcessYear    AND
+        TICKET.T-STAT          = "I" 
+        NO-LOCK NO-ERROR.
+    IF AVAILABLE TICKET THEN ProcessIncomplete = yes.
+   
    DISPLAY ACCT-RCV.CUST# LABEL "CUSTOMER NUMBER" SPACE(5)
            ACCT-RCV.C-NAME LABEL "CUSTOMER NAME"
-       WITH FRAME A OVERLAY NO-BOX SIDE-LABELS.
-   IF ZALL THEN UPDATE ZALL SKIP(1)
-       WITH FRAME C OVERLAY NO-BOX SIDE-LABELS.
-   IF IALL THEN UPDATE IALL SKIP(1) IPAR SKIP(1)
-       WITH FRAME I OVERLAY NO-BOX SIDE-LABELS.
-   IF PALL THEN UPDATE PALL
-       WITH FRAME P OVERLAY NO-BOX SIDE-LABELS.
-   FOR EACH TICKET /* USE-INDEX INDX1 */
-                   WHERE TICKET.COMP# = ACCT-RCV.COMP# AND
-                         TICKET.DIV# = ACCT-RCV.DIV# AND
-                         TICKET.CUST# = ACCT-RCV.CUST# AND
-                         ticket.route# = 0 and
-                         MONTH(TICKET.DATE-RET) = BEG# AND
-                           (TICKET.T-STAT = "C" OR
-                            TICKET.T-STAT = "I" OR
-                            TICKET.T-STAT = "P" ):
+       WITH FRAME Account OVERLAY NO-BOX SIDE-LABELS.
+   IF ProcessComplete THEN UPDATE ProcessComplete SKIP(1)
+       WITH FRAME Comp OVERLAY NO-BOX SIDE-LABELS.
+   IF ProcessIncomplete THEN UPDATE ProcessIncomplete SKIP(1) ProcessPartWhole SKIP(1)
+       WITH FRAME Incomp OVERLAY NO-BOX SIDE-LABELS.
+   IF ProcessP THEN UPDATE ProcessP
+       WITH FRAME Proc OVERLAY NO-BOX SIDE-LABELS.
+   
+   /* Loop thru open tickets for Customer */
+   
+   FOR EACH TICKET WHERE
+      TICKET.COMP#           = ACCT-RCV.COMP# AND
+      TICKET.DIV#            = ACCT-RCV.DIV#  AND
+      TICKET.CUST#           = ACCT-RCV.CUST# AND
+      ticket.route#          = 0              AND
+      MONTH(TICKET.DATE-RET) = BEG#           AND
+      YEAR(TICKET.DATE-RET)  = ProcessYear    AND
+      (TICKET.T-STAT    = "C" OR
+       TICKET.T-STAT    = "I" OR
+       TICKET.T-STAT    = "P" )
+       EXCLUSIVE-LOCK:
        IF TICKET.T-STAT = "C" AND TICKET.TOT-AMT-REM = 0.00 THEN DO:
           TICKET.T-STAT = "W".
           NEXT.
        END.
-       IF TICKET.T-STAT = "C" AND ZALL THEN TICKET.T-STAT = "D".
-       IF TICKET.T-STAT = "I" AND IALL AND IPAR = "W" THEN TICKET.T-STAT = "E".
-       IF TICKET.T-STAT = "P" AND PALL THEN TICKET.T-STAT = "F".
-       IF TICKET.T-STAT = "I" AND IALL AND IPAR = "M" THEN TICKET.T-STAT = "G".
-    END.
+       IF TICKET.T-STAT = "C" AND ProcessComplete                              THEN TICKET.T-STAT = "D".
+       IF TICKET.T-STAT = "I" AND ProcessIncomplete AND ProcessPartWhole = "W" THEN TICKET.T-STAT = "E".
+       IF TICKET.T-STAT = "P" AND ProcessP                                     THEN TICKET.T-STAT = "F".
+       IF TICKET.T-STAT = "I" AND ProcessIncomplete AND ProcessPartWhole = "M" THEN TICKET.T-STAT = "G".
+   END. /* FOR EACH Ticket...*/
+   
+   
 END.
-FOR EACH TICKET /* USE-INDEX INDX1 */
-                     WHERE TICKET.COMP# = XCOM AND
-                           TICKET.DIV# = XDIV AND
-                           ticket.route# = 0 and
-                           MONTH(TICKET.DATE-RET) = BEG# AND
-                           (TICKET.T-STAT = "D" OR
-                            TICKET.T-STAT = "E" OR
-                            TICKET.T-STAT = "F" OR
-                            TICKET.T-STAT = "G")
-                           BREAK BY TICKET.PROPSL#:
+
+/* Loop thru tickets for various Status's*/
+FOR EACH TICKET WHERE
+   TICKET.COMP#           = XCOM AND
+   TICKET.DIV#            = XDIV AND
+   ticket.route#          = 0 and
+   MONTH(TICKET.DATE-RET) = BEG# AND
+   YEAR(TICKET.DATE-RET)  = ProcessYear    AND
+   (TICKET.T-STAT = "D" OR
+    TICKET.T-STAT = "E" OR
+    TICKET.T-STAT = "F" OR
+    TICKET.T-STAT = "G")
+      EXCLUSIVE-LOCK
+      BREAK BY TICKET.PROPSL#
+      TRANSACTION:
+      
    IF FIRST-OF(TICKET.PROPSL#) THEN DO:
       FIND FIRST SYSCONTROL EXCLUSIVE-LOCK.
       XORD = SYSCONTROL.NEXT-ORD + 1.
@@ -134,86 +171,99 @@ FOR EACH TICKET /* USE-INDEX INDX1 */
       RELEASE SYSCONTROL.
       XITM = 0.
    END.
-   FIND FIRST PROPSL /* USE-INDEX INDX */
-               WHERE PROPSL.COMP# = TICKET.COMP# AND
-                     PROPSL.DIV# = TICKET.DIV# AND
-                     PROPSL.CUST# = TICKET.CUST# AND
-                     PROPSL.PROPSL# = TICKET.PROPSL# NO-ERROR.
+   FIND FIRST PROPSL WHERE
+     PROPSL.COMP#   = TICKET.COMP#   AND
+     PROPSL.DIV#    = TICKET.DIV#    AND
+     PROPSL.CUST#   = TICKET.CUST#   AND
+     PROPSL.PROPSL# = TICKET.PROPSL# 
+     NO-LOCK NO-ERROR.
    IF NOT AVAILABLE PROPSL THEN UNDO, NEXT.
-   FIND FIRST PRO-DESP /* USE-INDEX INDX2 */
-                 WHERE PRO-DESP.COMP# = TICKET.COMP# AND
-                       PRO-DESP.DIV# = TICKET.DIV# AND
-                       PRO-DESP.CUST# = TICKET.CUST# AND
-                       pro-desp.route# = 0 and
-                       PRO-DESP.PROPSL# = TICKET.PROPSL# AND
-                       PRO-DESP.ITEM# = TICKET.ITEM# NO-ERROR.
+   
+   FIND FIRST PRO-DESP WHERE
+     PRO-DESP.COMP#   = TICKET.COMP#   AND
+     PRO-DESP.DIV#    = TICKET.DIV#    AND
+     PRO-DESP.CUST#   = TICKET.CUST#   AND
+     pro-desp.route#  = 0              AND
+     PRO-DESP.PROPSL# = TICKET.PROPSL# AND
+     PRO-DESP.ITEM#   = TICKET.ITEM# 
+     NO-LOCK NO-ERROR.
    IF NOT AVAILABLE PRO-DESP THEN DO:
        HIDE MESSAGE.
-       MESSAGE "Pro-Descr not avail" skip "Cust# " TICKET.CUST# "Propsl# " TICKET.PROPSL# "Item# " TICKET.ITEM# "Route 0"  VIEW-AS ALERT-BOX.
+       MESSAGE "Pro-Descr not avail" skip 
+               "Cust# " TICKET.CUST# 
+               "Propsl# " TICKET.PROPSL# 
+               "Item# " TICKET.ITEM# 
+               "Route 0"  VIEW-AS ALERT-BOX.
        UNDO, NEXT.
    END.
-   FIND FIRST ACCT-RCV /* USE-INDEX INDX1 */
-                 WHERE ACCT-RCV.COMP# = TICKET.COMP# AND
-                       ACCT-RCV.DIV# = TICKET.DIV# AND
-                       ACCT-RCV.CUST# = TICKET.CUST#.
+   
+   FIND FIRST ACCT-RCV WHERE
+     ACCT-RCV.COMP# = TICKET.COMP# AND
+     ACCT-RCV.DIV#  = TICKET.DIV#  AND
+     ACCT-RCV.CUST# = TICKET.CUST#
+     NO-LOCK.
    CREATE INVOICE.
-   UPDATE INVOICE.COMP# = TICKET.COMP#.
-   UPDATE INVOICE.DIV# = TICKET.DIV#.
-   UPDATE INVOICE.CUST# = TICKET.CUST#.
-   UPDATE INVOICE.PROPSL# = TICKET.PROPSL#.
-   UPDATE INVOICE.L-NAME = PROPSL.L-NAME.
-   UPDATE INVOICE.C-DATE = TICKET.DATE-RET.
-   UPDATE INVOICE.PRICE = TICKET.DL - TICKET.DL-LAST.
-   UPDATE INVOICE.ORD-NO = XORD.
-   IF TICKET.T-STAT = "D" OR TICKET.T-STAT = "E" OR  TICKET.T-STAT = "F"
+   UPDATE INVOICE.COMP#   = TICKET.COMP#
+          INVOICE.DIV#    = TICKET.DIV#
+          INVOICE.CUST#   = TICKET.CUST#
+          INVOICE.PROPSL# = TICKET.PROPSL#
+          INVOICE.L-NAME  = PROPSL.L-NAME
+          INVOICE.C-DATE  = TICKET.DATE-RET
+          INVOICE.PRICE   = TICKET.DL - TICKET.DL-LAST
+          INVOICE.ORD-NO  = XORD.
+   
+   IF TICKET.T-STAT = "D" OR 
+      TICKET.T-STAT = "E" OR  
+      TICKET.T-STAT = "F"
        THEN UPDATE INVOICE.TOT-INV = TICKET.TOT-AMT-REM.
    IF TICKET.T-STAT = "G" THEN
        UPDATE INVOICE.TOT-INV = TICKET.MTD-VOL.
-   UPDATE INVOICE.ITEM# = TICKET.ITEM#.
-   UPDATE INVOICE.MONTH# = MONTH(TICKET.DATE-RET).
-   UPDATE INVOICE.T-INDX = TICKET.T-INDX.
-   XITM = XITM + 1.
-   UPDATE INVOICE.ITM-NO = XITM.
-   UPDATE INVOICE.SLS# = TICKET.M-NUM.
-   UPDATE INVOICE.INV-OPR = XOPR.
-   UPDATE INVOICE.PO# = PRO-DESP.PO#.
-   UPDATE INVOICE.SUB# = PRO-DESP.SUB#.
-   UPDATE INVOICE.ROUTE# = PRO-DESP.ROUTE#.
-   UPDATE INVOICE.APPR-CD = "A".
-   UPDATE INVOICE.LNE-STAT = "A".
-   UPDATE INVOICE.I-TYPE = "N".
-   UPDATE INVOICE.REC-TYPE = "T".
-   UPDATE INVOICE.I-DESRP = "TRANSFERRED FROM COMPLETED JOBS".
-   UPDATE INVOICE.TERM-CD = ACCT-RCV.TERM-CD.
-   UPDATE INVOICE.LADDR01 = PROPSL.LADDR01.
-   UPDATE INVOICE.LADDR02 = PROPSL.LADDR02.
-   UPDATE INVOICE.LADDR03 = PROPSL.LADDR03.
-   FIND FIRST TERMFILE NO-ERROR.
-   IF  AVAILABLE TERMFILE THEN DO:
-       IF ACCT-RCV.TERM-CD = "1" THEN UPDATE INVOICE.TERM-DSC = TERM01.
-       ELSE IF ACCT-RCV.TERM-CD = "2" THEN UPDATE INVOICE.TERM-DSC = TERM02.
-       ELSE IF ACCT-RCV.TERM-CD = "3" THEN UPDATE INVOICE.TERM-DSC = TERM03.
-       ELSE IF ACCT-RCV.TERM-CD = "4" THEN UPDATE INVOICE.TERM-DSC = TERM04.
-       ELSE IF ACCT-RCV.TERM-CD = "5" THEN UPDATE INVOICE.TERM-DSC = TERM05.
-       ELSE IF ACCT-RCV.TERM-CD = "6" THEN UPDATE INVOICE.TERM-DSC = TERM06.
-       ELSE IF ACCT-RCV.TERM-CD = "7" THEN UPDATE INVOICE.TERM-DSC = TERM07.
-       ELSE IF ACCT-RCV.TERM-CD = "8" THEN UPDATE INVOICE.TERM-DSC = TERM08.
-       ELSE IF ACCT-RCV.TERM-CD = "9" THEN UPDATE INVOICE.TERM-DSC = TERM09.
-       ELSE IF ACCT-RCV.TERM-CD = "10" THEN UPDATE INVOICE.TERM-DSC = TERM10.
-   END.
-   IF TICKET.T-STAT = "D" THEN DO:
-                TICKET.T-STAT = "W".
-                TICKET.WTD-VOL = TICKET.TOT-AMT.
-                TICKET.TOT-AMT-REM = 0.0.
-   END.
-   IF TICKET.T-STAT = "E" OR  TICKET.T-STAT = "F" THEN DO:
-                TICKET.T-STAT = "Y".
-                TICKET.WTD-VOL = TICKET.TOT-AMT.
-                TICKET.TOT-AMT-REM = 0.00.
-    END.
-    IF TICKET.T-STAT = "G" THEN DO:
-                TICKET.T-STAT = "Z".
-                TICKET.TOT-AMT-REM = TICKET.TOT-AMT-REM - TICKET.MTD-VOL.
-     END.
-     RELEASE INVOICE.
+   
+   UPDATE XITM             = XITM + 1
+          INVOICE.ITEM#    = TICKET.ITEM#
+          INVOICE.MONTH#   = MONTH(TICKET.DATE-RET)
+          INVOICE.T-INDX   = TICKET.T-INDX   
+          INVOICE.ITM-NO   = XITM
+          INVOICE.SLS#     = TICKET.M-NUM
+          INVOICE.INV-OPR  = XOPR
+          INVOICE.PO#      = PRO-DESP.PO#
+          INVOICE.SUB#     = PRO-DESP.SUB#
+          INVOICE.ROUTE#   = PRO-DESP.ROUTE#
+          INVOICE.APPR-CD  = "A"
+          INVOICE.LNE-STAT = "A"
+          INVOICE.I-TYPE   = "N"
+          INVOICE.REC-TYPE = "T"
+          INVOICE.I-DESRP  = "TRANSFERRED FROM COMPLETED JOBS"
+          INVOICE.TERM-CD  = ACCT-RCV.TERM-CD
+          INVOICE.LADDR01  = PROPSL.LADDR01
+          INVOICE.LADDR02  = PROPSL.LADDR02
+          INVOICE.LADDR03  = PROPSL.LADDR03.
+   FIND FIRST TERMFILE NO-LOCK NO-ERROR.
+   IF  AVAILABLE TERMFILE THEN CASE ACCT-RCV.TERM-CD:    
+       WHEN "1" THEN UPDATE INVOICE.TERM-DSC = TERM01.
+       WHEN "2" THEN UPDATE INVOICE.TERM-DSC = TERM02.
+       WHEN "3" THEN UPDATE INVOICE.TERM-DSC = TERM03.
+       WHEN "4" THEN UPDATE INVOICE.TERM-DSC = TERM04.
+       WHEN "5" THEN UPDATE INVOICE.TERM-DSC = TERM05.
+       WHEN "6" THEN UPDATE INVOICE.TERM-DSC = TERM06.
+       WHEN "7" THEN UPDATE INVOICE.TERM-DSC = TERM07.
+       WHEN "8" THEN UPDATE INVOICE.TERM-DSC = TERM08.
+       WHEN "9" THEN UPDATE INVOICE.TERM-DSC = TERM09.
+       WHEN "10" THEN UPDATE INVOICE.TERM-DSC = TERM10.
+   END CASE.
+   
+   CASE TICKET.T-STAT:
+      WHEN "D" THEN ASSIGN TICKET.T-STAT      = "W"
+                           TICKET.WTD-VOL     = TICKET.TOT-AMT
+                           TICKET.TOT-AMT-REM = 0.0.
+      WHEN "E" THEN ASSIGN TICKET.T-STAT      = "Y"
+                           TICKET.WTD-VOL     = TICKET.TOT-AMT
+                           TICKET.TOT-AMT-REM = 0.00.
+      WHEN "F" THEN ASSIGN TICKET.T-STAT      = "Y"
+                           TICKET.WTD-VOL     = TICKET.TOT-AMT
+                           TICKET.TOT-AMT-REM = 0.00.
+      WHEN "G" THEN ASSIGN TICKET.T-STAT      = "Z"
+                           TICKET.TOT-AMT-REM = TICKET.TOT-AMT-REM - TICKET.MTD-VOL.
+   END CASE.
+   RELEASE INVOICE.
 END.
