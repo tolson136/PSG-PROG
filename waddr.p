@@ -6,96 +6,92 @@
 /*  1/26/2018   TO    Added laser print option             */
 /*  4/18/2018   TO    Removed Start/Stop and Equip         */
 /*                    Added TestMode                       */
+/*  12/31/2019  TO    Changed Laser Print option           */
 /*                                                         */
 /***********************************************************/
 
-DEFINE SHARED VARIABLE TestMode AS LOGICAL.
-DEFINE SHARED VARIABLE XCOM AS INTEGER FORMAT "ZZ".
-DEFINE SHARED VARIABLE XDIV AS INTEGER FORMAT "ZZ".
-DEFINE SHARED VARIABLE XCOM-N AS CHAR FORMAT "X(30)".
-DEFINE SHARED VARIABLE XDIV-N AS CHAR FORMAT "X(30)".
-DEFINE SHARED VARIABLE XOPR AS CHAR FORMAT "XXX".
-DEFINE SHARED VARIABLE BEG# AS date FORMAT "99/99/9999"
+DEFINE SHARED VARIABLE TestMode     AS LOGICAL.
+DEFINE SHARED VARIABLE XCOM         AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XDIV         AS INTEGER FORMAT "ZZ".
+DEFINE SHARED VARIABLE XCOM-N       AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XDIV-N       AS CHAR FORMAT "X(30)".
+DEFINE SHARED VARIABLE XOPR         AS CHAR FORMAT "XXX".
+DEFINE SHARED VARIABLE BEG#         AS date FORMAT "99/99/9999"
   LABEL "ENTER MONTH & YEAR FOR WHICH YOU WANT TO RUN TICKETS".
-DEFINE VARIABLE H-FREQ AS CHAR FORMAT "X(5)".
-DEFINE SHARED VARIABLE D2 AS DECIMAL FORMAT "9999.99".
-DEFINE SHARED VARIABLE D3 AS DECIMAL FORMAT "9999".
-DEFINE SHARED VARIABLE D4 AS DECIMAL FORMAT "9999.99".
-DEFINE SHARED VARIABLE D5 AS INTEGER FORMAT "9999" LABEL "YEAR (4 DIGITS)".
-DEFINE SHARED VARIABLE L-YEAR AS LOGICAL.
-DEFINE VARIABLE TICKS AS INTEGER FORMAT "9999".
-DEFINE VARIABLE F-TICK AS LOGICAL.
-DEFINE VARIABLE H-WEEK AS INTEGER FORMAT "9".
-DEFINE SHARED VARIABLE DY AS INTEGER FORMAT "99".
-DEFINE SHARED VARIABLE UP-LIM AS INTEGER FORMAT "99".
-DEFINE VARIABLE C-DATE AS DATE FORMAT "99/99/9999".
-DEFINE SHARED VARIABLE F-CUST AS DECIMAL FORMAT "ZZZZZZZZZZ"
+DEFINE SHARED VARIABLE D2           AS DECIMAL FORMAT "9999.99".
+DEFINE SHARED VARIABLE D3           AS DECIMAL FORMAT "9999".
+DEFINE SHARED VARIABLE D4           AS DECIMAL FORMAT "9999.99".
+DEFINE SHARED VARIABLE D5           AS INTEGER FORMAT "9999" LABEL "YEAR (4 DIGITS)".
+DEFINE SHARED VARIABLE L-YEAR       AS LOGICAL.
+DEFINE SHARED VARIABLE DY           AS INTEGER FORMAT "99".
+DEFINE SHARED VARIABLE UP-LIM       AS INTEGER FORMAT "99".
+DEFINE SHARED VARIABLE F-CUST       AS DECIMAL FORMAT "ZZZZZZZZZZ"
     LABEL "CUSTOMER NUMBER".
-DEFINE SHARED VARIABLE F-PROP AS DECIMAL FORMAT "ZZZZZZZZZZ"
+DEFINE SHARED VARIABLE F-PROP       AS DECIMAL FORMAT "ZZZZZZZZZZ"
     LABEL "PROPOSAL NUMBER".
-DEFINE SHARED VARIABLE F-ITEM AS INTEGER FORMAT "ZZZZ"
+DEFINE SHARED VARIABLE F-ITEM       AS INTEGER FORMAT "ZZZZ"
     LABEL "ITEM NUMBER".
-DEFINE SHARED VARIABLE F-INDEX AS INTEGER FORMAT "ZZ"
+DEFINE SHARED VARIABLE F-INDEX      AS INTEGER FORMAT "ZZ"
     LABEL "TICK INDEX".
-def shared var xweek as int.
+DEFINE SHARED VARIABLE xweek        AS INT.
 DEFINE SHARED VARIABLE LaserPrinter AS LOG.
-DEFINE SHARED VARIABLE NumTickets AS INT.
+DEFINE SHARED VARIABLE NumTickets   AS INT.
+DEFINE SHARED VARIABLE xroute       AS INT FORMAT "ZZ"
+    LABEL "Enter Route Number".
+DEFINE SHARED VARIABLE xsub         AS INT format "ZZ"
+    LABEL "Enter Sub Number".
 
+DEFINE VARIABLE H-FREQ              AS CHAR FORMAT "X(5)".
+DEFINE VARIABLE TICKS               AS INTEGER FORMAT "9999".
+DEFINE VARIABLE F-TICK              AS LOGICAL.
+DEFINE VARIABLE H-WEEK              AS INTEGER FORMAT "9".
+DEFINE VARIABLE C-DATE              AS DATE FORMAT "99/99/9999".
+DEFINE VARIABLE gxmonth             AS INT.
+DEFINE VARIABLE FirstMonthDate      AS DATE NO-UNDO.
+DEFINE VARIABLE LastMonthDate       AS DATE NO-UNDO.    
+DEFINE VARIABLE TicketsPerPage      AS INT INIT 3.
+DEFINE VARIABLE CurrentTicket       AS INT INIT 1. /* count within expect tickets per*/
+DEFINE VARIABLE TicketCount         AS INT INIT 1. /* Count on page */
+DEFINE VARIABLE CoProposal          AS CHAR FORMAT "X(30)".
+DEFINE VARIABLE ttDocXSequence      AS INT.
+DEFINE VARIABLE FileName            AS CHAR.
+DEFINE VARIABLE Cmd                 AS CHAR.
+DEFINE VARIABLE gweekly             AS LOG.
+DEFINE VARIABLE gday                AS LOG EXTENT 7.
+DEFINE VARIABLE gweek               AS INT.
+DEFINE VARIABLE gmonth              AS LOG EXTENT 12.
 
-def var gxmonth as int.
-def shared var xroute as int format "ZZ"
-    label "Enter Route Number".
-def shared var xsub as int format "ZZ"
-    label "Enter Sub Number".
-DEF VAR FirstMonthDate AS DATE NO-UNDO.
-DEF VAR LastMonthDate AS DATE NO-UNDO.    
-DEFINE VARIABLE TicketsPerPage AS INT INIT 3.
-DEFINE VARIABLE CurrentTicket  AS INT INIT 1. /* count within expect tickets per*/
-DEFINE VARIABLE TicketCount    AS INT INIT 1. /* Count on page */
-DEF VAR CoProposal AS CHAR FORMAT "X(30)".
-DEF VAR ttDocXSequence AS INT.
-DEF VAR FileName AS CHAR.
-DEF VAR Cmd AS CHAR.
-
-DEF TEMP-TABLE ttDocXPrint
-  FIELD Idx AS INT 
-  FIELD Week AS CHAR
-  FIELD CoProposal AS CHAR
-  FIELD Location AS CHAR
-  FIELD Note1 AS CHAR
-  FIELD Note2 AS CHAR
-  FIELD Note3 AS CHAR
-  FIELD Note4 AS CHAR
-  FIELD Note5 AS CHAR
-  FIELD Note6 AS CHAR
-  FIELD Note7 AS CHAR
-  FIELD Note8 AS CHAR
-  FIELD Note9 AS CHAR
-  FIELD Note10 AS CHAR
+DEF TEMP-TABLE ttDocPrint
+  FIELD Idx              AS INT 
+  FIELD Week             AS CHAR
+  FIELD CoProposal       AS CHAR
+  FIELD Location         AS CHAR
+  FIELD Note1            AS CHAR
+  FIELD Note2            AS CHAR
+  FIELD Note3            AS CHAR
+  FIELD Note4            AS CHAR
+  FIELD Note5            AS CHAR
+  FIELD Note6            AS CHAR
+  FIELD Note7            AS CHAR
+  FIELD Note8            AS CHAR
+  FIELD Note9            AS CHAR
+  FIELD Note10           AS CHAR
   FIELD StartEndCodEquip AS CHAR
-  FIELD SpcIntr AS CHAR
+  FIELD SpcIntr          AS CHAR
   .
-  
-{slibooxml/slibdocx.i}
+
+IF LaserPrinter NE YES THEN LaserPrinter = NO.
+
 {include/stdutils.i}
 {slib/slibos.i}
     
-IF (USERID = "OPERATIONS") OR (USERID = "LANDMARK") OR (USERID = "GARCIA")
-THEN DO:
-    MESSAGE "YOU ARE NOT AUTHORIZED TO RUN THIS PROCEDURE".
-    RETURN.
-END.
-
 ASSIGN 
   FirstMonthDate  = DATE(MONTH(BEG#),1,YEAR(BEG#))
   LastMonthDate   = DATE(MONTH(BEG#),DaysInMonth(MONTH(BEG#),YEAR(BEG#)),YEAR(BEG#))
   .
 
 OUTPUT TO TERMINAL.
-def var gweekly as log.
-def var gday as log extent 7.
-def var gweek as int.
-def var gmonth as log extent 12.
+
 display gweekly label "Print weekly tickets only?" skip(3).
 display gweek label "Which week do you want to print?" skip(3)
 .
@@ -124,10 +120,7 @@ update gweekly gweek gday[1] gday[2] gday[3] gday[4] gday[5] gday[6] gday[7]
        if gmonth[11] then gxmonth = 11.
        if gmonth[12] then gxmonth = 12.
  
- IF LaserPrinter THEN DO:
-    IF NOT TestMode THEN RUN docx_load("p:\template\Tickets2up.dfw").
-    IF     TestMode THEN RUN docx_load("c:psg-prog\template\Tickets2up.dfw").
-END. 
+
   FIND FIRST ACCT-RCV WHERE ACCT-RCV.COMP# = XCOM AND
                             ACCT-RCV.DIV# = XDIV  AND
                             ACCT-RCV.CUST# = F-CUST AND
@@ -158,7 +151,7 @@ END.
      ( Propsl.StartDate LE LastMonthDate OR Propsl.StartDate = ?) AND
      (Propsl.EndDate GE FirstMonthDate OR Propsl.EndDate = ?)  
      THEN DO:
-       MESSAGE "This proposal it outside of its active dates" view-as alert-box.
+       MESSAGE "This proposal is outside of its active dates" view-as alert-box.
        NEXT.
   END.   
   FIND FIRST PRO-DESP WHERE PRO-DESP.COMP# = XCOM AND
@@ -642,114 +635,117 @@ IF LASTKEY = KEYCODE("ESC") THEN LEAVE.
 	          trim(string(gweek, ">>")) + "-" +
 	          TRIM(STRING(DY, ">>")).
 	    REPEAT CurrentTicket = 1 TO NumTickets: /* how many of each to print */  
-	       CREATE ttDocXPrint.
+	       CREATE ttDocPrint.
               ASSIGN 
-                  ttDocXPrint.Idx              = ttDocXSequence
-                  ttDocXPrint.Week             = h-Freq
-                  ttDocXPrint.CoProposal       = CoProposal
-                  ttDocXPrint.Location         = Propsl.L-Name + " " + 
+                  ttDocPrint.Idx              = ttDocXSequence
+                  ttDocPrint.Week             = h-Freq
+                  ttDocPrint.CoProposal       = CoProposal
+                  ttDocPrint.Location         = Propsl.L-Name + " " + 
                                                  Propsl.Laddr01 + " " +
                                                  Propsl.Laddr02 + " " +
                                                  propsl.laddr03
-                  ttDocXPrint.Note1            = PRO-DESP.DESC01
-                  ttDocXPrint.Note2            = PRO-DESP.DESC02
-                  ttDocXPrint.Note3            = PRO-DESP.DESC03
-                  ttDocXPrint.Note4            = PRO-DESP.DESC04
-                  ttDocXPrint.Note5            = PRO-DESP.DESC05
-                  ttDocXPrint.Note6            = PRO-DESP.DESC06
-                  ttDocXPrint.Note7            = PRO-DESP.DESC07
-                  ttDocXPrint.Note8            = PRO-DESP.DESC08
-                  ttDocXPrint.Note9            = PRO-DESP.DESC09
-                  ttDocXPrint.Note10           = PRO-DESP.DESC10
-                  ttDocXPrint.SpcIntr          =  PRO-DESP.SPC-INTR
+                  ttDocPrint.Note1            = PRO-DESP.DESC01
+                  ttDocPrint.Note2            = PRO-DESP.DESC02
+                  ttDocPrint.Note3            = PRO-DESP.DESC03
+                  ttDocPrint.Note4            = PRO-DESP.DESC04
+                  ttDocPrint.Note5            = PRO-DESP.DESC05
+                  ttDocPrint.Note6            = PRO-DESP.DESC06
+                  ttDocPrint.Note7            = PRO-DESP.DESC07
+                  ttDocPrint.Note8            = PRO-DESP.DESC08
+                  ttDocPrint.Note9            = PRO-DESP.DESC09
+                  ttDocPrint.Note10           = PRO-DESP.DESC10
+                  ttDocPrint.SpcIntr          =  PRO-DESP.SPC-INTR
                   .
               ttDocXSequence = ttDocXSequence + 1.    
                           
           END. /* REPEAT CurrentTicket */
       END. /* IF Laser */ 
               
-              CREATE TICKET.
-              TICKET.COMP# = ACCT-RCV.COMP#.
-              TICKET.DIV# = ACCT-RCV.DIV#.
-              TICKET.CUST# = ACCT-RCV.CUST#.
-              TICKET.PROPSL# = PRO-DESP.PROPSL#.
-              TICKET.ITEM# = PRO-DESP.ITEM#.
-              ticket.route# = pro-desp.route#.
-              ticket.sub# = pro-desp.sub#.
-              TICKET.MONTH# = gxmonth.
-              ticket.wk# = gweek.
-              ticket.ticketdate = beg#.
-              TICKET.T-INDX = DY.
-              TICKET.DATE-PRT = TODAY.
-              TICKET.DL-BUD = PRO-DESP.DL.
-              TICKET.DL-BAL = PRO-DESP.DL.
-              TICKET.WK-DL-BAL = PRO-DESP.DL.
-              TICKET.WK-DL-BUD = PRO-DESP.DL.
-              TICKET.PRT = "Y".
-              TICKET.FREQ = PRO-DESP.FREQ.
-              TICKET.T-STAT = "P".
+      CREATE TICKET.
+      ASSIGN  TICKET.COMP#      = ACCT-RCV.COMP#
+              TICKET.DIV#       = ACCT-RCV.DIV#
+              TICKET.CUST#      = ACCT-RCV.CUST#
+              TICKET.PROPSL#    = PRO-DESP.PROPSL#
+              TICKET.ITEM#      = PRO-DESP.ITEM#
+              ticket.route#     = pro-desp.route#
+              ticket.sub#       = pro-desp.sub#
+              TICKET.MONTH#     = gxmonth
+              ticket.wk#        = gweek
+              ticket.ticketdate = beg#
+              TICKET.T-INDX     = DY
+              TICKET.DATE-PRT   = TODAY
+              TICKET.DL-BUD     = PRO-DESP.DL
+              TICKET.DL-BAL     = PRO-DESP.DL
+              TICKET.WK-DL-BAL  = PRO-DESP.DL
+              TICKET.WK-DL-BUD  = PRO-DESP.DL
+              TICKET.PRT        = "Y"
+              TICKET.FREQ       = PRO-DESP.FREQ
+              TICKET.T-STAT     = "P".
               IF PRO-DESP.WHCH-AMT = 1 THEN DO:
                   TICKET.TOT-AMT = PRO-DESP.AMT.
                   TICKET.WK-START = PRO-DESP.AMT.
                   TICKET.TOT-AMT-REM = PRO-DESP.AMT.
               END.
-              IF PRO-DESP.WHCH-AMT = 2 THEN DO:
-                  TICKET.TOT-AMT = AMT2 * AMT2-MUL.
-                  TICKET.WK-START = AMT2 * AMT2-MUL.
-                  TICKET.TOT-AMT-REM = AMT2 * AMT2-MUL.
-              END.
-              RELEASE TICKET.
-              create cl-date.
-                cl-date.cl-date = 01/01/9999.
-                cl-date.comp# = acct-rcv.comp#.
-                cl-date.cust# = acct-rcv.cust#.
-                cl-date.date-ret = 01/01/9999.
-                cl-date.div# = acct-rcv.div#.
-                cl-date.freq = pro-desp.freq.
-                cl-date.item# = pro-desp.item#.
-                cl-date.month# = gxmonth.
-                cl-date.propsl# = pro-desp.propsl#.
-                cl-date.route# = pro-desp.route#.
-                cl-date.sub# = pro-desp.sub#.
-                cl-date.wk# = gweek.
-                cl-date.t-indx = dy.
-              release cl-date.
-            END.
-          END.
+      IF PRO-DESP.WHCH-AMT = 2 THEN DO:
+         ASSIGN TICKET.TOT-AMT     = AMT2 * AMT2-MUL
+                TICKET.WK-START    = AMT2 * AMT2-MUL
+                TICKET.TOT-AMT-REM = AMT2 * AMT2-MUL.
       END.
+      RELEASE TICKET.
+      CREATE cl-date.
+      ASSIGN    cl-date.cl-date  = 01/01/9999
+                cl-date.comp#    = acct-rcv.comp#
+                cl-date.cust#    = acct-rcv.cust#
+                cl-date.date-ret = 01/01/9999
+                cl-date.div#     = acct-rcv.div#
+                cl-date.freq     = pro-desp.freq
+                cl-date.item#    = pro-desp.item#
+                cl-date.month#   = gxmonth
+                cl-date.propsl#  = pro-desp.propsl#
+                cl-date.route#   = pro-desp.route#
+                cl-date.sub#     = pro-desp.sub#
+                cl-date.wk#      = gweek
+                cl-date.t-indx   = dy.
+       RELEASE cl-date.
+    END.
+  END.
+END.
       
       IF LaserPrinter THEN DO: /* Print ticket data to Word if Laser */
-     
-    	  FOR EACH ttDocXPrint BY Idx:
-    	       display idx ttDocXPrint.CoProposal ttDocXPrint.Location. pause.
-    	        run docx_setClipboardValue("Ticket",string(TicketCount) + "Week", ttDocXPrint.Week).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "ProposalNumber", ttDocXPrint.CoProposal).  
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Location", ttDocXPrint.Location).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note1", ttDocXPrint.Note1).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note2", ttDocXPrint.Note2).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note3", ttDocXPrint.Note3).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note4", ttDocXPrint.Note4).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note5", ttDocXPrint.Note5).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note6", ttDocXPrint.Note6).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note7", ttDocXPrint.Note7).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note8", ttDocXPrint.Note8).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note9", ttDocXPrint.Note9).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "Note10", ttDocXPrint.Note10).
-               run docx_setClipboardValue("Ticket",string(TicketCount) + "SpcIntr", ttDocXPrint.SpcIntr).
-               TicketCount = TicketCount + 1.
-               IF TicketCount GE TicketsPerPage THEN DO: /* print page and set for next page */
-                  run docx_paste("Ticket"). /* Output page to Word.*/
-                  TicketCount = 1.
-               END.  
-    	   END. /* FOR EACH ttDocXPrint */
-    	  
-          /*run docx_paste("Ticket"). /* Output final page to Word.*/ */
+          OUTPUT TO c:\LaserTickets\TicketDataPrint.csv.
+    	  FOR EACH ttDocPrint BY Idx:
+    	       PUT UNFORMATTED '"' + ttDocPrint.Week       + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.CoProposal + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Location   + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note1      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note2      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note3      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note4      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note5      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note6      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note7      + '"' + ",".                               
+               PUT UNFORMATTED '"' + ttDocPrint.Note8      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note9      + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.Note10     + '"' + ",".
+               PUT UNFORMATTED '"' + ttDocPrint.SpcIntr    + '"' + ",".
+               TicketCount = 1.             
+    	   END. /* FOR EACH ttDocPrint */
+           OUTPUT CLOSE.
+          
           FileName = os_getNextFile ( "c:\LaserTickets\SingleTicket" + 
                                       STRING(YEAR(TODAY))  + 
                                       STRING(MONTH(TODAY)) +
                                       STRING(DAY(TODAY)) +
                                       ".docx" ). 
-          run docx_save(FileName).
+           
+           /* Need to add DocXTemplater after /nodeproj on my test system */
+           Cmd = "node c:/nodeproj/docxtemplater/ticketsnode " +
+                 "c:/lasertickets/TicketDataPrint.csv " +
+                 /*"m:/template/tickets2upnode.docx " + */
+                 "c:/lasertickets/test.docx" + 
+                 FILENAME +
+                 " 1> c:\lasertickets\ticketnodeprint.err 2>&1". 
+          OS-command silent VALUE(Cmd).
           Cmd = "start winword.exe /t " + FileName.
           OS-command silent VALUE(Cmd).
   

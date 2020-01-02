@@ -70,7 +70,8 @@ DEF TEMP-TABLE ttDocPrint
   FIELD StartEndCodEquip AS CHAR
   FIELD SpcIntr AS CHAR
   . 
-               
+IF LaserPrinter NE YES THEN LaserPrinter = NO.
+
 {include/stdutils.i}
 {slib/slibos.i}
 

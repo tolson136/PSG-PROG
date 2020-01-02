@@ -1,4 +1,5 @@
 Setting up SQL ODBC Access
+
 https://knowledgebase.progress.com/articles/Article/000031840
 It appears that new users do not/cannot be created for existing DB users
 Not sure how to create user only privs.  grant DBA to clint; works but too broad
